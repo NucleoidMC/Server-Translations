@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "translated.server",
+  "id": "translated_server",
   "version": "${version}",
   "name": "Translated Server Log",
   "description": "",
@@ -9,7 +9,7 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/translated.server/icon.png",
+  "icon": "assets/translated_server/icon.png",
   "environment": "server",
   "entrypoints": {
     "preLaunch": [

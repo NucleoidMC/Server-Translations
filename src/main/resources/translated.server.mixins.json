@@ -4,6 +4,7 @@
   "package": "fr.catcore.translated.server.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinLanguage"
   ],
   "client": [
   ],

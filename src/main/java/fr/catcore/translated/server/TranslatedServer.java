@@ -8,6 +8,6 @@ import net.fabricmc.api.Environment;
 public class TranslatedServer implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
-
+        TranslationGatherer.setLanguage("fr_fr");
     }
 }
