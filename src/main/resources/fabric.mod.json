@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "translated.server",
+  "version": "${version}",
+  "name": "Translated Server Log",
+  "description": "",
+  "authors": [
+    "CatCore"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/translated.server/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "preLaunch": [
+      "fr.catcore.translated.server.TranslatedServerPreLaunch"
+    ],
+    "server": [
+      "fr.catcore.translated.server.TranslatedServer"
+    ]
+  },
+  "mixins": [
+    "translated.server.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.9.0+build.204",
+    "fabric": "*",
+    "minecraft": "1.16.1"
+  }
+}
