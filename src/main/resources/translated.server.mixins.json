@@ -6,8 +6,6 @@
   "mixins": [
     "MixinLanguage"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }

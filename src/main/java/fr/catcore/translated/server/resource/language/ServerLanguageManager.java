@@ -54,6 +54,6 @@ public class ServerLanguageManager {
     }
 
     public ServerLanguageDefinition getLanguage(String code) {
-        return (ServerLanguageDefinition)this.languageDefs.get(code);
+        return (ServerLanguageDefinition)this.languageDefs.getOrDefault(code, en_us);
     }
 }

@@ -9,7 +9,6 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/translated_server/icon.png",
   "environment": "server",
   "entrypoints": {},
   "mixins": [
