@@ -8,6 +8,7 @@ import fr.catcore.translated.server.resource.language.ServerLanguage;
 import fr.catcore.translated.server.resource.language.ServerLanguageDefinition;
 import fr.catcore.translated.server.resource.language.ServerLanguageManager;
 import fr.catcore.translated.server.resource.language.ServerTranslationStorage;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.util.Language;
 
@@ -23,8 +24,8 @@ public class TranslationGatherer {
     private static final Gson GSON = new Gson();
     private static URL versionURL = null;
     private static URL resourceManifestURL = null;
-    private static Map<String, String> resourceHashs = new HashMap<>();
-    private static Map<String, Map<String, String>> translations = new HashMap<>();
+    private static final Map<String, String> resourceHashs = new HashMap<>();
+    private static final Map<String, Map<String, String>> translations = new HashMap<>();
 
     public static void init() {
         try {
@@ -107,6 +108,10 @@ public class TranslationGatherer {
 
     private static URL getResourceURL(String hash) throws MalformedURLException {
         return new URL("https://resources.download.minecraft.net/" + hash.substring(0,2) + "/" + hash);
+    }
+
+    private static void lookIntoModFiles() {
+        FabricLoader.getInstance().getGameDir();
     }
 
     public static void setLanguage(String code) {

@@ -40,19 +40,6 @@ public class ServerLanguageManager {
                 jsonObject.get("region").getAsString(), jsonObject.get("bidirectional").getAsBoolean()));
     }
 
-//    public void apply(/*ResourceManager manager*/) {
-//        ServerLanguageDefinition languageDefinition = (ServerLanguageDefinition)this.languageDefs.getOrDefault("en_us", en_us);
-//        this.currentLanguage = (ServerLanguageDefinition)this.languageDefs.getOrDefault(this.currentLanguageCode, languageDefinition);
-//        List<ServerLanguageDefinition> list = Lists.newArrayList(new ServerLanguageDefinition[]{languageDefinition});
-//        if (this.currentLanguage != languageDefinition) {
-//            list.add(this.currentLanguage);
-//        }
-//
-//        ServerTranslationStorage translationStorage = ServerTranslationStorage.load((ResourceManager)manager, (List)list);
-////        I18n.method_29391(translationStorage);
-//        Language.setInstance(translationStorage);
-//    }
-
     public void setLanguage(ServerLanguageDefinition languageDefinition) {
         this.currentLanguageCode = languageDefinition.getCode();
         this.currentLanguage = languageDefinition;

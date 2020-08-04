@@ -30,69 +30,6 @@ public class ServerTranslationStorage extends Language {
         this.rightToLeft = rightToLeft;
     }
 
-//    public static ServerTranslationStorage load(ResourceManager resourceManager, List<ServerLanguageDefinition> definitions) {
-//        Map<String, String> map = Maps.newHashMap();
-//        boolean bl = false;
-//        Iterator var4 = definitions.iterator();
-//
-//        while(var4.hasNext()) {
-//            ServerLanguageDefinition languageDefinition = (ServerLanguageDefinition)var4.next();
-//            bl |= languageDefinition.isRightToLeft();
-//            String string = String.format("lang/%s.json", languageDefinition.getCode());
-//            Iterator var7 = resourceManager.getAllNamespaces().iterator();
-//
-//            while(var7.hasNext()) {
-//                String string2 = (String)var7.next();
-//
-//                try {
-//                    Identifier identifier = new Identifier(string2, string);
-//                    load((List)resourceManager.getAllResources(identifier), (Map)map);
-//                } catch (FileNotFoundException var10) {
-//                } catch (Exception var11) {
-//                    LOGGER.warn("Skipped language file: {}:{} ({})", string2, string, var11.toString());
-//                }
-//            }
-//        }
-//
-//        return new ServerTranslationStorage(ImmutableMap.copyOf(map), bl);
-//    }
-
-//    private static void load(List<Resource> resources, Map<String, String> translationMap) {
-//        Iterator var2 = resources.iterator();
-//
-//        while(var2.hasNext()) {
-//            Resource resource = (Resource)var2.next();
-//
-//            try {
-//                InputStream inputStream = resource.getInputStream();
-//                Throwable var5 = null;
-//
-//                try {
-//                    Language.load(inputStream, translationMap::put);
-//                } catch (Throwable var15) {
-//                    var5 = var15;
-//                    throw var15;
-//                } finally {
-//                    if (inputStream != null) {
-//                        if (var5 != null) {
-//                            try {
-//                                inputStream.close();
-//                            } catch (Throwable var14) {
-//                                var5.addSuppressed(var14);
-//                            }
-//                        } else {
-//                            inputStream.close();
-//                        }
-//                    }
-//
-//                }
-//            } catch (IOException var17) {
-//                LOGGER.warn("Failed to load translations from {}", resource, var17);
-//            }
-//        }
-//
-//    }
-
     public String get(String key) {
         return (String)this.translations.getOrDefault(key, key);
     }

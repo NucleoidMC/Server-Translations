@@ -11,14 +11,7 @@
   "license": "MIT",
   "icon": "assets/translated_server/icon.png",
   "environment": "server",
-  "entrypoints": {
-    "preLaunch": [
-      "fr.catcore.translated.server.TranslatedServerPreLaunch"
-    ],
-    "server": [
-      "fr.catcore.translated.server.TranslatedServer"
-    ]
-  },
+  "entrypoints": {},
   "mixins": [
     "translated.server.mixins.json"
   ],
