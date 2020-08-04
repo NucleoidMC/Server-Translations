@@ -1,27 +1,19 @@
 package fr.catcore.translated.server.resource.language;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ServerTranslationStorage extends Language {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Pattern field_25288 = Pattern.compile("%(?:(\\d+)\\$)?([A-Za-z])");
+    private static final Pattern PATTERN = Pattern.compile("%(?:(\\d+)\\$)?([A-Za-z])");
     private final Map<String, String> translations;
     private final boolean rightToLeft;
 
@@ -55,7 +47,7 @@ public class ServerTranslationStorage extends Language {
     }
 
     public static String method_29389(String string) {
-        Matcher matcher = field_25288.matcher(string);
+        Matcher matcher = PATTERN.matcher(string);
         StringBuffer stringBuffer = new StringBuffer();
         int var3 = 1;
 
@@ -79,5 +71,9 @@ public class ServerTranslationStorage extends Language {
         } catch (ArabicShapingException var3) {
             return string;
         }
+    }
+
+    public void addTranslation(String key, String value) {
+        this.translations.putIfAbsent(key, value);
     }
 }
