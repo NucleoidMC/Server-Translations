@@ -1,0 +1,17 @@
+{
+  "text.translated_server.loading.datapacks": "%s :ɹǝƃɐuɐWǝɔɹnosǝɹ ƃuᴉpɐolǝɹ",
+  "text.translated_server.loaded.recipe": "sǝdᴉɔǝɹ %s pǝpɐo˥",
+  "text.translated_server.loaded.advancement": "sʇuǝɯǝɔuɐʌpɐ %s pǝpɐo˥",
+  "text.translated_server.starting_version": "%s uoᴉsɹǝʌ ɹǝʌɹǝs ʇɟɐɹɔǝuᴉɯ ƃuᴉʇɹɐʇS",
+  "text.translated_server.loading.properties": "sǝᴉʇɹǝdoɹd ƃuᴉpɐo˥",
+  "text.translated_server.loading.gamemode": "s% :ǝdʎʇ ǝɯɐƃ ʇlnɐɟǝp",
+  "text.translated_server.generate.keypair": "ɹᴉɐdʎǝʞ ƃuᴉʇɐɹǝuǝפ",
+  "text.translated_server.loading.ip": "%2$s:%1$s uo ɹǝʌɹǝs ʇɟɐɹɔǝuᴉW ƃuᴉʇɹɐʇS",
+  "text.translated_server.preparing.level": ",,%s,, lǝʌǝl ƃuᴉɹɐdǝɹԀ",
+  "text.translated_server.preparing.dimension": "%s uoᴉsuǝɯᴉp ɹoɟ uoᴉƃǝɹ ʇɹɐʇs ƃuᴉɹɐdǝɹԀ",
+  "text.translated_server.time": "sɯ %s :pǝsdɐlǝ ǝɯᴉ┴",
+  "text.translated_server.done": ",,dlǝɥ,, ǝdʎʇ 'dlǝɥ ɹoℲ ¡(%s) ǝuop",
+  "text.translated_server.save.chunks": "%2$s/,%1$s, lǝʌǝl ɹoɟ sʞunɥɔ ƃuᴉʌɐS",
+  "text.translated_server.save.players": "sɹǝʎɐld ƃuᴉʌɐS",
+  "text.translated_server.save.worlds": "splɹoʍ ƃuᴉʌɐS"
+}
