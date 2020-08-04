@@ -1,6 +1,6 @@
 package fr.catcore.translated.server.mixin;
 
-import fr.catcore.translated.server.TranslatedServer;
+import fr.catcore.translated.server.TranslatedServerLog;
 import fr.catcore.translated.server.resource.language.ServerLanguage;
 import net.minecraft.util.Language;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ public class MixinLanguage {
 
     @Inject(method = "create", cancellable = true, at = @At("RETURN"))
     private static void server_GetInstance(CallbackInfoReturnable<Language> cir) {
-        TranslatedServer.onInitialize();
+        TranslatedServerLog.onInitialize();
         cir.setReturnValue(ServerLanguage.getInstance());
     }
 }

@@ -10,5 +10,8 @@
   "text.translated_server.preparing.level": "Preparing level \"%s\"",
   "text.translated_server.preparing.dimension": "Preparing start region for dimension %s",
   "text.translated_server.time": "Time elapsed: %s ms",
-  "text.translated_server.done": "Done (%s)! For help, type \"help\""
+  "text.translated_server.done": "Done (%s)! For help, type \"help\"",
+  "text.translated_server.save.chunks": "Saving chunks for level '%1$s'/%2$s",
+  "text.translated_server.save.players": "Saving players",
+  "text.translated_server.save.worlds": "Saving worlds"
 }

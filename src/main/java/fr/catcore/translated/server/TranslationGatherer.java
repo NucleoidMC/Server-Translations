@@ -42,7 +42,6 @@ public class TranslationGatherer {
 
     public static void init() {
         try {
-            System.out.println("Initializing TranslatedServerLog.");
             getVersionURL();
             getResourceManifestURL();
             getVanillaResourceList();
@@ -50,7 +49,6 @@ public class TranslationGatherer {
             loadVanillaTranslations();
             lookIntoModFiles();
             addMissingEntryToOtherLanguage();
-            System.out.println("Initialized TranslatedServerLog.");
         } catch (Exception malformedURLException) {
             malformedURLException.printStackTrace();
         }
