@@ -1,0 +1,14 @@
+{
+  "text.translated_server.loading.datapacks": "Rechargement du Gestionnaire de Ressources: %s",
+  "text.translated_server.loaded.recipe": "%s recettes chargés",
+  "text.translated_server.loaded.advancement": "%s avancements chargés",
+  "text.translated_server.starting_version": "Démarrage du serveur minecraft %s",
+  "text.translated_server.loading.properties": "Chargement des propriétés",
+  "text.translated_server.loading.gamemode": "Mode de jeu par défault: %s",
+  "text.translated_server.generate.keypair": "Génération de la bi-clé",
+  "text.translated_server.loading.ip": "Démarrage du serveur minecraft sur %1$s:%2$s",
+  "text.translated_server.preparing.level": "Préparation du niveau \"%s\"",
+  "text.translated_server.preparing.dimension": "Préparation de la zone de départ pour la dimension %s",
+  "text.translated_server.time": "Temps écoulé: %s ms",
+  "text.translated_server.done": "Terminé (%s) ! Taper \"help\" pour de l'aide"
+}

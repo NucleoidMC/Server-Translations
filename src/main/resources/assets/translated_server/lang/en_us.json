@@ -1,3 +1,14 @@
 {
-  "test.key.test": "Test is Successful"
+  "text.translated_server.loading.datapacks": "Reloading ResourceManager: %s",
+  "text.translated_server.loaded.recipe": "Loaded %s recipes",
+  "text.translated_server.loaded.advancement": "Loaded %s advancements",
+  "text.translated_server.starting_version": "Starting minecraft server version %s",
+  "text.translated_server.loading.properties": "Loading properties",
+  "text.translated_server.loading.gamemode": "Default game type: %s",
+  "text.translated_server.generate.keypair": "Generating keypair",
+  "text.translated_server.loading.ip": "Starting Minecraft server on %1$s:%2$s",
+  "text.translated_server.preparing.level": "Preparing level \"%s\"",
+  "text.translated_server.preparing.dimension": "Preparing start region for dimension %s",
+  "text.translated_server.time": "Time elapsed: %s ms",
+  "text.translated_server.done": "Done (%s)! For help, type \"help\""
 }

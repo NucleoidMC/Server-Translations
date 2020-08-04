@@ -4,7 +4,13 @@
   "package": "fr.catcore.translated.server.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinLanguage"
+    "MixinAdvancementManager",
+    "MixinLanguage",
+    "MixinMinecraftDedicatedServer",
+    "MixinMinecraftServer",
+    "MixinRecipeManager",
+    "MixinReloadableResourceManagerImpl",
+    "MixinWorldGenerationProgressLogger"
   ],
   "injectors": {
     "defaultRequire": 1
