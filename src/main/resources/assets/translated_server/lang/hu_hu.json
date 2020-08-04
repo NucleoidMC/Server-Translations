@@ -1,0 +1,17 @@
+{
+  "text.translated_server.loading.datapacks": "ForrásMenedzser Újratöltése: %s",
+  "text.translated_server.loaded.recipe": "%s Recept betöltve",
+  "text.translated_server.loaded.advancement": "%s Fejlesztés Betöltve",
+  "text.translated_server.starting_version": "%s Minecraft szerver verzió indítása",
+  "text.translated_server.loading.properties": "Beállítások betöltése",
+  "text.translated_server.loading.gamemode": "Alapértelmezett játék típus: %s",
+  "text.translated_server.generate.keypair": "Kulcspár generálása",
+  "text.translated_server.loading.ip": "Minecraft szerver indítása itt: %1$s:%2$s",
+  "text.translated_server.preparing.level": "Szint előkészítése \"%s\"",
+  "text.translated_server.preparing.dimension": "Kezdő régió generálása a(z) \"%s\" dimenziónak",
+  "text.translated_server.time": "Eltelt idő: %s ms",
+  "text.translated_server.done": "Kész (%s)! Segítségért írd \"help\"",
+  "text.translated_server.save.chunks": "Chunkok mentése a '%1$s'/%2$s szintról",
+  "text.translated_server.save.players": "Játékosok mentése",
+  "text.translated_server.save.worlds": "Világok mentése"
+}
