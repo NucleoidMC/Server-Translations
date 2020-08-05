@@ -36,8 +36,8 @@ public class ServerLanguageManager {
     }
 
     public static void registerLanguageDefinition(String code, JsonObject jsonObject) {
-        getInstance().languageDefs.putIfAbsent(code, new ServerLanguageDefinition(code, jsonObject.get("name").getAsString(),
-                jsonObject.get("region").getAsString(), jsonObject.get("bidirectional").getAsBoolean()));
+        getInstance().languageDefs.putIfAbsent(code, new ServerLanguageDefinition(code, jsonObject.get("region").getAsString(),
+                jsonObject.get("name").getAsString(), jsonObject.get("bidirectional").getAsBoolean()));
     }
 
     public void setLanguage(ServerLanguageDefinition languageDefinition) {
