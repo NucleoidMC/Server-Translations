@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "fr.catcore.translated.server.mixin_1_16",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinAdvancementManager",
+    "MixinLanguage",
+    "MixinMinecraftDedicatedServer",
+    "MixinMinecraftServer",
+    "MixinRecipeManager",
+    "MixinReloadableResourceManagerImpl",
+    "MixinWorldGenerationProgressLogger"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "fr.catcore.translated.server.mixin_1_16.MixinPlugin"
+}

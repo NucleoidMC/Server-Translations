@@ -13,5 +13,8 @@
   "text.translated_server.done": ",,dlǝɥ,, ǝdʎʇ 'dlǝɥ ɹoℲ ¡(%s) ǝuop",
   "text.translated_server.save.chunks": "%2$s/,%1$s, lǝʌǝl ɹoɟ sʞunɥɔ ƃuᴉʌɐS",
   "text.translated_server.save.players": "sɹǝʎɐld ƃuᴉʌɐS",
-  "text.translated_server.save.worlds": "splɹoʍ ƃuᴉʌɐS"
+  "text.translated_server.save.worlds": "splɹoʍ ƃuᴉʌɐS",
+  "text.translated_server.new.datapack": "ʎllɐɔᴉʇɐɯoʇnɐ ʇᴉ ƃuᴉpɐol '%s ʞɔɐd ɐʇɐp ʍǝu punoℲ",
+  "text.translated_server.force": "ɐllᴉuɐʌ ƃuᴉɔɹoɟ 'pǝʇɔǝlǝs sʞɔɐdɐʇɐp oN",
+  "text.translated_server.saved": "pǝʌɐs ǝɹɐ sʞunɥɔ ll∀ :(%s) ǝƃɐɹoʇSʞunɥƆlᴉʌu∀pǝpɐǝɹɥ┴"
 }

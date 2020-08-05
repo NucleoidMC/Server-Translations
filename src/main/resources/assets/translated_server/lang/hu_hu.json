@@ -13,5 +13,8 @@
   "text.translated_server.done": "Kész (%s)! Segítségért írd \"help\"",
   "text.translated_server.save.chunks": "Chunkok mentése a '%1$s'/%2$s szintról",
   "text.translated_server.save.players": "Játékosok mentése",
-  "text.translated_server.save.worlds": "Világok mentése"
+  "text.translated_server.save.worlds": "Világok mentése",
+  "text.translated_server.new.datapack": "Found new data pack %s, loading it automatically",
+  "text.translated_server.force": "No datapacks selected, forcing vanilla",
+  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): All chunks are saved"
 }

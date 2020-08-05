@@ -1,10 +1,17 @@
 pluginManagement {
     repositories {
         jcenter()
+        gradlePluginPortal()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
-        gradlePluginPortal()
+        mavenLocal()
     }
 }
+
+rootProject.name = "Translated-Server-Log"
+
+include 'common'
+include '1.16.1'
+include '1.15.2'

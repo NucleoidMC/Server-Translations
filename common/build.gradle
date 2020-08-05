@@ -1,0 +1,6 @@
+archivesBaseName = "common"
+version = getSubprojectVersion()
+
+dependencies {
+    include "com.ibm.icu:icu4j:66.1"
+}

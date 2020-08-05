@@ -13,5 +13,8 @@
   "text.translated_server.done": "Terminé (%s) ! Taper \"help\" pour de l'aide",
   "text.translated_server.save.chunks": "Sauvegarde des chunks pour le niveau '%1$s'/%2$s",
   "text.translated_server.save.players": "Sauvegarde des joueurs",
-  "text.translated_server.save.worlds": "Sauvegarde des mondes"
+  "text.translated_server.save.worlds": "Sauvegarde des mondes",
+  "text.translated_server.new.datapack": "Nouveau datapack trouvé \"%s\", chargement automatique de celui-ci",
+  "text.translated_server.force": "Aucun datapack sélectionné, application du vanilla",
+  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): Tous les chunks ont été sauvegardés"
 }
