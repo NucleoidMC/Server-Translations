@@ -9,11 +9,7 @@ import fr.catcore.translated.server.resource.language.ServerLanguageDefinition;
 import fr.catcore.translated.server.resource.language.ServerLanguageManager;
 import fr.catcore.translated.server.resource.language.ServerTranslationStorage;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.fabricmc.loader.metadata.EntrypointMetadata;
-import net.fabricmc.loader.metadata.ModMetadataV1;
 import net.fabricmc.loader.util.version.VersionParsingException;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.util.Language;
@@ -23,16 +19,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.*;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class TranslationGatherer {
 
