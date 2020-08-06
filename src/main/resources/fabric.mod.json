@@ -7,6 +7,9 @@
   "authors": [
     "CatCore"
   ],
+  "contributors": [
+    "László Gaming", "Samekichi"
+  ],
   "contact": {},
   "license": "MIT",
   "environment": "server",
