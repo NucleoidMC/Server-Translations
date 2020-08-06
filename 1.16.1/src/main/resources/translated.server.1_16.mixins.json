@@ -10,6 +10,7 @@
     "MixinMinecraftServer",
     "MixinRecipeManager",
     "MixinReloadableResourceManagerImpl",
+    "MixinThreadedAnvilChunkStorage",
     "MixinWorldGenerationProgressLogger"
   ],
   "injectors": {
