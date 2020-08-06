@@ -16,5 +16,8 @@
   "text.translated_server.save.worlds": "Világok mentése",
   "text.translated_server.new.datapack": "Found new data pack %s, loading it automatically",
   "text.translated_server.force": "No datapacks selected, forcing vanilla",
-  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): All chunks are saved"
+  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): All chunks are saved",
+  "text.translated_server.preparing.dimension.old": "Preparing start region for level %s",
+  "text.translated_server.done.old": "Done (%s)! For help, type \"help\" or \"?\"",
+  "text.translated_server.progress.old": "Preparing spawn area: %s%"
 }

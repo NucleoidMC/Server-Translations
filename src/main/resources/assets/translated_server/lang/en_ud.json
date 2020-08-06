@@ -17,5 +17,7 @@
   "text.translated_server.save.worlds": "splɹoʍ ƃuᴉʌɐS",
   "text.translated_server.new.datapack": "ʎllɐɔᴉʇɐɯoʇnɐ ʇᴉ ƃuᴉpɐol '%s ʞɔɐd ɐʇɐp ʍǝu punoℲ",
   "text.translated_server.force": "ɐllᴉuɐʌ ƃuᴉɔɹoɟ 'pǝʇɔǝlǝs sʞɔɐdɐʇɐp oN",
-  "text.translated_server.saved": "pǝʌɐs ǝɹɐ sʞunɥɔ ll∀ :(%s) ǝƃɐɹoʇSʞunɥƆlᴉʌu∀pǝpɐǝɹɥ┴"
+  "text.translated_server.saved": "pǝʌɐs ǝɹɐ sʞunɥɔ ll∀ :(%s) ǝƃɐɹoʇSʞunɥƆlᴉʌu∀pǝpɐǝɹɥ┴",
+  "text.translated_server.preparing.dimension.old": "%s lǝʌǝl ɹoɟ uoᴉƃǝɹ ʇɹɐʇs ƃuᴉɹɐdǝɹԀ",
+  "text.translated_server.progress.old": "%%s :ɐǝɹɐ uʍɐds ƃuᴉɹɐdǝɹԀ"
 }

@@ -17,5 +17,7 @@
   "text.translated_server.save.worlds": "Sauvegarde des mondes",
   "text.translated_server.new.datapack": "Nouveau datapack trouvé \"%s\", chargement automatique de celui-ci",
   "text.translated_server.force": "Aucun datapack sélectionné, application du vanilla",
-  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): Tous les chunks ont été sauvegardés"
+  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): Tous les chunks ont été sauvegardés",
+  "text.translated_server.preparing.dimension.old": "Préparation de la zone de départ pour le niveau %s",
+  "text.translated_server.progress.old": "Préparation de la zone d'apparition: %s%"
 }
