@@ -1,0 +1,23 @@
+{
+  "text.translated_server.loading.datapacks": "重新加载资源管理器中: %s",
+  "text.translated_server.loaded.recipe": "加载了 %s 个配方",
+  "text.translated_server.loaded.advancement": "加载了 %s 个进度",
+  "text.translated_server.starting_version": "正在启动 Minecraft %s 服务器",
+  "text.translated_server.loading.properties": "加载服务器设置中",
+  "text.translated_server.loading.gamemode": "默认游戏模式: %s",
+  "text.translated_server.generate.keypair": "生成秘钥对中",
+  "text.translated_server.loading.ip": "正在 %1$s:%2$s 上启动 Minecraft 服务器",
+  "text.translated_server.preparing.level": "正在准备 \"%s\" 地图",
+  "text.translated_server.preparing.dimension": "正在准备 %s 维度的启动区域文件",
+  "text.translated_server.preparing.dimension.old": "正在准备 %s 维度的启动区域文件",
+  "text.translated_server.time": "已消耗时间: %s 毫秒",
+  "text.translated_server.done": "准备完成 (%s)! 输入 \"help\" 获取帮助信息",
+  "text.translated_server.done.old": "准备完成 (%s)! 输入 \"help\" 或 \"?\" 获取帮助信息",
+  "text.translated_server.save.chunks": "保存 '%1$s'/%2$s 地图的区块信息中",
+  "text.translated_server.save.players": "保存玩家信息中",
+  "text.translated_server.save.worlds": "保存世界中",
+  "text.translated_server.new.datapack": "发现了新的数据包 %s, 正在自动加载它",
+  "text.translated_server.force": "没有数据包被选用, 已强制使用原版",
+  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): 所有区块已被保存",
+  "text.translated_server.progress.old": "正在准备出生点: %s%"
+}
