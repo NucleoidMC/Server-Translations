@@ -11,6 +11,7 @@
   "text.translated_server.preparing.dimension": "Préparation de la zone de départ pour la dimension %s",
   "text.translated_server.time": "Temps écoulé: %s ms",
   "text.translated_server.done": "Terminé (%s) ! Taper \"help\" pour de l'aide",
+  "text.translated_server.done.old": "Terminé (%s) ! Taper \"help\" ou \"?\" pour de l'aide",
   "text.translated_server.save.chunks": "Sauvegarde des chunks pour le niveau '%1$s'/%2$s",
   "text.translated_server.save.players": "Sauvegarde des joueurs",
   "text.translated_server.save.worlds": "Sauvegarde des mondes",

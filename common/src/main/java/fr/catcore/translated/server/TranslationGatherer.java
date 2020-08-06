@@ -10,9 +10,11 @@ import fr.catcore.translated.server.resource.language.ServerLanguageManager;
 import fr.catcore.translated.server.resource.language.ServerTranslationStorage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.metadata.EntrypointMetadata;
 import net.fabricmc.loader.metadata.ModMetadataV1;
+import net.fabricmc.loader.util.version.VersionParsingException;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.util.Language;
 
@@ -65,8 +67,18 @@ public class TranslationGatherer {
             versionObjects.add((JsonObject) iterator.next());
         }
         for (JsonObject version : versionObjects) {
-            if (version.get("id").getAsString().equals(MinecraftVersion.create().getName())) {
-                versionURL = new URL(version.get("url").getAsString());
+            try {
+                if (version.get("id").getAsString().equals(MinecraftVersion.field_25319.getName())) {
+                    versionURL = new URL(version.get("url").getAsString());
+                }
+            } catch (NoSuchFieldError error) {
+                if (version.get("id").getAsString().equals(MinecraftVersion.create().getName())) {
+                    versionURL = new URL(version.get("url").getAsString());
+                }
+            } catch (NoClassDefFoundError error) {
+                if (version.get("id").getAsString().equals(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString())) {
+                    versionURL = new URL(version.get("url").getAsString());
+                }
             }
         }
         read.close();
@@ -104,26 +116,73 @@ public class TranslationGatherer {
 
     private static void loadVanillaTranslations() throws IOException {
         for (ServerLanguageDefinition language : ServerLanguageManager.getInstance().getAllLanguages()) {
-            if (language == ServerLanguageManager.getInstance().getLanguage("en_us")) {
-                BufferedReader read = new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")));
-                JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-                Map<String, String> langTranslations = new HashMap<>();
-                for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                    langTranslations.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+            try {
+                if (SemanticVersion.parse(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString()).compareTo(SemanticVersion.parse("1.13-Snapshot.17.48.a")) >= 0) {
+                    if (language == ServerLanguageManager.getInstance().getLanguage("en_us")) {
+                        BufferedReader read = new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")));
+                        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
+                        Map<String, String> langTranslations = new HashMap<>();
+                        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                            langTranslations.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+                        }
+                        translations.putIfAbsent(language.getCode(), langTranslations);
+                        read.close();
+                    } else {
+                        BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("minecraft/lang/" + language.getCode() + ".json")).openStream()));
+                        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
+                        Map<String, String> langTranslations = new HashMap<>();
+                        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                            langTranslations.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+                        }
+                        translations.putIfAbsent(language.getCode(), langTranslations);
+                        read.close();
+                    }
+                } else {
+                    if (SemanticVersion.parse(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString()).compareTo(SemanticVersion.parse("1.11-Snapshot.16.32.a")) >= 0) {
+                        if (language == ServerLanguageManager.getInstance().getLanguage("en_us")) {
+                            BufferedReader read = new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang")));
+                            readOldLangFiles("en_us", read);
+                        } else {
+                            BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("minecraft/lang/" + language.getCode() +".lang")).openStream()));
+                            readOldLangFiles(language.getCode(), read);
+                        }
+                    } else {
+                        if (language == ServerLanguageManager.getInstance().getLanguage("en_us")) {
+                            BufferedReader read = new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang")));
+                            readOldLangFiles("en_us", read);
+                        } else {
+                            BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("minecraft/lang/" + language.getCode().split("_")[0] + "_" + language.getCode().split("_")[1].toUpperCase() +".lang")).openStream()));
+                            readOldLangFiles(language.getCode(), read);
+                        }
+                    }
                 }
-                translations.putIfAbsent(language.getCode(), langTranslations);
-                read.close();
-            } else {
-
-                BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("minecraft/lang/" + language.getCode() + ".json")).openStream()));
-                JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-                Map<String, String> langTranslations = new HashMap<>();
-                for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                    langTranslations.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
-                }
-                translations.putIfAbsent(language.getCode(), langTranslations);
-                read.close();
+            } catch (VersionParsingException parsingException) {
+                parsingException.printStackTrace();
             }
+        }
+    }
+
+    private static void readOldLangFiles(String code, BufferedReader bufferedReader) {
+        Iterator<String> lines = bufferedReader.lines().iterator();
+        Map<String, String> langTranslations = new HashMap<>();
+        while (lines.hasNext()) {
+
+            String line = lines.next();
+            if (line.startsWith("\n") || line.startsWith("#") || line.startsWith("/")) continue;
+            String key = line.split("=")[0];
+            int values = line.split("=").length;
+            String value = "";
+            for (int a = 1; a < values; a++) {
+                value = value + line.split("=")[a];
+            }
+            langTranslations.putIfAbsent(key, value);
+        }
+        if (translations.containsKey(code)) {
+            for (Map.Entry<String, String> entry : langTranslations.entrySet()) {
+                translations.get(code).putIfAbsent(entry.getKey(), entry.getValue());
+            }
+        } else {
+            translations.putIfAbsent(code, langTranslations);
         }
     }
 
@@ -132,7 +191,12 @@ public class TranslationGatherer {
     }
 
     private static void lookIntoModFiles() {
-        File modPath = new File(FabricLoader.getInstance().getGameDir().toFile(), "mods");
+        File modPath;
+        try {
+            modPath = new File(FabricLoader.getInstance().getGameDir().toFile(), "mods");
+        } catch (NoSuchMethodError error) {
+            modPath = new File(FabricLoader.getInstance().getGameDirectory(), "mods");
+        }
         for (File mod : Objects.requireNonNull(modPath.listFiles())) {
             try {
                 JarFile jarFile = new JarFile(mod);
@@ -148,13 +212,19 @@ public class TranslationGatherer {
                     }
                 }
                 for (ZipEntry zipEntry : jarEntries) {
-                    String fileName = zipEntry.getName().split("lang")[1].replace("/", "").replace(".json", "");
-                    BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
-                    JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-                    for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                        translations.get(fileName).putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+                    if (zipEntry.getName().contains(".json")) {
+                        String fileName = zipEntry.getName().split("lang")[1].replace("/", "").replace(".json", "");
+                        BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
+                        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
+                        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                            translations.get(fileName).putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+                        }
+                        read.close();
+                    } else if (zipEntry.getName().contains(".lang")) {
+                        String langCode = zipEntry.getName().split("lang")[1].replace("/", "").replace(".lang", "").toLowerCase();
+                        BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
+                        readOldLangFiles(langCode, read);
                     }
-                    read.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

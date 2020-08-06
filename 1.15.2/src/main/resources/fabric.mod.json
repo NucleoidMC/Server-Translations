@@ -15,6 +15,5 @@
     "translated.server.1_15.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.9.0+build.204"
   }
 }

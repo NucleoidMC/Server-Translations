@@ -2,7 +2,7 @@ package fr.catcore.translated.server.resource.language;
 
 import com.mojang.bridge.game.Language;
 
-public class ServerLanguageDefinition implements Language, Comparable<ServerLanguageDefinition> {
+public class ServerLanguageDefinition implements Comparable<ServerLanguageDefinition> {
     private final String code;
     private final String name;
     private final String region;

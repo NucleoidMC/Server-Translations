@@ -22,6 +22,7 @@ def getSubprojectVersion() {
 }
 
 allprojects {
+    def projectName = it.name;
     apply plugin: 'maven-publish'
     apply plugin: 'fabric-loom'
 
@@ -30,23 +31,33 @@ allprojects {
 
     group = "fr.catcore"
 
-    def testt = it.name;
-    sourceSets {
-        testmod {
-            compileClasspath += main.compileClasspath
-            runtimeClasspath += main.runtimeClasspath
+
+    dependencies {
+        if (projectName == "1.8.9") {
+            compile "com.google.guava:guava:23.5-jre"
+            minecraft "com.mojang:minecraft:1.8.9"
+            mappings "net.fabricmc:yarn:1.8.9+build.202007011615:v2"
+            modCompile ("net.fabricmc:fabric-loader-1.8.9:0.8.2+build.202004131640") {
+                exclude module: "guava"
+            }
+        } else {
+            if (projectName == "1.15.2") {
+                minecraft "com.mojang:minecraft:1.15.2"
+                mappings "net.fabricmc:yarn:1.15.2+build.17:v2"
+            } else {
+                minecraft "com.mojang:minecraft:$Globals.mcVersion"
+                mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+            }
+            modCompile "net.fabricmc:fabric-loader:0.9.0+build.204"
         }
     }
 
-    dependencies {
-        if (testt == "1.15.2") {
-            minecraft "com.mojang:minecraft:1.15.2"
-            mappings "net.fabricmc:yarn:1.15.2+build.17:v2"
-        } else {
-            minecraft "com.mojang:minecraft:$Globals.mcVersion"
-            mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+    if (projectName == "1.8.9") {
+        minecraft {
+            intermediaryUrl = {
+                return "https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
+            }
         }
-        modCompile "net.fabricmc:fabric-loader:0.9.0+build.204"
     }
 
     configurations {
@@ -55,6 +66,24 @@ allprojects {
 
     repositories {
         mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven {
+            name = 'Fabric'
+            url = 'http://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'SpongePowered'
+            url = 'http://repo.spongepowered.org/maven'
+        }
+        maven {
+            name = 'mojang'
+            url = 'https://libraries.minecraft.net/'
+        }
+        maven {
+            name = 'legacy-fabric'
+            url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+        }
     }
 
     jar {

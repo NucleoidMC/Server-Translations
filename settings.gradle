@@ -15,3 +15,4 @@ rootProject.name = "Translated-Server-Log"
 include 'common'
 include '1.16.1'
 include '1.15.2'
+include '1.8.9'

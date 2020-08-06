@@ -10,7 +10,7 @@ public class ConfigManager {
 
     private static Config config;
 
-    private static final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "translated_server.json");
+    private static final File configFile;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -54,5 +54,15 @@ public class ConfigManager {
         public String getLanguageCode() {
             return language_code;
         }
+    }
+
+    static {
+        File config1;
+        try {
+            config1 = new File(FabricLoader.getInstance().getConfigDir().toFile(), "translated_server.json");
+        } catch (NoSuchMethodError error) {
+            config1 = new File(FabricLoader.getInstance().getConfigDirectory(), "translated_server.json");
+        }
+        configFile = config1;
     }
 }

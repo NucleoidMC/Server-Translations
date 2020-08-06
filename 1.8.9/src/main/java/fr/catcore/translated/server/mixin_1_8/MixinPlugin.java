@@ -1,4 +1,4 @@
-package fr.catcore.translated.server.mixin_1_16;
+package fr.catcore.translated.server.mixin_1_8;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
@@ -24,7 +24,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         try {
-            return SemanticVersion.parse(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString()).compareTo(SemanticVersion.parse("1.16")) >= 0;
+            return SemanticVersion.parse(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString()).compareTo(SemanticVersion.parse("1.8.9")) <= 0;
         } catch (VersionParsingException e) {
             e.printStackTrace();
         }
