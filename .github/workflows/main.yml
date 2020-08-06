@@ -1,0 +1,30 @@
+name: Fabric CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  buildAndRunForSomeVersions:
+    name: Run tests for ${{ matrix.minecraftVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        minecraftVersion:
+          - 1.14.4
+          - 1.15.2
+          - 1.16.1
+          - latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: Geometrically/fabric-test-runner@v1
+        id: testRunner
+        with:
+          minecraftVersion: ${{ matrix.minecraftVersion }}
+          runServerTest: true
+          runBuildTest: true

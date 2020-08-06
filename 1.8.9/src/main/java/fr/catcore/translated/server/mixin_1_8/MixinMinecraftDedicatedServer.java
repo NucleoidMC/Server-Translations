@@ -1,5 +1,6 @@
 package fr.catcore.translated.server.mixin_1_8;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.level.LevelInfo;
@@ -45,6 +46,8 @@ public class MixinMinecraftDedicatedServer {
 
     @ModifyArg(method = "setupServer", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", ordinal = 7), index = 0)
     private String translated_done(String string) {
-        return new TranslatableText("text.translated_server.done.old", string.replace("Done (","").replace(")! For help, type \"help\" or \"?\"","")).getString();
+        if (!FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            return new TranslatableText("text.translated_server.done.old", string.replace("Done (", "").replace(")! For help, type \"help\" or \"?\"", "")).getString();
+        } else return string;
     }
 }

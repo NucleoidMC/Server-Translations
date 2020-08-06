@@ -10,10 +10,6 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
 
-    @Shadow public int progress;
-
-    @Shadow public String progressType;
-
     @ModifyArg(method = "prepareWorlds", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V"), index = 0)
     private String translated_preparingDimension(String string) {
         return new TranslatableText("text.translated_server.preparing.dimension.old", string.replace("Preparing start region for level ","")).getString();
