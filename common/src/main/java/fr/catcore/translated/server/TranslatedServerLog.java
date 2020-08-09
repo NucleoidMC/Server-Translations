@@ -3,10 +3,8 @@ package fr.catcore.translated.server;
 import fr.catcore.translated.server.config.ConfigManager;
 import fr.catcore.translated.server.resource.language.ServerLanguageDefinition;
 import fr.catcore.translated.server.resource.language.ServerLanguageManager;
-import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.TranslatableText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,17 +1,11 @@
 package fr.catcore.translated.server.resource.language;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
-import net.minecraft.util.Language;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class ServerLanguageManager {
     private static final Logger LOGGER = LogManager.getLogger();
