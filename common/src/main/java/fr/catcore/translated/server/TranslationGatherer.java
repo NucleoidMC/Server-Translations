@@ -14,10 +14,7 @@ import net.fabricmc.loader.util.version.VersionParsingException;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.util.Language;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -166,14 +163,14 @@ public class TranslationGatherer {
             for (int a = 1; a < values; a++) {
                 value = value + line.split("=")[a];
             }
-            langTranslations.putIfAbsent(key, value);
+            langTranslations.put(key, value);
         }
         if (translations.containsKey(code)) {
             for (Map.Entry<String, String> entry : langTranslations.entrySet()) {
-                translations.get(code).putIfAbsent(entry.getKey(), entry.getValue());
+                translations.get(code).put(entry.getKey(), entry.getValue());
             }
         } else {
-            translations.putIfAbsent(code, langTranslations);
+            translations.put(code, langTranslations);
         }
     }
 
@@ -190,16 +187,15 @@ public class TranslationGatherer {
         }
         for (File mod : Objects.requireNonNull(modPath.listFiles())) {
             try {
+                if(mod.isDirectory() || !mod.getName().endsWith(".jar") || !isZip(mod)) continue;
                 JarFile jarFile = new JarFile(mod);
                 List<ZipEntry> jarEntries = new ArrayList<>();
                 Iterator<JarEntry> zip = jarFile.stream().iterator();
-                boolean isTrue = false;
                 while(zip.hasNext()) {
                     ZipEntry ze = zip.next();
                     String entryName = ze.getName();
                     if (entryName.startsWith("assets") && entryName.contains("lang")) {
-                        if (isTrue) jarEntries.add(ze);
-                        else isTrue = true;
+                        if (!ze.isDirectory()) jarEntries.add(ze);
                     }
                 }
                 for (ZipEntry zipEntry : jarEntries) {
@@ -208,7 +204,7 @@ public class TranslationGatherer {
                         BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
                         JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
                         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                            translations.get(fileName).putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+                            translations.get(fileName).put(entry.getKey(), entry.getValue().getAsString());
                         }
                         read.close();
                     } else if (zipEntry.getName().contains(".lang")) {
@@ -236,5 +232,13 @@ public class TranslationGatherer {
     public static void setLanguage(String code) {
         ServerLanguage.setInstance(new ServerTranslationStorage(translations.getOrDefault(code, translations.get("en_us")), ServerLanguageManager.getInstance().getLanguage(code).isRightToLeft()));
         ServerLanguageManager.getInstance().setLanguage(ServerLanguageManager.getInstance().getLanguage(code));
+    }
+
+    public static boolean isZip(File file) throws IOException {
+        RandomAccessFile rfile = new RandomAccessFile(file, "r");
+        long n = rfile.readInt();
+        rfile.close();
+        return n == 0x504B0304;
+        // 504B0304 is a magic number (the file signature) for .zip and thus .jar files https://en.wikipedia.org/wiki/List_of_file_signatures
     }
 }
