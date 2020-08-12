@@ -163,14 +163,14 @@ public class TranslationGatherer {
             for (int a = 1; a < values; a++) {
                 value = value + line.split("=")[a];
             }
-            langTranslations.putIfAbsent(key, value);
+            langTranslations.put(key, value);
         }
         if (translations.containsKey(code)) {
             for (Map.Entry<String, String> entry : langTranslations.entrySet()) {
-                translations.get(code).putIfAbsent(entry.getKey(), entry.getValue());
+                translations.get(code).put(entry.getKey(), entry.getValue());
             }
         } else {
-            translations.putIfAbsent(code, langTranslations);
+            translations.put(code, langTranslations);
         }
     }
 
@@ -204,7 +204,7 @@ public class TranslationGatherer {
                         BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
                         JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
                         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                            translations.get(fileName).putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+                            translations.get(fileName).put(entry.getKey(), entry.getValue().getAsString());
                         }
                         read.close();
                     } else if (zipEntry.getName().contains(".lang")) {
