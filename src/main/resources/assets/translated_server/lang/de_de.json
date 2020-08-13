@@ -1,0 +1,23 @@
+{
+  "text.translated_server.loading.datapacks": "Lade Ressourcenmanager: %s",
+  "text.translated_server.loaded.recipe": "%s Rezepte geladen",
+  "text.translated_server.loaded.advancement": "%s Fortschritte geladen",
+  "text.translated_server.starting_version": "Starte Minecraft Server in Version %s",
+  "text.translated_server.loading.properties": "Lade Eigenschaften",
+  "text.translated_server.loading.gamemode": "Standard-Spielmodus: %s",
+  "text.translated_server.generate.keypair": "Generiere Schlüsselpaar",
+  "text.translated_server.loading.ip": "Starte Minecraft-Server auf %1$s:%2$s",
+  "text.translated_server.preparing.level": "Level wird vorbereitet: \"%s\"",
+  "text.translated_server.preparing.dimension": "Start-Region für Dimension %s wird vorbereitet",
+  "text.translated_server.preparing.dimension.old": "Start-Region für Level %s wird vorbereitet",
+  "text.translated_server.time": "Zeit vergangen: %s ms",
+  "text.translated_server.done": "Fertig (%s)! Für Hilfe, nutze \"help\"",
+  "text.translated_server.done.old": "Fertig (%s)! Für Hilfe, nutze \"help\" oder ?\"",
+  "text.translated_server.save.chunks": "Speichere Chunks für Level '%1$s'/%2$s",
+  "text.translated_server.save.players": "Speichere Spieler",
+  "text.translated_server.save.worlds": "Speichere Welten",
+  "text.translated_server.new.datapack": "Neues Datenpaket %s gefunden, wird automatisch geladen",
+  "text.translated_server.force": "Keine Datenpakete ausgewählt, erzwinge Vanilla",
+  "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): Alle Chunks wurden abgespeichert",
+  "text.translated_server.progress.old": "Einstiegsbereich wird vorbereitet: %s%"
+}
