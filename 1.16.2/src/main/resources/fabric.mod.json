@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "server_translations_1_15",
+  "id": "server_translations_1_16",
   "version": "${version}",
-  "name": "Server Translations 1.15",
+  "name": "Server Translations Log 1.16",
   "description": "",
   "authors": [
     "CatCore"
@@ -12,8 +12,9 @@
   "environment": "server",
   "entrypoints": {},
   "mixins": [
-    "server_translations.1_15.mixins.json"
+    "server_translations.1_16.mixins.json"
   ],
   "depends": {
+    "fabricloader": ">=0.9.0+build.204"
   }
 }

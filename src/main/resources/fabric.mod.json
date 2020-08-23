@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "translated_server",
+  "id": "server_translations",
   "version": "${version}",
-  "name": "Translated Server Log",
+  "name": "Server Translations",
   "description": "",
   "authors": [
     "CatCore"
