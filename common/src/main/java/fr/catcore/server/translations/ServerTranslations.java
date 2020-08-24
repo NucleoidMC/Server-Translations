@@ -42,10 +42,14 @@ public class ServerTranslations {
         }
     }
 
-    public static void sendTranslatedMessage(TranslatableText translatableText, MessageType messageType, UUID uuid, PlayerEntity playerEntity) {
+    public static void sendTranslatedMessage(TranslatableText translatableText, MessageType messageType, UUID uuid, ServerPlayerEntity playerEntity) {
+        LiteralText message = getMessageForPlayer(translatableText, playerEntity);
+        playerEntity.sendMessage(message, messageType, uuid);
+    }
+
+    public static LiteralText getMessageForPlayer(TranslatableText translatableText, PlayerEntity playerEntity) {
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) playerEntity;
         String language = ((ServerPlayerEntityAccessor) serverPlayerEntity).getLanguage();
-        String message = TranslationGatherer.getTranslation(language, translatableText);
-        serverPlayerEntity.sendMessage(new LiteralText(message), messageType, uuid);
+        return TranslationGatherer.getTranslation(language, translatableText);
     }
 }

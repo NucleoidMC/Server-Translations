@@ -12,6 +12,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
 import net.minecraft.MinecraftVersion;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Language;
 import org.apache.commons.io.IOUtils;
@@ -310,13 +312,14 @@ public class TranslationGatherer {
         // 504B0304 is a magic number (the file signature) for .zip and thus .jar files https://en.wikipedia.org/wiki/List_of_file_signatures
     }
 
-    public static String getTranslation(String languageCode, TranslatableText translatableText) {
+    public static LiteralText getTranslation(String languageCode, TranslatableText translatableText) {
         String original = ServerLanguageManager.getInstance().getLanguage().getCode();
+        Style style = translatableText.getStyle();
         // TODO: find another way to do this.
         setLanguage(languageCode);
         String string = translatableText.getString();
 
         setLanguage(original);
-        return string;
+        return (LiteralText) new LiteralText(string).setStyle(style);
     }
 }
