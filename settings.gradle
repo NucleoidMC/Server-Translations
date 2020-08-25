@@ -11,7 +11,3 @@ pluginManagement {
 }
 
 rootProject.name = "Server-Translations"
-
-include 'common'
-include '1.16.2'
-include '1.15.2'

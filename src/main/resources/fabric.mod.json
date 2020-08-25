@@ -17,5 +17,10 @@
   "mixins": [
   ],
   "depends": {
-  }
+    "minecraft": ">=1.16",
+    "fabricloader": ">=0.9.0+build.204"
+  },
+  "mixins": [
+    "server_translations.mixin.json"
+  ]
 }

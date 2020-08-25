@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.mixin_1_16;
+package fr.catcore.server.translations.mixin;
 
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;

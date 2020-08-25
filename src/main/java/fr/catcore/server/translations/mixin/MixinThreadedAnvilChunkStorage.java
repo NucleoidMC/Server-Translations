@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.mixin_1_15;
+package fr.catcore.server.translations.mixin;
 
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.text.TranslatableText;

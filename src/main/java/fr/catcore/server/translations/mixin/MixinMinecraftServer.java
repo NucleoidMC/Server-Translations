@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.mixin_1_16;
+package fr.catcore.server.translations.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.TranslatableText;

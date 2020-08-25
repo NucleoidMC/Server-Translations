@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "fr.catcore.server.translations.mixin_1_16",
+  "package": "fr.catcore.server.translations.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "ClientSettingsC2SPacketAccessor",
@@ -17,6 +17,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "plugin": "fr.catcore.server.translations.mixin_1_16.MixinPlugin"
+  }
 }

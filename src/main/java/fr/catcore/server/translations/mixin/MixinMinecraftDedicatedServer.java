@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.mixin_1_16;
+package fr.catcore.server.translations.mixin;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;

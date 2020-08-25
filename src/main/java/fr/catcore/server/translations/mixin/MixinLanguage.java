@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.mixin_1_16;
+package fr.catcore.server.translations.mixin;
 
 import fr.catcore.server.translations.ServerTranslations;
 import fr.catcore.server.translations.resource.language.ServerLanguage;
