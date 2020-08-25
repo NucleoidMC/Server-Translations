@@ -10,7 +10,7 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "1.2.0"
+    static def baseVersion = "1.2.1"
     static def mcVersion = "1.16.2"
     static def yarnVersion = "+build.21"
 }
@@ -48,6 +48,7 @@ dependencies {
     minecraft "com.mojang:minecraft:$Globals.mcVersion"
     mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
     modCompile "net.fabricmc:fabric-loader:0.9.2+build.206"
+    include "com.ibm.icu:icu4j:66.1"
 }
 
 processResources {
