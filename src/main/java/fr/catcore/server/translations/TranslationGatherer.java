@@ -12,9 +12,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
 import net.minecraft.MinecraftVersion;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 import net.minecraft.util.Language;
 import org.apache.commons.io.IOUtils;
 
@@ -318,8 +316,29 @@ public class TranslationGatherer {
         // TODO: find another way to do this.
         setLanguage(languageCode);
         String string = translatableText.getString();
+        List<Text> siblings = new ArrayList<>();
+        for (Text text : translatableText.getSiblings()) {
+            string = string.replace(text.getString(), "");
+            if (text instanceof TranslatableText) siblings.add(getTranslation(languageCode, (TranslatableText) text));
+            else if (text instanceof BaseText) {
+                for (Text text1 : translatableText.getSiblings()) {
+                    string = string.replace(text1.getString(), "");
+                    if (text1 instanceof TranslatableText) siblings.add(getTranslation(languageCode, (TranslatableText) text1));
+                    else {
+                        siblings.add(text1);
+                    }
+
+                }
+            } else {
+                siblings.add(text);
+            }
+        }
 
         setLanguage(original);
-        return (LiteralText) new LiteralText(string).setStyle(style);
+        MutableText literalText = new LiteralText(string).setStyle(style);
+        for (Text sibling : siblings) {
+            literalText = literalText.append(sibling);
+        }
+        return (LiteralText) literalText;
     }
 }
