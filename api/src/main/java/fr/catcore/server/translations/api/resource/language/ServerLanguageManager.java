@@ -3,29 +3,39 @@ package fr.catcore.server.translations.api.resource.language;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceReloadListener;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Language;
+import net.minecraft.util.profiler.Profiler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public class ServerLanguageManager {
+public class ServerLanguageManager implements ResourceReloadListener {
     public static final ServerLanguageDefinition DEFAULT = new ServerLanguageDefinition("en_us", "US", "English", false);
     public static final ServerLanguageManager INSTANCE = new ServerLanguageManager();
 
     private static final Logger LOGGER = LogManager.getLogger(ServerLanguageManager.class);
+    private static final Gson GSON = new Gson();
 
     private final Multimap<String, Supplier<LanguageMap>> languageSuppliers = HashMultimap.create();
 
     private final Map<String, ServerLanguage> languages = new HashMap<>();
     private final SortedMap<String, ServerLanguageDefinition> supportedLanguages = Maps.newTreeMap();
     private ServerLanguage systemLanguage;
+
+    private static final List<TranslationsReloadListener> RELOAD_LISTENERS = new ArrayList<>();
 
     private ServerLanguageManager() {
         this.systemLanguage = this.createLanguage(DEFAULT);
@@ -60,6 +70,13 @@ public class ServerLanguageManager {
         } else {
             this.languageSuppliers.put(definition.getCode(), supplier);
         }
+    }
+
+    private void clearTranslations() {
+        this.languageSuppliers.clear();
+        this.languages.forEach((s, serverLanguage) -> {
+            serverLanguage.clearTranslations();
+        });
     }
 
     public ServerLanguage getLanguage(String code) {
@@ -101,5 +118,49 @@ public class ServerLanguageManager {
 
     public Iterable<ServerLanguageDefinition> getAllLanguages() {
         return this.supportedLanguages.values();
+    }
+
+    public void registerReloadListener(TranslationsReloadListener reloadListener) {
+        RELOAD_LISTENERS.add(reloadListener);
+    }
+
+    @Override
+    public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
+        CompletableFuture<Map<Identifier, LanguageMap>> completableFuture = CompletableFuture.supplyAsync(() -> {
+            this.clearTranslations();
+            this.addTranslations(DEFAULT, ServerLanguageManager::loadDefaultLanguage);
+            RELOAD_LISTENERS.forEach(TranslationsReloadListener::reload);
+            Map<Identifier, LanguageMap> map = Maps.newHashMap();
+            for (Identifier identifier : manager.findResources("lang", (stringx) -> {
+                return stringx.endsWith(".json");
+            })) {
+                String string = identifier.getPath();
+                Identifier identifier2 = new Identifier(identifier.getNamespace(), string.substring("lang".length() + 1, string.length() - ".json".length()));
+
+                try {
+                    for (Resource resource : manager.getAllResources(identifier)) {
+
+                        try {
+                            InputStream inputStream = resource.getInputStream();
+                            Throwable var10 = null;
+
+                            map.putIfAbsent(identifier2, LanguageReader.read(inputStream));
+                        } catch (RuntimeException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return map;
+        });
+        return completableFuture.thenCompose(synchronizer::whenPrepared).thenAcceptAsync((void_) -> {
+            Map<Identifier, LanguageMap> map = completableFuture.join();
+            for (Map.Entry<Identifier, LanguageMap> entry : map.entrySet()) {
+                ServerLanguageDefinition languageDefinition = this.getLanguage(entry.getKey().getPath()).getDefinition();
+                this.addTranslations(languageDefinition, entry.getValue());
+            }
+        });
     }
 }

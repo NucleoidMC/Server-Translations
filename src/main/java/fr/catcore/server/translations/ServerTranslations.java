@@ -24,5 +24,6 @@ public class ServerTranslations implements ModInitializer {
         ServerLanguageDefinition language = ServerLanguageManager.INSTANCE.getLanguage(systemCode).getDefinition();
         ServerLanguageManager.INSTANCE.setSystemLanguage(language);
         LOGGER.info("Language set to {}: {} ({})", language.getCode(), language.getName(), language.getRegion());
+        ServerLanguageManager.INSTANCE.registerReloadListener(TranslationGatherer::init);
     }
 }

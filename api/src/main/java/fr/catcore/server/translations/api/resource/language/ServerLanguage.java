@@ -52,6 +52,10 @@ public class ServerLanguage extends Language {
         this.map.putAll(map);
     }
 
+    protected void clearTranslations() {
+        this.map.clear();
+    }
+
     @Override
     @Environment(EnvType.CLIENT)
     public OrderedText reorder(StringVisitable text) {

@@ -38,7 +38,7 @@ public class TranslationGatherer {
                 ServerLanguageManager.INSTANCE.addTranslations(language, supplier);
             }
 
-            lookIntoModFiles(languages);
+//            lookIntoModFiles(languages);
         } catch (Exception e) {
             e.printStackTrace();
         }

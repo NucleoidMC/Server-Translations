@@ -11,6 +11,7 @@
     "MixinLanguage",
     "MixinServerPlayerEntity",
     "MixinServerPlayNetworkHandler",
+    "MixinServerResourceManager",
     "MixinTextSerializer",
     "MixinTranslatableText",
     "TitleS2CPacketAccessor"

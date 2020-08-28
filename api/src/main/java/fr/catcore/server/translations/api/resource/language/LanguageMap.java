@@ -35,4 +35,8 @@ public final class LanguageMap {
     public Set<Map.Entry<String, String>> entrySet() {
         return this.map.entrySet();
     }
+
+    protected void clear() {
+        this.map.clear();
+    }
 }
