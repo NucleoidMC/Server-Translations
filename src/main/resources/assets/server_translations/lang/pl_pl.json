@@ -1,0 +1,23 @@
+{
+"text.translated_server.loading.datapacks": "Przeładowuję manager zasobów: %s",
+"text.translated_server.loaded.recipe": "Załadowano %s receptur",
+"text.translated_server.loaded.advancement": "Załadowano %s osiągnięć",
+"text.translated_server.starting_version": "Uruchamianie serwera Minecraft w wersji %s",
+"text.translated_server.loading.properties": "Załadowano właściwości",
+"text.translated_server.loading.gamemode": "Domyślny tryb gry: %s",
+"text.translated_server.generate.keypair": "Generowanie kluczy",
+"text.translated_server.loading.ip": "Usuchamiam serwer Minecraft na %1$s:%2$s",
+"text.translated_server.preparing.level": "Przygotowywanie poziomu \"%s\"",
+"text.translated_server.preparing.dimension": "Przygotowywanie regionu startowego dla wymiaru %s",
+"text.translated_server.preparing.dimension.old": "Przygotowywanie regionu startowego dla świata %s",
+"text.translated_server.time": "Mineło: %s ms",
+"text.translated_server.done": "Gotowe (%s)! Aby otrzymać pomoc, wpisz \"help\"",
+"text.translated_server.done.old": "Gotowe (%s)! Aby otrzymać pomoc, wpisz \"help\" lub \"?\"",
+"text.translated_server.save.chunks": "Zapisuję chunki dla poziomu '%1$s'/%2$s",
+"text.translated_server.save.players": "Zapisuję graczy",
+"text.translated_server.save.worlds": "Zapisuję światy",
+"text.translated_server.new.datapack": "Znaleziono nową paczkę danych %s, ładuję ją automatycznie",
+"text.translated_server.force": "Nie znaleziono paczek danych, używam Vanilli",
+"text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): Wszystkie chunki zostały zapisane",
+"text.translated_server.progress.old": "Przygotowuję teren spawnu: %s%"
+}
