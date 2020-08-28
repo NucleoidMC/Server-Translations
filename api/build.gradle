@@ -1,0 +1,9 @@
+archivesBaseName = "server-translations-api"
+
+minecraft {
+  accessWidener = file("src/main/resources/server_translations_api.accesswidener")
+}
+
+dependencies {
+  include "com.ibm.icu:icu4j:66.1"
+}

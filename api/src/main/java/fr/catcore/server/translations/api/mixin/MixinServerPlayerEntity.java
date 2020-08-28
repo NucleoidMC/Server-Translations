@@ -1,6 +1,6 @@
-package fr.catcore.server.translations.mixin;
+package fr.catcore.server.translations.api.mixin;
 
-import fr.catcore.server.translations.ServerPlayerEntityAccessor;
+import fr.catcore.server.translations.api.LocalizationTarget;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public class MixinServerPlayerEntity implements ServerPlayerEntityAccessor {
+public class MixinServerPlayerEntity implements LocalizationTarget {
 
     private String language;
 
@@ -19,7 +19,7 @@ public class MixinServerPlayerEntity implements ServerPlayerEntityAccessor {
     }
 
     @Override
-    public String getLanguage() {
+    public String getLanguageCode() {
         return this.language;
     }
 }

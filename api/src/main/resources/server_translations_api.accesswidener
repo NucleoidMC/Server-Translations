@@ -1,0 +1,8 @@
+accessWidener v1 named
+
+accessible field net/minecraft/text/TranslatableText key Ljava/lang/String;
+accessible field net/minecraft/text/TranslatableText translations Ljava/util/List;
+accessible field net/minecraft/text/TranslatableText languageCache Lnet/minecraft/util/Language;
+
+extendable method net/minecraft/text/TranslatableText updateTranslations ()V
+accessible method net/minecraft/text/TranslatableText setTranslation (Ljava/lang/String;)V

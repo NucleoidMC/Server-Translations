@@ -11,3 +11,4 @@ pluginManagement {
 }
 
 rootProject.name = "Server-Translations"
+include 'api'

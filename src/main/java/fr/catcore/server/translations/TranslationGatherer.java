@@ -1,344 +1,207 @@
 package fr.catcore.server.translations;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import fr.catcore.server.translations.resource.language.ServerLanguage;
-import fr.catcore.server.translations.resource.language.ServerLanguageDefinition;
-import fr.catcore.server.translations.resource.language.ServerLanguageManager;
-import fr.catcore.server.translations.resource.language.ServerTranslationStorage;
+import com.google.gson.JsonParser;
+import fr.catcore.server.translations.api.resource.language.LanguageMap;
+import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
+import fr.catcore.server.translations.api.resource.language.ServerLanguageManager;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.util.version.VersionParsingException;
-import net.minecraft.MinecraftVersion;
-import net.minecraft.text.*;
+import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.util.Language;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 public class TranslationGatherer {
 
-    private static final Gson GSON = new Gson();
-    private static URL versionURL = null;
-    private static URL resourceManifestURL = null;
-    private static final Map<String, String> resourceHashs = new HashMap<>();
-    private static final Map<String, Map<String, String>> translations = new HashMap<>();
+    private static final JsonParser PARSER = new JsonParser();
+    private static final Path TEMP_PATH = FabricLoader.getInstance().getGameDir().resolve("temp/translations");
+    private static final Path MODS_PATH = FabricLoader.getInstance().getGameDir().resolve("mods");
 
     public static void init() {
         try {
-            getVersionURL();
-            getResourceManifestURL();
-            getVanillaResourceList();
-            loadVanillaMCMeta();
-            loadVanillaTranslations();
-            lookIntoModFiles();
-            addMissingEntryToOtherLanguage();
-        } catch (Exception malformedURLException) {
-            malformedURLException.printStackTrace();
+            VanillaAssets assets = VanillaAssets.get();
+
+            Map<String, ServerLanguageDefinition> languages = loadLanguageDefinitions(assets);
+            for (ServerLanguageDefinition language : languages.values()) {
+                Supplier<LanguageMap> supplier = () -> loadVanillaLanguage(assets, language);
+                ServerLanguageManager.INSTANCE.addTranslations(language, supplier);
+            }
+
+            lookIntoModFiles(languages);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private static void getVersionURL() throws IOException {
-        URL manifestURL = new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
-        BufferedReader read = new BufferedReader(new InputStreamReader(manifestURL.openStream()));
-        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-        JsonArray versions = jsonObject.getAsJsonArray("versions");
-        Iterator<JsonElement> iterator = versions.iterator();
-        List<JsonObject> versionObjects = new ArrayList<>();
-        while (iterator.hasNext()) {
-            versionObjects.add((JsonObject) iterator.next());
-        }
-        for (JsonObject version : versionObjects) {
-            try {
-                if (version.get("id").getAsString().equals(MinecraftVersion.field_25319.getName())) {
-                    versionURL = new URL(version.get("url").getAsString());
-                }
-            } catch (NoSuchFieldError error) {
-                if (version.get("id").getAsString().equals(MinecraftVersion.create().getName())) {
-                    versionURL = new URL(version.get("url").getAsString());
-                }
-            } catch (NoClassDefFoundError error) {
-                if (version.get("id").getAsString().equals(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString())) {
-                    versionURL = new URL(version.get("url").getAsString());
-                }
+    private static Map<String, ServerLanguageDefinition> loadLanguageDefinitions(VanillaAssets assets) throws IOException {
+        Map<String, ServerLanguageDefinition> languageDefinitions = new HashMap<>();
+
+        try (BufferedReader read = new BufferedReader(new InputStreamReader(assets.openStream("pack.mcmeta")))) {
+            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject().getAsJsonObject("language");
+
+            for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                ServerLanguageDefinition definition = ServerLanguageDefinition.parse(entry.getKey(), (JsonObject) entry.getValue());
+                languageDefinitions.putIfAbsent(definition.getCode(), definition);
             }
         }
-        read.close();
+
+        return languageDefinitions;
     }
 
-    private static void getResourceManifestURL() throws IOException {
-        BufferedReader read = new BufferedReader(new InputStreamReader(versionURL.openStream()));
-        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-        resourceManifestURL = new URL(jsonObject.getAsJsonObject("assetIndex").get("url").getAsString());
-        read.close();
-    }
+    private static LanguageMap loadVanillaLanguage(VanillaAssets assets, ServerLanguageDefinition language) {
+        try {
+            ModContainer vanilla = FabricLoader.getInstance().getModContainer("minecraft").get();
+            SemanticVersion minecraftVersion = SemanticVersion.parse(vanilla.getMetadata().getVersion().getFriendlyString());
 
-    private static void getVanillaResourceList() throws IOException {
-        BufferedReader read = new BufferedReader(new InputStreamReader(resourceManifestURL.openStream()));
-        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-        JsonObject resourceArray = jsonObject.getAsJsonObject("objects");
-
-        for (Map.Entry<String, JsonElement> entry : resourceArray.entrySet()) {
-            if (entry.getKey().equals("pack.mcmeta") || entry.getKey().startsWith("minecraft/lang/")) {
-                resourceHashs.put(entry.getKey(), entry.getValue().getAsJsonObject().get("hash").getAsString());
-            }
-        }
-        read.close();
-    }
-
-    private static void loadVanillaMCMeta() throws IOException {
-        BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("pack.mcmeta")).openStream()));
-        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class).getAsJsonObject("language");
-
-        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-            ServerLanguageManager.registerLanguageDefinition(entry.getKey(), (JsonObject) entry.getValue());
-        }
-        read.close();
-    }
-
-    private static void loadVanillaTranslations() throws IOException {
-        for (ServerLanguageDefinition language : ServerLanguageManager.getInstance().getAllLanguages()) {
-            try {
-                if (SemanticVersion.parse(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString()).compareTo(SemanticVersion.parse("1.13-Snapshot.17.48.a")) >= 0) {
-                    if (language == ServerLanguageManager.getInstance().getLanguage("en_us")) {
-                        BufferedReader read = new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")));
-                        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-                        Map<String, String> langTranslations = new HashMap<>();
-                        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                            langTranslations.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
-                        }
-                        translations.putIfAbsent(language.getCode(), langTranslations);
-                        read.close();
+            if (minecraftVersion.compareTo(SemanticVersion.parse("1.13-Snapshot.17.48.a")) >= 0) {
+                InputStream stream;
+                if (ServerLanguageManager.DEFAULT.equals(language)) {
+                    stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.json");
+                } else {
+                    stream = assets.openStream("minecraft/lang/" + language.getCode() + ".json");
+                }
+                return readJsonLangFile(stream);
+            } else {
+                InputStream stream;
+                if (minecraftVersion.compareTo(SemanticVersion.parse("1.11-Snapshot.16.32.a")) >= 0) {
+                    if (ServerLanguageManager.DEFAULT.equals(language)) {
+                        stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
                     } else {
-                        BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("minecraft/lang/" + language.getCode() + ".json")).openStream()));
-                        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-                        Map<String, String> langTranslations = new HashMap<>();
-                        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                            langTranslations.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
-                        }
-                        translations.putIfAbsent(language.getCode(), langTranslations);
-                        read.close();
+                        stream = assets.openStream("minecraft/lang/" + language.getCode() + ".lang");
                     }
                 } else {
-                    if (SemanticVersion.parse(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString()).compareTo(SemanticVersion.parse("1.11-Snapshot.16.32.a")) >= 0) {
-                        if (language == ServerLanguageManager.getInstance().getLanguage("en_us")) {
-                            BufferedReader read = new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang")));
-                            readOldLangFiles("en_us", read);
-                        } else {
-                            BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("minecraft/lang/" + language.getCode() +".lang")).openStream()));
-                            readOldLangFiles(language.getCode(), read);
-                        }
+                    if (ServerLanguageManager.DEFAULT.equals(language)) {
+                        stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
                     } else {
-                        if (language == ServerLanguageManager.getInstance().getLanguage("en_us")) {
-                            BufferedReader read = new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang")));
-                            readOldLangFiles("en_us", read);
-                        } else {
-                            BufferedReader read = new BufferedReader(new InputStreamReader(getResourceURL(resourceHashs.get("minecraft/lang/" + language.getCode().split("_")[0] + "_" + language.getCode().split("_")[1].toUpperCase() +".lang")).openStream()));
-                            readOldLangFiles(language.getCode(), read);
-                        }
+                        stream = assets.openStream("minecraft/lang/" + language.getCode().split("_")[0] + "_" + language.getCode().split("_")[1].toUpperCase(Locale.ROOT) + ".lang");
                     }
                 }
-            } catch (VersionParsingException parsingException) {
-                parsingException.printStackTrace();
+
+                return readOldLangFile(stream);
             }
+        } catch (VersionParsingException | IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    private static void readOldLangFiles(String code, BufferedReader bufferedReader) {
-        Iterator<String> lines = bufferedReader.lines().iterator();
-        Map<String, String> langTranslations = new HashMap<>();
-        while (lines.hasNext()) {
-
-            String line = lines.next();
-            if (line.startsWith("\n") || line.startsWith("#") || line.startsWith("/")) continue;
-            String key = line.split("=")[0];
-            int values = line.split("=").length;
-            String value = "";
-            for (int a = 1; a < values; a++) {
-                value = value + line.split("=")[a];
+    private static LanguageMap readJsonLangFile(InputStream stream) throws IOException {
+        try (BufferedReader read = new BufferedReader(new InputStreamReader(stream))) {
+            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject();
+            LanguageMap langTranslations = new LanguageMap();
+            for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                langTranslations.put(entry.getKey(), entry.getValue().getAsString());
             }
-            langTranslations.put(key, value);
-        }
-        if (translations.containsKey(code)) {
-            for (Map.Entry<String, String> entry : langTranslations.entrySet()) {
-                translations.get(code).put(entry.getKey(), entry.getValue());
-            }
-        } else {
-            translations.put(code, langTranslations);
+            return langTranslations;
         }
     }
 
-    private static URL getResourceURL(String hash) throws MalformedURLException {
-        return new URL("https://resources.download.minecraft.net/" + hash.substring(0,2) + "/" + hash);
+    private static LanguageMap readOldLangFile(InputStream input) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            Iterator<String> lines = reader.lines().iterator();
+            LanguageMap langTranslations = new LanguageMap();
+            while (lines.hasNext()) {
+
+                String line = lines.next();
+                if (line.startsWith("\n") || line.startsWith("#") || line.startsWith("/")) continue;
+                String key = line.split("=")[0];
+                int values = line.split("=").length;
+                String value = "";
+                for (int a = 1; a < values; a++) {
+                    value = value + line.split("=")[a];
+                }
+                langTranslations.put(key, value);
+            }
+
+            return langTranslations;
+        }
     }
 
-    private static void lookIntoModFiles() {
-        File modPath;
-        try {
-            modPath = new File(FabricLoader.getInstance().getGameDir().toFile(), "mods");
-        } catch (NoSuchMethodError error) {
-            modPath = new File(FabricLoader.getInstance().getGameDirectory(), "mods");
-        }
-        for (File mod : Objects.requireNonNull(modPath.listFiles())) {
+    private static void lookIntoModFiles(Map<String, ServerLanguageDefinition> languages) throws IOException {
+        Files.walk(MODS_PATH, 1).forEach(mod -> {
             try {
-                if(mod.isDirectory() || !mod.getName().endsWith(".jar") || !isZip(mod)) continue;
-                JarFile jarFile = new JarFile(mod);
-                List<ZipEntry> jarEntries = new ArrayList<>();
-                Iterator<JarEntry> zip = jarFile.stream().iterator();
-                List<ZipEntry> jarInJar = new ArrayList<>();
-                while(zip.hasNext()) {
-                    ZipEntry ze = zip.next();
-                    String entryName = ze.getName();
-                    if (entryName.startsWith("assets") && entryName.contains("lang")) {
-                        if (!ze.isDirectory()) jarEntries.add(ze);
-                    }
-                    if (entryName.startsWith("META-INF") && entryName.contains("jars") && entryName.contains(".jar")) {
-                        if (!ze.isDirectory()) jarInJar.add(ze);
-                    }
-                }
-                for (ZipEntry zipEntry : jarEntries) {
-                    if (zipEntry.getName().contains(".json")) {
-                        String fileName = zipEntry.getName().split("lang")[1].replace("/", "").replace(".json", "");
-                        BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
-                        JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-                        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                            translations.get(fileName).put(entry.getKey(), entry.getValue().getAsString());
-                        }
-                        read.close();
-                    } else if (zipEntry.getName().contains(".lang")) {
-                        String langCode = zipEntry.getName().split("lang")[1].replace("/", "").replace(".lang", "").toLowerCase();
-                        BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
-                        readOldLangFiles(langCode, read);
-                    }
-                }
-                for (ZipEntry zipEntry : jarInJar) {
-                    lookIntoJarInJar(jarFile, zipEntry);
-                }
+                if(Files.isDirectory(mod) || !mod.getFileName().endsWith(".jar") || !isZip(mod)) return;
+                readFromJar(mod, languages);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        });
 
-        File tempDirectory = new File(FabricLoader.getInstance().getGameDirectory(), "temp/translations");
-        if (tempDirectory.exists()) {
-            if (!tempDirectory.delete()) {
-                for (File file : tempDirectory.listFiles()) {
-                    file.delete();
+        FileUtils.deleteDirectory(TEMP_PATH.toFile());
+    }
+
+    private static void readFromJar(Path path, Map<String, ServerLanguageDefinition> languages) throws IOException {
+        try (JarFile jarFile = new JarFile(path.toFile())) {
+            List<JarEntry> langEntries = new ArrayList<>();
+
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry ze = entries.nextElement();
+                String entryName = ze.getName();
+                if (entryName.startsWith("assets") && entryName.contains("lang")) {
+                    if (!ze.isDirectory()) langEntries.add(ze);
                 }
-                tempDirectory.delete();
             }
-        }
 
-    }
+            for (JarEntry langEntry : langEntries) {
+                String entryName = langEntry.getName();
+                ServerLanguageDefinition language = null;
 
-    private static void lookIntoJarInJar(JarFile rootJar, ZipEntry jar) throws IOException {
-        InputStream inputStream = rootJar.getInputStream(jar);
-
-        File file = new File(FabricLoader.getInstance().getGameDirectory(), "temp/translations/" + jar.getName().replace("META-INF/jars/", ""));
-        if (!file.exists())new File(file.getParent()).mkdirs();
-        Files.copy(
-                inputStream,
-                file.toPath(),
-                StandardCopyOption.REPLACE_EXISTING);
-
-        IOUtils.closeQuietly(inputStream);
-
-        JarFile jarFile = new JarFile(file);
-        List<ZipEntry> jarEntries = new ArrayList<>();
-        Iterator<JarEntry> zip = jarFile.stream().iterator();
-        List<ZipEntry> jarInJar = new ArrayList<>();
-        while(zip.hasNext()) {
-            ZipEntry ze = zip.next();
-            String entryName = ze.getName();
-            if (entryName.startsWith("assets") && entryName.contains("lang")) {
-                if (!ze.isDirectory()) jarEntries.add(ze);
-            }
-            if (entryName.startsWith("META-INF") && entryName.contains("jars") && entryName.contains(".jar")) {
-                if (!ze.isDirectory()) jarInJar.add(ze);
-            }
-        }
-        for (ZipEntry zipEntry : jarEntries) {
-            if (zipEntry.getName().contains(".json")) {
-                String fileName = zipEntry.getName().split("lang")[1].replace("/", "").replace(".json", "");
-                BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
-                JsonObject jsonObject = GSON.fromJson(read, JsonObject.class);
-                for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                    translations.get(fileName).put(entry.getKey(), entry.getValue().getAsString());
+                if (entryName.contains(".json")) {
+                    String langCode = entryName.split("lang")[1].replace("/", "").replace(".json", "");
+                    language = languages.get(langCode);
+                } else if (entryName.contains(".lang")) {
+                    String langCode = entryName.split("lang")[1].replace("/", "").replace(".lang", "").toLowerCase(Locale.ROOT);
+                    language = languages.get(langCode);
                 }
-                read.close();
-            } else if (zipEntry.getName().contains(".lang")) {
-                String langCode = zipEntry.getName().split("lang")[1].replace("/", "").replace(".lang", "").toLowerCase();
-                BufferedReader read = new BufferedReader(new InputStreamReader(jarFile.getInputStream(zipEntry)));
-                readOldLangFiles(langCode, read);
-            }
-        }
-        for (ZipEntry zipEntry : jarInJar) {
-            lookIntoJarInJar(jarFile, zipEntry);
-        }
-        file.delete();
-    }
 
-    private static void addMissingEntryToOtherLanguage() {
-        for (Map.Entry<String, String> entry : translations.get("en_us").entrySet()) {
-            for (Map.Entry<String, Map<String, String>> entry1 : translations.entrySet()) {
-                if (entry1.getKey().equals("en_us")) continue;
-                translations.get(entry1.getKey()).putIfAbsent(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-
-    public static void setLanguage(String code) {
-        ServerLanguage.setInstance(new ServerTranslationStorage(translations.getOrDefault(code, translations.get("en_us")), ServerLanguageManager.getInstance().getLanguage(code).isRightToLeft()));
-        ServerLanguageManager.getInstance().setLanguage(ServerLanguageManager.getInstance().getLanguage(code));
-    }
-
-    public static boolean isZip(File file) throws IOException {
-        RandomAccessFile rfile = new RandomAccessFile(file, "r");
-        long n = rfile.readInt();
-        rfile.close();
-        return n == 0x504B0304;
-        // 504B0304 is a magic number (the file signature) for .zip and thus .jar files https://en.wikipedia.org/wiki/List_of_file_signatures
-    }
-
-    public static LiteralText getTranslation(String languageCode, TranslatableText translatableText) {
-        String original = ServerLanguageManager.getInstance().getLanguage().getCode();
-        Style style = translatableText.getStyle();
-        // TODO: find another way to do this.
-        setLanguage(languageCode);
-        String string = translatableText.getString();
-        List<Text> siblings = new ArrayList<>();
-        for (Text text : translatableText.getSiblings()) {
-            string = string.replace(text.getString(), "");
-            if (text instanceof TranslatableText) siblings.add(getTranslation(languageCode, (TranslatableText) text));
-            else if (text instanceof BaseText) {
-                for (Text text1 : translatableText.getSiblings()) {
-                    string = string.replace(text1.getString(), "");
-                    if (text1 instanceof TranslatableText) siblings.add(getTranslation(languageCode, (TranslatableText) text1));
-                    else {
-                        siblings.add(text1);
-                    }
-
+                if (language != null) {
+                    ServerLanguageManager.INSTANCE.addTranslations(language, () -> {
+                        try {
+                            return readFromJar(path, entryName);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    });
                 }
-            } else {
-                siblings.add(text);
             }
         }
+    }
 
-        setLanguage(original);
-        MutableText literalText = new LiteralText(string).setStyle(style);
-        for (Text sibling : siblings) {
-            literalText = literalText.append(sibling);
+    private static LanguageMap readFromJar(Path jarPath, String name) throws IOException {
+        try (JarFile jarFile = new JarFile(jarPath.toFile())) {
+            JarEntry entry = jarFile.getJarEntry(name);
+            if (entry != null) {
+                InputStream input = jarFile.getInputStream(entry);
+                if (name.endsWith(".json")) {
+                    return readJsonLangFile(input);
+                } else {
+                    return readOldLangFile(input);
+                }
+            }
         }
-        return (LiteralText) literalText;
+        return null;
+    }
+
+    public static boolean isZip(Path path) {
+        try (RandomAccessFile rfile = new RandomAccessFile(path.toFile(), "r")) {
+            long n = rfile.readInt();
+            rfile.close();
+            return n == 0x504B0304;
+            // 504B0304 is a magic number (the file signature) for .zip and thus .jar files https://en.wikipedia.org/wiki/List_of_file_signatures
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

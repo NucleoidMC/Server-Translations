@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "fr.catcore.server.translations.api.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ClientSettingsC2SPacketAccessor",
+    "MixinLanguage",
+    "MixinServerPlayerEntity",
+    "MixinTextSerializer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
