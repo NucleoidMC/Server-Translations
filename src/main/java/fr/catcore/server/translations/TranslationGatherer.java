@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fr.catcore.server.translations.api.resource.language.LanguageMap;
+import fr.catcore.server.translations.api.resource.language.LanguageReader;
 import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
 import fr.catcore.server.translations.api.resource.language.ServerLanguageManager;
 import net.fabricmc.loader.api.FabricLoader;
@@ -70,7 +71,7 @@ public class TranslationGatherer {
                 } else {
                     stream = assets.openStream("minecraft/lang/" + language.getCode() + ".json");
                 }
-                return readJsonLangFile(stream);
+                return LanguageReader.read(stream);
             } else {
                 InputStream stream;
                 if (minecraftVersion.compareTo(SemanticVersion.parse("1.11-Snapshot.16.32.a")) >= 0) {
@@ -87,43 +88,11 @@ public class TranslationGatherer {
                     }
                 }
 
-                return readOldLangFile(stream);
+                return LanguageReader.readLegacy(stream);
             }
         } catch (VersionParsingException | IOException e) {
             e.printStackTrace();
             return null;
-        }
-    }
-
-    private static LanguageMap readJsonLangFile(InputStream stream) throws IOException {
-        try (BufferedReader read = new BufferedReader(new InputStreamReader(stream))) {
-            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject();
-            LanguageMap langTranslations = new LanguageMap();
-            for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                langTranslations.put(entry.getKey(), entry.getValue().getAsString());
-            }
-            return langTranslations;
-        }
-    }
-
-    private static LanguageMap readOldLangFile(InputStream input) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
-            Iterator<String> lines = reader.lines().iterator();
-            LanguageMap langTranslations = new LanguageMap();
-            while (lines.hasNext()) {
-
-                String line = lines.next();
-                if (line.startsWith("\n") || line.startsWith("#") || line.startsWith("/")) continue;
-                String key = line.split("=")[0];
-                int values = line.split("=").length;
-                String value = "";
-                for (int a = 1; a < values; a++) {
-                    value = value + line.split("=")[a];
-                }
-                langTranslations.put(key, value);
-            }
-
-            return langTranslations;
         }
     }
 
@@ -185,9 +154,9 @@ public class TranslationGatherer {
             if (entry != null) {
                 InputStream input = jarFile.getInputStream(entry);
                 if (name.endsWith(".json")) {
-                    return readJsonLangFile(input);
+                    return LanguageReader.read(input);
                 } else {
-                    return readOldLangFile(input);
+                    return LanguageReader.readLegacy(input);
                 }
             }
         }
