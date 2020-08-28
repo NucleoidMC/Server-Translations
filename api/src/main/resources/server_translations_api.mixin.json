@@ -4,6 +4,7 @@
   "package": "fr.catcore.server.translations.api.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BossBarS2CPacketAccessor",
     "ClientSettingsC2SPacketAccessor",
     "GameMessageS2CPacketAccessor",
     "MixinBaseText",
@@ -11,7 +12,8 @@
     "MixinServerPlayerEntity",
     "MixinServerPlayNetworkHandler",
     "MixinTextSerializer",
-    "MixinTranslatableText"
+    "MixinTranslatableText",
+    "TitleS2CPacketAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
