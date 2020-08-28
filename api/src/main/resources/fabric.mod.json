@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "server_translations",
+  "id": "server_translations_api",
   "version": "${version}",
-  "name": "Server Translations",
+  "name": "Server Translations API",
   "description": "",
   "authors": [
     "CatCore"
@@ -13,15 +13,12 @@
   "contact": {},
   "license": "MIT",
   "environment": "server",
-  "entrypoints": {
-    "main": ["fr.catcore.server.translations.ServerTranslations"]
-  },
+  "entrypoints": {},
   "depends": {
     "minecraft": ">=1.16",
-    "fabricloader": ">=0.9.0+build.204",
-    "server_translations_api": "*"
+    "fabricloader": ">=0.9.0+build.204"
   },
   "mixins": [
-    "server_translations.mixin.json"
+    "server_translations_api.mixin.json"
   ]
 }

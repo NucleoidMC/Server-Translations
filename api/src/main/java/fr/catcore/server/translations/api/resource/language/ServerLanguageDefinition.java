@@ -1,4 +1,8 @@
-package fr.catcore.server.translations.resource.language;
+package fr.catcore.server.translations.api.resource.language;
+
+import com.google.gson.JsonObject;
+
+import java.util.Locale;
 
 public class ServerLanguageDefinition implements Comparable<ServerLanguageDefinition> {
     private final String code;
@@ -15,6 +19,13 @@ public class ServerLanguageDefinition implements Comparable<ServerLanguageDefini
 
     public String getCode() {
         return this.code;
+    }
+
+    public static ServerLanguageDefinition parse(String code, JsonObject jsonObject) {
+        String region = jsonObject.get("region").getAsString();
+        String name = jsonObject.get("name").getAsString();
+        boolean bidirectional = jsonObject.get("bidirectional").getAsBoolean();
+        return new ServerLanguageDefinition(code.toLowerCase(Locale.ROOT), region, name, bidirectional);
     }
 
     public String getName() {
@@ -37,7 +48,7 @@ public class ServerLanguageDefinition implements Comparable<ServerLanguageDefini
         if (this == o) {
             return true;
         } else {
-            return !(o instanceof ServerLanguageDefinition) ? false : this.code.equals(((ServerLanguageDefinition)o).code);
+            return o instanceof ServerLanguageDefinition && this.code.equals(((ServerLanguageDefinition) o).code);
         }
     }
 

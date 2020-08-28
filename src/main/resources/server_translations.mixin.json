@@ -4,14 +4,11 @@
   "package": "fr.catcore.server.translations.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ClientSettingsC2SPacketAccessor",
     "MixinAdvancementManager",
-    "MixinLanguage",
     "MixinMinecraftDedicatedServer",
     "MixinMinecraftServer",
     "MixinRecipeManager",
     "MixinReloadableResourceManagerImpl",
-    "MixinServerPlayerEntity",
     "MixinThreadedAnvilChunkStorage",
     "MixinWorldGenerationProgressLogger"
   ],

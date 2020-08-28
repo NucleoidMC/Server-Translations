@@ -8,96 +8,92 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "1.2.2"
+    static def baseVersion = "1.3.0"
     static def mcVersion = "1.16.2"
     static def yarnVersion = "+build.21"
 }
 
-version = Globals.baseVersion
-archivesBaseName = "Server-Translations"
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+remapJar.dependsOn ':api:remapJar'
 
-group = "fr.catcore"
+archivesBaseName = "Server-Translations"
+
+allprojects {
+    apply plugin: 'fabric-loom'
+
+    version = Globals.baseVersion
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    group = "fr.catcore"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven {
+            name = 'Fabric'
+            url = 'http://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'SpongePowered'
+            url = 'http://repo.spongepowered.org/maven'
+        }
+        maven {
+            name = 'mojang'
+            url = 'https://libraries.minecraft.net/'
+        }
+        maven {
+            name = 'legacy-fabric'
+            url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+        }
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:$Globals.mcVersion"
+        mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+        modCompile "net.fabricmc:fabric-loader:0.9.2+build.206"
+    }
+
+    processResources {
+        inputs.property "version", project.version
+
+        from(sourceSets.main.resources.srcDirs) {
+            include "fabric.mod.json"
+            expand "version": project.version
+        }
+
+        from(sourceSets.main.resources.srcDirs) {
+            exclude "fabric.mod.json"
+        }
+    }
+
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this task, sources will not be generated.
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+    }
+
+    jar {
+        from "LICENSE"
+    }
+}
 
 repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-    maven {
-        name = 'Fabric'
-        url = 'http://maven.fabricmc.net/'
-    }
-    maven {
-        name = 'SpongePowered'
-        url = 'http://repo.spongepowered.org/maven'
-    }
-    maven {
-        name = 'mojang'
-        url = 'https://libraries.minecraft.net/'
-    }
-    maven {
-        name = 'legacy-fabric'
-        url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+    flatDir {
+        dirs 'api/build/libs'
     }
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:$Globals.mcVersion"
-    mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-    modCompile "net.fabricmc:fabric-loader:0.9.2+build.206"
-    include "com.ibm.icu:icu4j:66.1"
-}
-
-processResources {
-    inputs.property "version", project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-        expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
-}
-
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
-    from sourceSets.main.allSource
-}
-
-jar {
-    from "LICENSE"
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-        }
-    }
-
-    // select the repositories you want to publish to
-    repositories {
-        // uncomment to publish to the local maven
-        // mavenLocal()
-    }
+    implementation project(':api')
+    include (name: 'server-translations-api', version: project(':api').version, ext: 'jar')
 }
