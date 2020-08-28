@@ -1,5 +1,6 @@
 package fr.catcore.server.translations;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,6 +16,8 @@ import net.minecraft.util.Language;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -25,8 +28,18 @@ import java.util.jar.JarFile;
 public class TranslationGatherer {
 
     private static final JsonParser PARSER = new JsonParser();
-    private static final Path TEMP_PATH = FabricLoader.getInstance().getGameDir().resolve("temp/translations");
-    private static final Path MODS_PATH = FabricLoader.getInstance().getGameDir().resolve("mods");
+    private static final URL LANGUAGE_LIST;
+
+    static {
+        URL languageList;
+        try {
+            languageList = new URL("https://github.com/arthurbambou/Server-Translations/raw/master/src/main/resources/data/server_translations/language_list.json");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            languageList = null;
+        }
+        LANGUAGE_LIST = languageList;
+    }
 
     public static void init() {
         try {
@@ -37,8 +50,7 @@ public class TranslationGatherer {
                 Supplier<LanguageMap> supplier = () -> loadVanillaLanguage(assets, language);
                 ServerLanguageManager.INSTANCE.addTranslations(language, supplier);
             }
-
-//            lookIntoModFiles(languages);
+            getModTranslationFromGithub(languages);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,81 +108,30 @@ public class TranslationGatherer {
         }
     }
 
-    private static void lookIntoModFiles(Map<String, ServerLanguageDefinition> languages) throws IOException {
-        Files.walk(MODS_PATH, 1).forEach(mod -> {
-            try {
-                if(Files.isDirectory(mod) || !mod.getFileName().endsWith(".jar") || !isZip(mod)) return;
-                readFromJar(mod, languages);
-            } catch (IOException e) {
-                e.printStackTrace();
+    private static void getModTranslationFromGithub(Map<String, ServerLanguageDefinition> languages) {
+        try (BufferedReader read = new BufferedReader(new InputStreamReader(LANGUAGE_LIST.openStream()))) {
+            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject();
+            JsonArray languageArray = jsonObject.getAsJsonArray("languages");
+
+            for (Iterator<JsonElement> it = languageArray.iterator(); it.hasNext(); ) {
+                JsonElement entry = it.next();
+
+                String code = entry.getAsString();
+                URL languageURL = getLanguageURL(code);
+                if (languageURL == null) continue;
+                ServerLanguageManager.INSTANCE.addTranslations(languages.get(code), LanguageReader.read(languageURL.openStream()));
             }
-        });
-
-        FileUtils.deleteDirectory(TEMP_PATH.toFile());
-    }
-
-    private static void readFromJar(Path path, Map<String, ServerLanguageDefinition> languages) throws IOException {
-        try (JarFile jarFile = new JarFile(path.toFile())) {
-            List<JarEntry> langEntries = new ArrayList<>();
-
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry ze = entries.nextElement();
-                String entryName = ze.getName();
-                if (entryName.startsWith("assets") && entryName.contains("lang")) {
-                    if (!ze.isDirectory()) langEntries.add(ze);
-                }
-            }
-
-            for (JarEntry langEntry : langEntries) {
-                String entryName = langEntry.getName();
-                ServerLanguageDefinition language = null;
-
-                if (entryName.contains(".json")) {
-                    String langCode = entryName.split("lang")[1].replace("/", "").replace(".json", "");
-                    language = languages.get(langCode);
-                } else if (entryName.contains(".lang")) {
-                    String langCode = entryName.split("lang")[1].replace("/", "").replace(".lang", "").toLowerCase(Locale.ROOT);
-                    language = languages.get(langCode);
-                }
-
-                if (language != null) {
-                    ServerLanguageManager.INSTANCE.addTranslations(language, () -> {
-                        try {
-                            return readFromJar(path, entryName);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    });
-                }
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private static LanguageMap readFromJar(Path jarPath, String name) throws IOException {
-        try (JarFile jarFile = new JarFile(jarPath.toFile())) {
-            JarEntry entry = jarFile.getJarEntry(name);
-            if (entry != null) {
-                InputStream input = jarFile.getInputStream(entry);
-                if (name.endsWith(".json")) {
-                    return LanguageReader.read(input);
-                } else {
-                    return LanguageReader.readLegacy(input);
-                }
-            }
+    private static URL getLanguageURL(String code) {
+        try {
+            return new URL("https://github.com/arthurbambou/Server-Translations/raw/master/src/main/resources/data/server_translations/lang/" + code + ".json");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean isZip(Path path) {
-        try (RandomAccessFile rfile = new RandomAccessFile(path.toFile(), "r")) {
-            long n = rfile.readInt();
-            rfile.close();
-            return n == 0x504B0304;
-            // 504B0304 is a magic number (the file signature) for .zip and thus .jar files https://en.wikipedia.org/wiki/List_of_file_signatures
-        } catch (IOException e) {
-            return false;
-        }
     }
 }

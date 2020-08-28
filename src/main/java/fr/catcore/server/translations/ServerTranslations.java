@@ -6,6 +6,7 @@ import fr.catcore.server.translations.config.ConfigManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.text.TranslatableText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,7 +24,11 @@ public class ServerTranslations implements ModInitializer {
         String systemCode = ConfigManager.getLanguageCodeFromConfig();
         ServerLanguageDefinition language = ServerLanguageManager.INSTANCE.getLanguage(systemCode).getDefinition();
         ServerLanguageManager.INSTANCE.setSystemLanguage(language);
-        LOGGER.info("Language set to {}: {} ({})", language.getCode(), language.getName(), language.getRegion());
-        ServerLanguageManager.INSTANCE.registerReloadListener(TranslationGatherer::init);
+        LOGGER.info(new TranslatableText("text.translated_server.language.set", language.getCode(), language.getName(), language.getRegion()).getString());
+        ServerLanguageManager.INSTANCE.registerReloadStartListener(TranslationGatherer::init);
+        ServerLanguageManager.INSTANCE.registerReloadStopListener(() -> {
+            int keyNumber = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyNumber();
+            LOGGER.info(new TranslatableText("text.translated_server.loaded.translation_key", keyNumber).getString());
+        });
     }
 }

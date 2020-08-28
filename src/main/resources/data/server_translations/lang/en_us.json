@@ -19,5 +19,8 @@
   "text.translated_server.new.datapack": "Found new data pack %s, loading it automatically",
   "text.translated_server.force": "No datapacks selected, forcing vanilla",
   "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): All chunks are saved",
-  "text.translated_server.progress.old": "Preparing spawn area: %s%"
+  "text.translated_server.progress.old": "Preparing spawn area: %s%",
+
+  "text.translated_server.loaded.translation_key": "Loaded %s translation keys",
+  "text.translated_server.language.set": "Language set to %1$s: %2$s (%3$s)"
 }

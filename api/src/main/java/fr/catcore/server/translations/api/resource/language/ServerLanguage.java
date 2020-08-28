@@ -65,4 +65,8 @@ public class ServerLanguage extends Language {
             }, Style.EMPTY).isPresent();
         };
     }
+
+    public int getKeyNumber() {
+        return this.map.entrySet().size();
+    }
 }
