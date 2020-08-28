@@ -18,7 +18,6 @@
     "minecraft": ">=1.16",
     "fabricloader": ">=0.9.0+build.204"
   },
-  "accessWidener": "server_translations_api.accesswidener",
   "mixins": [
     "server_translations_api.mixin.json"
   ]

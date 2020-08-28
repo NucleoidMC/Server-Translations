@@ -5,9 +5,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "ClientSettingsC2SPacketAccessor",
+    "GameMessageS2CPacketAccessor",
+    "MixinBaseText",
     "MixinLanguage",
     "MixinServerPlayerEntity",
-    "MixinTextSerializer"
+    "MixinServerPlayNetworkHandler",
+    "MixinTextSerializer",
+    "MixinTranslatableText"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -2,10 +2,6 @@ apply plugin: 'maven-publish'
 
 archivesBaseName = "server-translations-api"
 
-minecraft {
-  accessWidener = file("src/main/resources/server_translations_api.accesswidener")
-}
-
 publishing {
   publications {
     mavenJava(MavenPublication) {

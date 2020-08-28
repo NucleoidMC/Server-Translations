@@ -2,7 +2,7 @@ package fr.catcore.server.translations.api.mixin;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
-import fr.catcore.server.translations.api.LocalizedText;
+import fr.catcore.server.translations.api.LocalizableText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,9 +23,11 @@ public abstract class MixinTextSerializer {
             cancellable = true
     )
     private void serializeTranslatableText(Text text, Type type, JsonSerializationContext ctx, CallbackInfoReturnable<JsonElement> ci) {
-        if (text instanceof LocalizedText) {
-            Text literal = ((LocalizedText) text).asLiteral();
-            ci.setReturnValue(this.serialize(literal, literal.getClass(), ctx));
+        if (text instanceof LocalizableText) {
+            Text localized = ((LocalizableText) text).asLocalized();
+            if (text != localized) {
+                ci.setReturnValue(this.serialize(localized, localized.getClass(), ctx));
+            }
         }
     }
 }
