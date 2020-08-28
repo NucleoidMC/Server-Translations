@@ -163,13 +163,13 @@ public class ServerLanguageManager implements ResourceReloadListener {
                 ServerLanguageDefinition languageDefinition = this.getLanguage(entry.getKey().getPath()).getDefinition();
                 this.addTranslations(languageDefinition, entry.getValue());
             }
+            if (RELOAD_STOP_LISTENERS.isEmpty()) {
+                int keyNumber = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyNumber();
+                LOGGER.info(String.format("Loaded %s translation keys", keyNumber));
+            } else {
+                RELOAD_STOP_LISTENERS.forEach(TranslationsReloadListener::reload);
+            }
         });
-        if (RELOAD_STOP_LISTENERS.isEmpty()) {
-            int keyNumber = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyNumber();
-            LOGGER.info(String.format("Loaded %s translation keys", keyNumber));
-        } else {
-            RELOAD_STOP_LISTENERS.forEach(TranslationsReloadListener::reload);
-        }
         return completableFuture1;
     }
 }
