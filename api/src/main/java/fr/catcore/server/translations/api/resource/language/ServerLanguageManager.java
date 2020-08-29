@@ -78,6 +78,10 @@ public class ServerLanguageManager implements ResourceReloadListener {
     }
 
     public ServerLanguage getLanguage(String code) {
+        if (code == null) {
+            return this.systemLanguage;
+        }
+
         ServerLanguage language = this.languages.get(code);
         if (language != null) {
             return language;
