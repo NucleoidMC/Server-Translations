@@ -33,6 +33,11 @@ public class ServerTranslationsAPI implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        init();
+        ServerLanguageManager.INSTANCE.registerReloadStartListener(ServerTranslationsAPI::init);
+    }
+
+    private static void init() {
         try {
             VanillaAssets assets = VanillaAssets.get();
             Map<String, ServerLanguageDefinition> languages = loadLanguageDefinitions(assets);
