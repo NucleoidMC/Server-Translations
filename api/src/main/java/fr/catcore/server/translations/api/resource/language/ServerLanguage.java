@@ -8,7 +8,9 @@ import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Style;
 import net.minecraft.util.Language;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class ServerLanguage extends Language {
     private final ServerLanguageDefinition definition;
@@ -68,5 +70,9 @@ public class ServerLanguage extends Language {
 
     public int getKeyNumber() {
         return this.map.entrySet().size();
+    }
+
+    public Set<Map.Entry<String, String>> getEntryList() {
+        return this.map.entrySet();
     }
 }

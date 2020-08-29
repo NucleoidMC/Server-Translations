@@ -167,6 +167,15 @@ public class ServerLanguageManager implements ResourceReloadListener {
                 ServerLanguageDefinition languageDefinition = this.getLanguage(entry.getKey().getPath()).getDefinition();
                 this.addTranslations(languageDefinition, entry.getValue());
             }
+            ServerLanguage serverLanguage = this.getLanguage("en_us");
+            for (ServerLanguageDefinition serverLanguageDefinition : this.getAllLanguages()) {
+                ServerLanguage serverLanguage1 = this.getLanguage(serverLanguageDefinition.getCode());
+                LanguageMap map1 = new LanguageMap();
+                for (Map.Entry<String, String> entry : serverLanguage.getEntryList()) {
+                    if (!serverLanguage1.hasTranslation(entry.getKey())) map1.put(entry.getKey(), entry.getValue());
+                }
+                this.addTranslations(serverLanguageDefinition, () -> map1);
+            }
             if (RELOAD_STOP_LISTENERS.isEmpty()) {
                 int keyNumber = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyNumber();
                 LOGGER.info(String.format("Loaded %s translation keys", keyNumber));
