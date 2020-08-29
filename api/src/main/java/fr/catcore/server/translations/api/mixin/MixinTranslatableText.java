@@ -69,6 +69,6 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
             }
         }
 
-        return literal;
+        return literal == null ? null : literal.setStyle(this.getStyle());
     }
 }
