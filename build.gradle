@@ -84,6 +84,8 @@ allprojects {
     jar {
         from "LICENSE"
     }
+
+    if (it.name != "api") remapJar.dependsOn ':api:remapJar'
 }
 
 repositories {
