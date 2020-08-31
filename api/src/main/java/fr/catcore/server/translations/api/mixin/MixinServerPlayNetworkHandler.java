@@ -4,18 +4,23 @@ import fr.catcore.server.translations.api.LocalizableText;
 import fr.catcore.server.translations.api.LocalizationTarget;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+
+import java.util.List;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class MixinServerPlayNetworkHandler {
@@ -38,6 +43,8 @@ public class MixinServerPlayNetworkHandler {
             return this.modifyBossBar(packet);
         } else if (packet instanceof TitleS2CPacket) {
             return this.modifyTitle(packet);
+        } else if (packet instanceof InventoryS2CPacket) {
+            return this.modifyInventory(packet);
         }
 
         return packet;
@@ -93,6 +100,29 @@ public class MixinServerPlayNetworkHandler {
                     accessor.getFadeOut()
             );
         }
+
+        return packet;
+    }
+
+    private Packet<?> modifyInventory(Packet<?> packet) {
+        InventoryS2CPacketAccessor accessor = (InventoryS2CPacketAccessor) packet;
+
+        boolean notEquals = false;
+        List<ItemStack> stacks = accessor.getStacks();
+        DefaultedList<ItemStack> defaultedList = DefaultedList.of();
+        for (int i = 0; i < stacks.size(); i++) {
+            Text name = stacks.get(i).getName();
+            Text localized = this.asLocalized(name);
+            if (name != localized) {
+                notEquals = true;
+                defaultedList.add(stacks.get(i).setCustomName(localized));
+            }
+        }
+
+        if (notEquals) {
+            return new InventoryS2CPacket(accessor.getSync(), defaultedList);
+        }
+
 
         return packet;
     }
