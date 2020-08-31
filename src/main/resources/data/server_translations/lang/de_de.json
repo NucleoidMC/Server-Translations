@@ -19,5 +19,7 @@
   "text.translated_server.new.datapack": "Neues Datenpaket %s gefunden, wird automatisch geladen",
   "text.translated_server.force": "Keine Datenpakete ausgewählt, erzwinge Vanilla",
   "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): Alle Chunks wurden abgespeichert",
-  "text.translated_server.progress.old": "Einstiegsbereich wird vorbereitet: %s%"
+  "text.translated_server.progress.old": "Einstiegsbereich wird vorbereitet: %s%",
+
+  "text.translated_server.language.set": "Language set to %1$s: %2$s (%3$s)"
 }

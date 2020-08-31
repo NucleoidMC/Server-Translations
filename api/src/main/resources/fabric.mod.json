@@ -13,9 +13,7 @@
   "contact": {},
   "license": "MIT",
   "environment": "server",
-  "entrypoints": {
-    "main": ["fr.catcore.server.translations.api.ServerTranslationsAPI"]
-  },
+  "entrypoints": {},
   "depends": {
     "minecraft": ">=1.16",
     "fabricloader": ">=0.9.0+build.204",

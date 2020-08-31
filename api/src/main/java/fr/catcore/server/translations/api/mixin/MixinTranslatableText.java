@@ -21,6 +21,10 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
     @Shadow
     protected abstract void updateTranslations();
 
+    @Shadow @Final private String key;
+
+    @Shadow public abstract TranslatableText copy();
+
     @Override
     public Text asLocalizedFor(LocalizationTarget target) {
         LocalizationTarget lastTarget = this.getTarget();
@@ -30,7 +34,9 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
             this.updateTranslations();
 
             MutableText literal = this.selfAsLiteral(target);
-
+            if (literal instanceof LiteralText && this.key.equals(literal.getString())) {
+                literal = this.copy();
+            }
             for (Text sibling : this.getSiblings()) {
                 sibling = LocalizableText.asLocalizedFor(sibling, target);
                 if (literal == null) {

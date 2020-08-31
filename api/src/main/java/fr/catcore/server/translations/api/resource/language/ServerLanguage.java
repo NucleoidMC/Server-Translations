@@ -32,10 +32,6 @@ public class ServerLanguage extends Language {
     @Override
     public String get(String key) {
         String value = this.map.get(key);
-        if (value == null) {
-            ServerLanguage system = ServerLanguageManager.INSTANCE.getSystemLanguage();
-            value = system.map.get(key);
-        }
 
         return value != null ? value : key;
     }

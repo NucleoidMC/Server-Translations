@@ -4,9 +4,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloadListener;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 import net.minecraft.util.profiler.Profiler;
@@ -20,6 +24,9 @@ import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public class ServerLanguageManager implements ResourceReloadListener {
+
+    private static final JsonParser PARSER = new JsonParser();
+
     public static final ServerLanguageDefinition DEFAULT = new ServerLanguageDefinition("en_us", "US", "English", false);
     public static final ServerLanguageManager INSTANCE = new ServerLanguageManager();
 
@@ -33,11 +40,14 @@ public class ServerLanguageManager implements ResourceReloadListener {
     private ServerLanguage systemLanguage;
 
     private static final List<TranslationsReloadListener> RELOAD_START_LISTENERS = new ArrayList<>();
-    private static final List<TranslationsReloadListener> RELOAD_STOP_LISTENERS = new ArrayList<>();
+
+    private static List<String> VANILLA_KEYS;
 
     private ServerLanguageManager() {
+        VANILLA_KEYS = new ArrayList<>();
         this.systemLanguage = this.createLanguage(DEFAULT);
         this.addTranslations(DEFAULT, ServerLanguageManager::loadDefaultLanguage);
+        this.getMinecraftLanguageList();
     }
 
     private static LanguageMap loadDefaultLanguage() {
@@ -49,7 +59,31 @@ public class ServerLanguageManager implements ResourceReloadListener {
             LOGGER.warn("Failed to load default langage", e);
         }
 
+        for (Map.Entry<String, String> entry : translations.entrySet()) {
+            VANILLA_KEYS.add(entry.getKey());
+        }
         return translations;
+    }
+
+    private void getMinecraftLanguageList() {
+        Map<String, ServerLanguageDefinition> languageDefinitions = new HashMap<>();
+        try(BufferedReader read = new BufferedReader(new InputStreamReader(ServerLanguage.class.getResourceAsStream("/minecraft_languages.json")))) {
+            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject().getAsJsonObject("language");
+
+            for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                ServerLanguageDefinition definition = ServerLanguageDefinition.parse(entry.getKey(), (JsonObject) entry.getValue());
+                languageDefinitions.putIfAbsent(definition.getCode(), definition);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (ServerLanguageDefinition language : languageDefinitions.values()) {
+            LanguageMap map = new LanguageMap();
+            if (language != null) {
+                this.addTranslations(language, () -> map);
+            }
+        }
     }
 
     public void addTranslations(ServerLanguageDefinition definition, LanguageMap map) {
@@ -126,10 +160,6 @@ public class ServerLanguageManager implements ResourceReloadListener {
         RELOAD_START_LISTENERS.add(reloadListener);
     }
 
-    public void registerReloadStopListener(TranslationsReloadListener reloadListener) {
-        RELOAD_STOP_LISTENERS.add(reloadListener);
-    }
-
     @Override
     public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
         CompletableFuture<Map<Identifier, LanguageMap>> completableFuture = CompletableFuture.supplyAsync(() -> {
@@ -172,16 +202,17 @@ public class ServerLanguageManager implements ResourceReloadListener {
                 ServerLanguage serverLanguage1 = this.getLanguage(serverLanguageDefinition.getCode());
                 LanguageMap map1 = new LanguageMap();
                 for (Map.Entry<String, String> entry : serverLanguage.getEntryList()) {
-                    if (!serverLanguage1.hasTranslation(entry.getKey())) map1.put(entry.getKey(), entry.getValue());
+                    if (!serverLanguage1.hasTranslation(entry.getKey())) {
+                        if (!VANILLA_KEYS.contains(entry.getKey())) {
+                            System.out.println(VANILLA_KEYS.contains(entry.getKey()));
+                            map1.put(entry.getKey(), entry.getValue());
+                        }
+                    }
                 }
                 this.addTranslations(serverLanguageDefinition, () -> map1);
             }
-            if (RELOAD_STOP_LISTENERS.isEmpty()) {
-                int keyNumber = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyNumber();
-                LOGGER.info(String.format("Loaded %s translation keys", keyNumber));
-            } else {
-                RELOAD_STOP_LISTENERS.forEach(TranslationsReloadListener::reload);
-            }
+            int keyNumber = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyNumber();
+            LOGGER.info(new TranslatableText("text.translated_server.loaded.translation_key", String.valueOf(keyNumber)).getString());
         });
         return completableFuture1;
     }

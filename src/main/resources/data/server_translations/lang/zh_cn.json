@@ -19,5 +19,7 @@
   "text.translated_server.new.datapack": "发现了新的数据包 %s, 正在自动加载它",
   "text.translated_server.force": "没有数据包被选用, 已强制使用原版",
   "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): 所有区块已被保存",
-  "text.translated_server.progress.old": "正在准备出生点区域: %s%"
+  "text.translated_server.progress.old": "正在准备出生点区域: %s%",
+
+  "text.translated_server.language.set": "Language set to %1$s: %2$s (%3$s)"
 }

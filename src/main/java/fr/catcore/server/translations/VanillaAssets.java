@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.api;
+package fr.catcore.server.translations;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

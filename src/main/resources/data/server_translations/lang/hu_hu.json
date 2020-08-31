@@ -19,5 +19,7 @@
   "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): All chunks are saved",
   "text.translated_server.preparing.dimension.old": "Preparing start region for level %s",
   "text.translated_server.done.old": "Done (%s)! For help, type \"help\" or \"?\"",
-  "text.translated_server.progress.old": "Preparing spawn area: %s%"
+  "text.translated_server.progress.old": "Preparing spawn area: %s%",
+
+  "text.translated_server.language.set": "Language set to %1$s: %2$s (%3$s)"
 }

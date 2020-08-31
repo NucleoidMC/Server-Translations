@@ -19,5 +19,7 @@
 "text.translated_server.new.datapack": "Znaleziono nową paczkę danych %s, ładuję ją automatycznie",
 "text.translated_server.force": "Nie znaleziono paczek danych, używam Vanilli",
 "text.translated_server.saved": "ThreadedAnvilChunkStorage (%s): Wszystkie chunki zostały zapisane",
-"text.translated_server.progress.old": "Przygotowuję teren spawnu: %s%"
+"text.translated_server.progress.old": "Przygotowuję teren spawnu: %s%",
+
+"text.translated_server.language.set": "Language set to %1$s: %2$s (%3$s)"
 }

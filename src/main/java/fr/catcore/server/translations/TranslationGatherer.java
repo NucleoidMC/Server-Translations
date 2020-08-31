@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fr.catcore.server.translations.api.VanillaAssets;
 import fr.catcore.server.translations.api.resource.language.LanguageMap;
 import fr.catcore.server.translations.api.resource.language.LanguageReader;
 import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
@@ -40,29 +39,55 @@ public class TranslationGatherer {
     public static void init() {
         try {
             VanillaAssets assets = VanillaAssets.get();
-            Map<String, ServerLanguageDefinition> languages = loadLanguageDefinitions(assets);
+            Iterable<ServerLanguageDefinition> languages = ServerLanguageManager.INSTANCE.getAllLanguages();
+            for (ServerLanguageDefinition language : languages) {
+                Supplier<LanguageMap> supplier = () -> loadVanillaLanguage(assets, language);
+                ServerLanguageManager.INSTANCE.addTranslations(language, supplier);
+            }
             getModTranslationFromGithub(languages);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static Map<String, ServerLanguageDefinition> loadLanguageDefinitions(VanillaAssets assets) throws IOException {
-        Map<String, ServerLanguageDefinition> languageDefinitions = new HashMap<>();
+    private static LanguageMap loadVanillaLanguage(VanillaAssets assets, ServerLanguageDefinition language) {
+        try {
+            ModContainer vanilla = FabricLoader.getInstance().getModContainer("minecraft").get();
+            SemanticVersion minecraftVersion = SemanticVersion.parse(vanilla.getMetadata().getVersion().getFriendlyString());
 
-        try (BufferedReader read = new BufferedReader(new InputStreamReader(assets.openStream("pack.mcmeta")))) {
-            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject().getAsJsonObject("language");
+            if (minecraftVersion.compareTo(SemanticVersion.parse("1.13-Snapshot.17.48.a")) >= 0) {
+                InputStream stream;
+                if (ServerLanguageManager.DEFAULT.equals(language)) {
+                    stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.json");
+                } else {
+                    stream = assets.openStream("minecraft/lang/" + language.getCode() + ".json");
+                }
+                return LanguageReader.read(stream);
+            } else {
+                InputStream stream;
+                if (minecraftVersion.compareTo(SemanticVersion.parse("1.11-Snapshot.16.32.a")) >= 0) {
+                    if (ServerLanguageManager.DEFAULT.equals(language)) {
+                        stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
+                    } else {
+                        stream = assets.openStream("minecraft/lang/" + language.getCode() + ".lang");
+                    }
+                } else {
+                    if (ServerLanguageManager.DEFAULT.equals(language)) {
+                        stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
+                    } else {
+                        stream = assets.openStream("minecraft/lang/" + language.getCode().split("_")[0] + "_" + language.getCode().split("_")[1].toUpperCase(Locale.ROOT) + ".lang");
+                    }
+                }
 
-            for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                ServerLanguageDefinition definition = ServerLanguageDefinition.parse(entry.getKey(), (JsonObject) entry.getValue());
-                languageDefinitions.putIfAbsent(definition.getCode(), definition);
+                return LanguageReader.readLegacy(stream);
             }
+        } catch (VersionParsingException | IOException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        return languageDefinitions;
     }
 
-    private static void getModTranslationFromGithub(Map<String, ServerLanguageDefinition> languages) {
+    private static void getModTranslationFromGithub(Iterable<ServerLanguageDefinition> languages) {
         try (BufferedReader read = new BufferedReader(new InputStreamReader(LANGUAGE_LIST.openStream()))) {
             JsonObject jsonObject = PARSER.parse(read).getAsJsonObject();
             JsonArray languageArray = jsonObject.getAsJsonArray("languages");
@@ -73,7 +98,12 @@ public class TranslationGatherer {
                 String code = entry.getAsString();
                 URL languageURL = getLanguageURL(code);
                 if (languageURL == null) continue;
-                ServerLanguageManager.INSTANCE.addTranslations(languages.get(code), LanguageReader.read(languageURL.openStream()));
+                for (ServerLanguageDefinition languageDefinition : languages) {
+                    if (languageDefinition.getCode().equals(code)) {
+                        ServerLanguageManager.INSTANCE.addTranslations(languageDefinition, LanguageReader.read(languageURL.openStream()));
+                        break;
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -21,6 +21,5 @@
   "text.translated_server.preparing.dimension.old": "Préparation de la zone de départ pour le niveau %s",
   "text.translated_server.progress.old": "Préparation de la zone d'apparition: %s%",
 
-  "text.translated_server.loaded.translation_key": "%s clées de traduction chargées",
   "text.translated_server.language.set": "La langue utilisée est %1$s: %2$s (%3$s)"
 }
