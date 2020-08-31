@@ -204,7 +204,6 @@ public class ServerLanguageManager implements ResourceReloadListener {
                 for (Map.Entry<String, String> entry : serverLanguage.getEntryList()) {
                     if (!serverLanguage1.hasTranslation(entry.getKey())) {
                         if (!VANILLA_KEYS.contains(entry.getKey())) {
-                            System.out.println(VANILLA_KEYS.contains(entry.getKey()));
                             map1.put(entry.getKey(), entry.getValue());
                         }
                     }
