@@ -80,9 +80,7 @@ public class ServerLanguageManager implements ResourceReloadListener {
 
         for (ServerLanguageDefinition language : languageDefinitions.values()) {
             LanguageMap map = new LanguageMap();
-            if (language != null) {
-                this.addTranslations(language, () -> map);
-            }
+            this.addTranslations(language, () -> map);
         }
     }
 
