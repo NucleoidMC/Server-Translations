@@ -34,9 +34,6 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
             this.updateTranslations();
 
             MutableText literal = this.selfAsLiteral(target);
-            if (literal instanceof LiteralText && this.key.equals(literal.getString())) {
-                literal = this.copy();
-            }
             for (Text sibling : this.getSiblings()) {
                 sibling = LocalizableText.asLocalizedFor(sibling, target);
                 if (literal == null) {
@@ -72,6 +69,11 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
                 literal = text.shallowCopy();
             } else {
                 literal = literal.append(text);
+            }
+        }
+        if (literal != null) {
+            if (literal instanceof LiteralText && this.key.equals(literal.getString())) {
+                literal = this.copy();
             }
         }
 
