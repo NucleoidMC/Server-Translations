@@ -17,6 +17,9 @@
     "MixinTranslatableText",
     "TitleS2CPacketAccessor"
   ],
+  "client": [
+    "client.MixinLanguage"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

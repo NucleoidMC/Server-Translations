@@ -12,7 +12,7 @@
   ],
   "contact": {},
   "license": "MIT",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {},
   "depends": {
     "minecraft": ">=1.16",
