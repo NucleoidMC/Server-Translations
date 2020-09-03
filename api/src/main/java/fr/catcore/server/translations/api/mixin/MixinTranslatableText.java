@@ -16,14 +16,14 @@ import java.util.List;
 public abstract class MixinTranslatableText implements LocalizableText, Text {
     @Shadow
     @Final
-    public List<StringVisitable> translations;
+    private List<StringVisitable> translations;
+
+    @Shadow
+    @Final
+    private String key;
 
     @Shadow
     protected abstract void updateTranslations();
-
-    @Shadow @Final private String key;
-
-    @Shadow public abstract TranslatableText copy();
 
     @Override
     public Text asLocalizedFor(LocalizationTarget target) {
@@ -59,7 +59,10 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
 
         for (StringVisitable entry : this.translations) {
             Text text;
-            if (entry instanceof Text) {
+            if (entry.getString().equals(this.key)) {
+                // if we fail to translate this key, we'll just try send it to be translated on the client
+                text = this;
+            } else if (entry instanceof Text) {
                 text = LocalizableText.asLocalizedFor((Text) entry, target);
             } else {
                 text = new LiteralText(entry.getString());
@@ -71,12 +74,7 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
                 literal = literal.append(text);
             }
         }
-        if (literal != null) {
-            if (literal instanceof LiteralText && this.key.equals(literal.getString())) {
-                literal = this.copy();
-            }
-        }
 
-        return literal == null ? null : literal.setStyle(this.getStyle());
+        return literal != null ? literal.setStyle(this.getStyle()) : null;
     }
 }

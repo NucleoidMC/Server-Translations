@@ -15,7 +15,7 @@ public final class LanguageMap {
     }
 
     public void put(String key, String translation) {
-        this.map.putIfAbsent(key, translation);
+        this.map.put(key, translation);
     }
 
     public void putAll(LanguageMap map) {
@@ -25,6 +25,10 @@ public final class LanguageMap {
     }
 
     public String get(String key) {
+        return this.map.getOrDefault(key, key);
+    }
+
+    public String getOrNull(String key) {
         return this.map.get(key);
     }
 

@@ -42,9 +42,9 @@ public class TranslationGatherer {
             Iterable<ServerLanguageDefinition> languages = ServerLanguageManager.INSTANCE.getAllLanguages();
             for (ServerLanguageDefinition language : languages) {
                 Supplier<LanguageMap> supplier = () -> loadVanillaLanguage(assets, language);
-                ServerLanguageManager.INSTANCE.addTranslations(language, supplier);
+                ServerLanguageManager.INSTANCE.addTranslations(language.getCode(), supplier);
             }
-            getModTranslationFromGithub(languages);
+            getModTranslationFromGithub();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,23 +87,24 @@ public class TranslationGatherer {
         }
     }
 
-    private static void getModTranslationFromGithub(Iterable<ServerLanguageDefinition> languages) {
+    private static void getModTranslationFromGithub() {
         try (BufferedReader read = new BufferedReader(new InputStreamReader(LANGUAGE_LIST.openStream()))) {
             JsonObject jsonObject = PARSER.parse(read).getAsJsonObject();
             JsonArray languageArray = jsonObject.getAsJsonArray("languages");
 
-            for (Iterator<JsonElement> it = languageArray.iterator(); it.hasNext(); ) {
-                JsonElement entry = it.next();
-
+            for (JsonElement entry : languageArray) {
                 String code = entry.getAsString();
                 URL languageURL = getLanguageURL(code);
                 if (languageURL == null) continue;
-                for (ServerLanguageDefinition languageDefinition : languages) {
-                    if (languageDefinition.getCode().equals(code)) {
-                        ServerLanguageManager.INSTANCE.addTranslations(languageDefinition, LanguageReader.read(languageURL.openStream()));
-                        break;
+
+                ServerLanguageManager.INSTANCE.addTranslations(code, () -> {
+                    try {
+                        return LanguageReader.read(languageURL.openStream());
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                }
+                    return null;
+                });
             }
         } catch (IOException e) {
             e.printStackTrace();

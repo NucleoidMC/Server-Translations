@@ -16,5 +16,16 @@ publishing {
   }
 
   repositories {
+    if (project.hasProperty("mavenUrl")) {
+      maven {
+        credentials {
+          username project.mavenUsername ?: ""
+          password project.mavenPassword ?: ""
+        }
+        url project.mavenUrl ?: ""
+      }
+    } else {
+      mavenLocal()
+    }
   }
 }

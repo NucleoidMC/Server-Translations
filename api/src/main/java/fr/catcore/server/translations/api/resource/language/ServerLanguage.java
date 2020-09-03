@@ -31,9 +31,7 @@ public class ServerLanguage extends Language {
 
     @Override
     public String get(String key) {
-        String value = this.map.get(key);
-
-        return value != null ? value : key;
+        return this.map.get(key);
     }
 
     @Override
@@ -64,11 +62,15 @@ public class ServerLanguage extends Language {
         };
     }
 
-    public int getKeyNumber() {
+    public int getKeyCount() {
         return this.map.entrySet().size();
     }
 
-    public Set<Map.Entry<String, String>> getEntryList() {
+    public LanguageMap getMap() {
+        return this.map;
+    }
+
+    public Set<Map.Entry<String, String>> entrySet() {
         return this.map.entrySet();
     }
 }

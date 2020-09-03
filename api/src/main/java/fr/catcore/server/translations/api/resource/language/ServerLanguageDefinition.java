@@ -1,10 +1,17 @@
 package fr.catcore.server.translations.api.resource.language;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.util.Locale;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class ServerLanguageDefinition implements Comparable<ServerLanguageDefinition> {
+    private static final JsonParser PARSER = new JsonParser();
+
     private final String code;
     private final String name;
     private final String region;
@@ -19,6 +26,21 @@ public class ServerLanguageDefinition implements Comparable<ServerLanguageDefini
 
     public String getCode() {
         return this.code;
+    }
+
+    public static List<ServerLanguageDefinition> loadLanguageDefinitions() throws IOException {
+        List<ServerLanguageDefinition> languageDefinitions = new ArrayList<>();
+
+        try (BufferedReader read = new BufferedReader(new InputStreamReader(ServerLanguage.class.getResourceAsStream("/minecraft_languages.json")))) {
+            JsonObject root = PARSER.parse(read).getAsJsonObject().getAsJsonObject("language");
+
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+                ServerLanguageDefinition definition = ServerLanguageDefinition.parse(entry.getKey(), (JsonObject) entry.getValue());
+                languageDefinitions.add(definition);
+            }
+        }
+
+        return languageDefinitions;
     }
 
     public static ServerLanguageDefinition parse(String code, JsonObject jsonObject) {
