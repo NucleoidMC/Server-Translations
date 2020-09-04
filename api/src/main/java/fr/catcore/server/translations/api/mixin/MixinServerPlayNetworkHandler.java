@@ -108,21 +108,23 @@ public class MixinServerPlayNetworkHandler {
         InventoryS2CPacketAccessor accessor = (InventoryS2CPacketAccessor) packet;
 
         boolean notEquals = false;
+
         List<ItemStack> stacks = accessor.getStacks();
-        DefaultedList<ItemStack> defaultedList = DefaultedList.of();
-        for (int i = 0; i < stacks.size(); i++) {
-            Text name = stacks.get(i).getName();
+        DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(stacks.size(), ItemStack.EMPTY);
+        for (ItemStack stack : stacks) {
+            Text name = stack.getName();
             Text localized = this.asLocalized(name);
             if (name != localized) {
                 notEquals = true;
-                defaultedList.add(stacks.get(i).setCustomName(localized));
+                defaultedList.add(stack.setCustomName(localized));
+            } else {
+                defaultedList.add(stack);
             }
         }
 
         if (notEquals) {
             return new InventoryS2CPacket(accessor.getSync(), defaultedList);
         }
-
 
         return packet;
     }
