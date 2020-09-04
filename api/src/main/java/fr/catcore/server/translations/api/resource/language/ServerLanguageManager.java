@@ -145,7 +145,7 @@ public class ServerLanguageManager implements ResourceReloadListener {
 
     @Override
     public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
-        CompletableFuture<Map<String, Supplier<LanguageMap>>> future = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<Multimap<String, Supplier<LanguageMap>>> future = CompletableFuture.supplyAsync(() -> {
             this.clearTranslations();
             this.addTranslations(DEFAULT_CODE, ServerLanguageManager::loadDefaultLanguage);
             this.reloadListeners.forEach(TranslationsReloadListener::reload);
@@ -155,7 +155,7 @@ public class ServerLanguageManager implements ResourceReloadListener {
 
         return future.thenCompose(synchronizer::whenPrepared)
                 .thenAcceptAsync(v -> {
-                    Map<String, Supplier<LanguageMap>> languageSuppliers = future.join();
+                    Multimap<String, Supplier<LanguageMap>> languageSuppliers = future.join();
                     languageSuppliers.forEach(this::addTranslations);
 
                     int keyCount = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyCount();
@@ -163,8 +163,8 @@ public class ServerLanguageManager implements ResourceReloadListener {
                 });
     }
 
-    private Map<String, Supplier<LanguageMap>> collectLanguageSuppliers(ResourceManager manager) {
-        Map<String, Supplier<LanguageMap>> languageSuppliers = new HashMap<>();
+    private Multimap<String, Supplier<LanguageMap>> collectLanguageSuppliers(ResourceManager manager) {
+        Multimap<String, Supplier<LanguageMap>> languageSuppliers = HashMultimap.create();
 
         for (Identifier path : manager.findResources("lang", path -> path.endsWith(".json"))) {
             String code = this.getLanguageCodeForPath(path);
