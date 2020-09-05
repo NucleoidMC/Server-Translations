@@ -8,7 +8,7 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "1.3.5"
+    static def baseVersion = "1.3.7"
     static def mcVersion = "1.16.2"
     static def yarnVersion = "+build.21"
 }

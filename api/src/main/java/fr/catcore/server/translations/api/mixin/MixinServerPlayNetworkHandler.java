@@ -107,26 +107,34 @@ public class MixinServerPlayNetworkHandler {
     private Packet<?> modifyInventory(Packet<?> packet) {
         InventoryS2CPacketAccessor accessor = (InventoryS2CPacketAccessor) packet;
 
-        boolean notEquals = false;
-
         List<ItemStack> stacks = accessor.getStacks();
+        if (!this.shouldLocalizeInventory(stacks)) {
+            return packet;
+        }
+
         DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(stacks.size(), ItemStack.EMPTY);
+        for (int i = 0; i < stacks.size(); i++) {
+            ItemStack stack = stacks.get(i);
+            Text name = stack.getName();
+            Text localized = this.asLocalized(name);
+            if (name != localized) {
+                stack.setCustomName(localized);
+            }
+            defaultedList.set(i, stack);
+        }
+
+        return new InventoryS2CPacket(accessor.getSync(), defaultedList);
+    }
+
+    private boolean shouldLocalizeInventory(List<ItemStack> stacks) {
         for (ItemStack stack : stacks) {
             Text name = stack.getName();
             Text localized = this.asLocalized(name);
             if (name != localized) {
-                notEquals = true;
-                defaultedList.add(stack.setCustomName(localized));
-            } else {
-                defaultedList.add(stack);
+                return true;
             }
         }
-
-        if (notEquals) {
-            return new InventoryS2CPacket(accessor.getSync(), defaultedList);
-        }
-
-        return packet;
+        return false;
     }
 
     private Text asLocalized(Text message) {
