@@ -4,18 +4,18 @@
   "package": "fr.catcore.server.translations.api.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "BossBarS2CPacketAccessor",
-    "ClientSettingsC2SPacketAccessor",
-    "GameMessageS2CPacketAccessor",
-    "InventoryS2CPacketAccessor",
-    "MixinBaseText",
     "MixinLanguage",
     "MixinServerPlayerEntity",
-    "MixinServerPlayNetworkHandler",
     "MixinServerResourceManager",
-    "MixinTextSerializer",
-    "MixinTranslatableText",
-    "TitleS2CPacketAccessor"
+    "packet.BossBarS2CPacketAccessor",
+    "packet.ClientSettingsC2SPacketAccessor",
+    "packet.GameMessageS2CPacketAccessor",
+    "packet.InventoryS2CPacketAccessor",
+    "packet.MixinServerPlayNetworkHandler",
+    "packet.TitleS2CPacketAccessor",
+    "text.MixinBaseText",
+    "text.MixinTextSerializer",
+    "text.MixinTranslatableText"
   ],
   "client": [
     "client.MixinLanguage"

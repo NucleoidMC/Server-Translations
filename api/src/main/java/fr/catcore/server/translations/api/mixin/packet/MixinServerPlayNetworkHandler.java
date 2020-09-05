@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.api.mixin;
+package fr.catcore.server.translations.api.mixin.packet;
 
 import fr.catcore.server.translations.api.LocalizableText;
 import fr.catcore.server.translations.api.LocalizationTarget;

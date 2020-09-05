@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.api.mixin;
+package fr.catcore.server.translations.api.mixin.packet;
 
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.text.Text;

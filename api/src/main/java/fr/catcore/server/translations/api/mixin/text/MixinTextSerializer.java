@@ -1,4 +1,4 @@
-package fr.catcore.server.translations.api.mixin;
+package fr.catcore.server.translations.api.mixin.text;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
