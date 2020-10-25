@@ -104,6 +104,8 @@ public class MixinServerPlayNetworkHandler {
         return packet;
     }
 
+    // TODO: modify writeItemStack logic and track target player:
+    //       it's not enough to just modify the inventory packet
     private Packet<?> modifyInventory(Packet<?> packet) {
         InventoryS2CPacketAccessor accessor = (InventoryS2CPacketAccessor) packet;
 

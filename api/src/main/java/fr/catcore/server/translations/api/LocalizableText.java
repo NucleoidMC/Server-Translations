@@ -3,6 +3,7 @@ package fr.catcore.server.translations.api;
 import fr.catcore.server.translations.api.resource.language.ServerLanguageManager;
 import fr.catcore.server.translations.api.text.LocalizedLiteralBuilder;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Language;
@@ -27,6 +28,11 @@ public interface LocalizableText extends Text {
     }
 
     default Text asLocalizedFor(LocalizationTarget target) {
+        // early-exit in simplest cases where we're using a single LiteralText
+        if (this instanceof LiteralText && this.getSiblings().isEmpty()) {
+            return this;
+        }
+
         LocalizedLiteralBuilder builder = new LocalizedLiteralBuilder();
         this.visitLocalized(builder, target, this.getStyle());
 
