@@ -9,19 +9,7 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(BaseText.class)
-public abstract class MixinBaseText implements LocalizableText {
-    private LocalizationTarget target;
-
-    @Override
-    public void setTarget(LocalizationTarget target) {
-        this.target = target;
-    }
-
-    @Override
-    public LocalizationTarget getTarget() {
-        return this.target;
-    }
-
+public abstract class BaseTextMixin implements LocalizableText {
     @Override
     public Text asLocalizedFor(LocalizationTarget target) {
         return this;

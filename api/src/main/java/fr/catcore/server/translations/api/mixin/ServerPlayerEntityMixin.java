@@ -5,13 +5,14 @@ import fr.catcore.server.translations.api.mixin.packet.ClientSettingsC2SPacketAc
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public class MixinServerPlayerEntity implements LocalizationTarget {
-
+public class ServerPlayerEntityMixin implements LocalizationTarget {
+    @Unique
     private String language;
 
     @Inject(at = @At("RETURN"), method = "setClientSettings")

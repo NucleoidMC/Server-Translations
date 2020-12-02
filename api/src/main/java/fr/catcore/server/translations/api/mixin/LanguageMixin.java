@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Language.class)
-public class MixinLanguage {
+public class LanguageMixin {
     @Shadow
     private static Language instance;
 

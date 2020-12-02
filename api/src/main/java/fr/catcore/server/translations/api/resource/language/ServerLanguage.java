@@ -48,7 +48,7 @@ public class ServerLanguage extends Language {
         this.map.putAll(map);
     }
 
-    protected void clearTranslations() {
+    public void clearTranslations() {
         this.map.clear();
     }
 

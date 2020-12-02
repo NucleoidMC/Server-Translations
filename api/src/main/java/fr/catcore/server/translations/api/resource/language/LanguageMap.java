@@ -1,5 +1,7 @@
 package fr.catcore.server.translations.api.resource.language;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +30,7 @@ public final class LanguageMap {
         return this.map.getOrDefault(key, key);
     }
 
+    @Nullable
     public String getOrNull(String key) {
         return this.map.get(key);
     }

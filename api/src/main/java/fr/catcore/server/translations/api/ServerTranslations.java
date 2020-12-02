@@ -1,8 +1,10 @@
-package fr.catcore.server.translations.api.resource.language;
+package fr.catcore.server.translations.api;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import fr.catcore.server.translations.api.resource.language.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloadListener;
@@ -12,6 +14,8 @@ import net.minecraft.util.Language;
 import net.minecraft.util.profiler.Profiler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,26 +24,26 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public class ServerLanguageManager implements ResourceReloadListener {
+public final class ServerTranslations implements ResourceReloadListener {
     public static final String DEFAULT_CODE = "en_us";
     public static final ServerLanguageDefinition DEFAULT = new ServerLanguageDefinition(DEFAULT_CODE, "US", "English", false);
 
-    private static final Logger LOGGER = LogManager.getLogger(ServerLanguageManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(ServerTranslations.class);
 
-    public static final ServerLanguageManager INSTANCE = new ServerLanguageManager();
+    public static final ServerTranslations INSTANCE = new ServerTranslations();
 
     private final Multimap<String, Supplier<LanguageMap>> languageSuppliers = HashMultimap.create();
 
-    private final SortedMap<String, ServerLanguageDefinition> supportedLanguages = Maps.newTreeMap();
-    private final Map<String, ServerLanguage> languages = new HashMap<>();
+    private final SortedMap<String, ServerLanguageDefinition> supportedLanguages = new Object2ObjectRBTreeMap<>();
+    private final Map<String, ServerLanguage> languages = new Object2ObjectOpenHashMap<>();
 
     private ServerLanguage systemLanguage;
 
     private final List<TranslationsReloadListener> reloadListeners = new ArrayList<>();
 
-    private ServerLanguageManager() {
+    private ServerTranslations() {
         this.loadSupportedLanguages();
-        this.addTranslations(DEFAULT_CODE, ServerLanguageManager::loadDefaultLanguage);
+        this.addTranslations(DEFAULT_CODE, ServerTranslations::loadDefaultLanguage);
 
         this.systemLanguage = this.createLanguage(DEFAULT);
     }
@@ -50,7 +54,7 @@ public class ServerLanguageManager implements ResourceReloadListener {
         try (InputStream input = Language.class.getResourceAsStream("/assets/minecraft/lang/" + DEFAULT.getCode() + ".json")) {
             Language.load(input, translations::put);
         } catch (IOException e) {
-            LOGGER.warn("Failed to load default langage", e);
+            LOGGER.warn("Failed to load default language", e);
         }
 
         return translations;
@@ -84,7 +88,13 @@ public class ServerLanguageManager implements ResourceReloadListener {
         this.languages.values().forEach(ServerLanguage::clearTranslations);
     }
 
-    public ServerLanguage getLanguage(String code) {
+    @NotNull
+    public ServerLanguage getLanguage(@Nullable LocalizationTarget target) {
+        return this.getLanguage(target != null ? target.getLanguageCode() : null);
+    }
+
+    @NotNull
+    public ServerLanguage getLanguage(@Nullable String code) {
         if (code == null) {
             return this.systemLanguage;
         }
@@ -100,6 +110,14 @@ public class ServerLanguageManager implements ResourceReloadListener {
         } else {
             return this.systemLanguage;
         }
+    }
+
+    @NotNull
+    public ServerLanguageDefinition getLanguageDefinition(@Nullable String code) {
+        if (code == null) {
+            return this.systemLanguage.getDefinition();
+        }
+        return this.supportedLanguages.getOrDefault(code, this.systemLanguage.getDefinition());
     }
 
     private ServerLanguage createLanguage(ServerLanguageDefinition definition) {
@@ -147,7 +165,7 @@ public class ServerLanguageManager implements ResourceReloadListener {
     public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
         CompletableFuture<Multimap<String, Supplier<LanguageMap>>> future = CompletableFuture.supplyAsync(() -> {
             this.clearTranslations();
-            this.addTranslations(DEFAULT_CODE, ServerLanguageManager::loadDefaultLanguage);
+            this.addTranslations(DEFAULT_CODE, ServerTranslations::loadDefaultLanguage);
             this.reloadListeners.forEach(TranslationsReloadListener::reload);
 
             return this.collectLanguageSuppliers(manager);
@@ -158,7 +176,7 @@ public class ServerLanguageManager implements ResourceReloadListener {
                     Multimap<String, Supplier<LanguageMap>> languageSuppliers = future.join();
                     languageSuppliers.forEach(this::addTranslations);
 
-                    int keyCount = ServerLanguageManager.INSTANCE.getSystemLanguage().getKeyCount();
+                    int keyCount = ServerTranslations.INSTANCE.getSystemLanguage().getKeyCount();
                     LOGGER.info(new TranslatableText("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
                 });
     }

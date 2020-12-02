@@ -2,6 +2,7 @@ package fr.catcore.server.translations.api.mixin.text;
 
 import fr.catcore.server.translations.api.LocalizableText;
 import fr.catcore.server.translations.api.LocalizationTarget;
+import fr.catcore.server.translations.api.ServerTranslations;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Style;
@@ -17,25 +18,29 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.List;
 
 @Mixin(TranslatableText.class)
-public abstract class MixinTranslatableText implements LocalizableText, Text {
+public abstract class TranslatableTextMixin implements LocalizableText, Text {
     @Shadow
     @Final
     private List<StringVisitable> translations;
+
+    private LocalizationTarget target;
 
     @Shadow
     protected abstract void updateTranslations();
 
     @Redirect(method = "updateTranslations", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Language;getInstance()Lnet/minecraft/util/Language;"))
     private Language getLanguage() {
-        return this.getTargetLanguage();
+        if (this.target != null) {
+            return this.target.getLanguage();
+        } else {
+            return ServerTranslations.INSTANCE.getSystemLanguage();
+        }
     }
 
     @Override
     public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
-        LocalizationTarget lastTarget = this.getTarget();
-
         try {
-            this.setTarget(target);
+            this.target = target;
             this.updateTranslations();
 
             for (StringVisitable translation : this.translations) {
@@ -46,7 +51,7 @@ public abstract class MixinTranslatableText implements LocalizableText, Text {
                 }
             }
         } finally {
-            this.setTarget(lastTarget);
+            this.target = null;
         }
     }
 }

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(Language.class)
-public class MixinLanguage {
+public class LanguageMixin {
     @ModifyVariable(method = "setInstance", at = @At("HEAD"), argsOnly = true)
     private static Language modifyLanguage(Language language) {
         DelegatedLanguage delegated = DelegatedLanguage.INSTANCE;

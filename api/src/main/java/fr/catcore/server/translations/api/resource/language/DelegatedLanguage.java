@@ -1,5 +1,6 @@
 package fr.catcore.server.translations.api.resource.language;
 
+import fr.catcore.server.translations.api.ServerTranslations;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextVisitFactory;
@@ -24,7 +25,7 @@ public final class DelegatedLanguage extends Language {
 
     @Override
     public String get(String key) {
-        String override = ServerLanguageManager.INSTANCE.getSystemLanguage().get(key);
+        String override = ServerTranslations.INSTANCE.getSystemLanguage().get(key);
         if (override != key) {
             return override;
         }
@@ -33,12 +34,12 @@ public final class DelegatedLanguage extends Language {
 
     @Override
     public boolean hasTranslation(String key) {
-        return this.vanilla.hasTranslation(key) || ServerLanguageManager.INSTANCE.getSystemLanguage().hasTranslation(key);
+        return this.vanilla.hasTranslation(key) || ServerTranslations.INSTANCE.getSystemLanguage().hasTranslation(key);
     }
 
     @Override
     public boolean isRightToLeft() {
-        return ServerLanguageManager.INSTANCE.getSystemLanguage().isRightToLeft();
+        return ServerTranslations.INSTANCE.getSystemLanguage().isRightToLeft();
     }
 
     @Override

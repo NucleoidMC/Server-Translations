@@ -14,7 +14,7 @@
   "license": "MIT",
   "environment": "server",
   "entrypoints": {
-    "main": ["fr.catcore.server.translations.ServerTranslations"]
+    "main": ["fr.catcore.server.translations.ServerTranslationsInitializer"]
   },
   "depends": {
     "minecraft": ">=1.16",

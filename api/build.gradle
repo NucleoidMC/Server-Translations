@@ -2,6 +2,16 @@ apply plugin: 'maven-publish'
 
 archivesBaseName = "server-translations-api"
 
+repositories {
+  mavenLocal()
+  maven { url = 'https://maven.gegy.dev/' }
+}
+
+dependencies {
+  modImplementation 'xyz.nucleoid:packet-tweaker:0.1.0'
+  include 'xyz.nucleoid:packet-tweaker:0.1.0'
+}
+
 publishing {
   publications {
     mavenJava(MavenPublication) {
