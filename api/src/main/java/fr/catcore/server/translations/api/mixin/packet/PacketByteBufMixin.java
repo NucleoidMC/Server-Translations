@@ -5,7 +5,10 @@ import fr.catcore.server.translations.api.text.LocalizableText;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,6 +35,12 @@ public class PacketByteBufMixin {
             return buf.writeCompoundTag(tag);
         }
 
+        if (tag != null && tag.contains("display", NbtType.COMPOUND)) {
+            CompoundTag display = tag.getCompound("display");
+            display = this.translateDisplay(display);
+            tag.put("display", display);
+        }
+
         Text name = stack.getItem().getName(stack);
         Text localized = LocalizableText.asLocalizedFor(name, target);
         if (!name.equals(localized)) {
@@ -39,6 +48,26 @@ public class PacketByteBufMixin {
         }
 
         return buf.writeCompoundTag(tag);
+    }
+
+    private CompoundTag translateDisplay(CompoundTag display) {
+        if (display.contains("Name", NbtType.STRING)) {
+            display.putString("Name", this.translateTextJson(display.getString("Name")));
+        }
+
+        if (display.contains("Lore", NbtType.LIST)) {
+            ListTag loreList = display.getList("Lore", NbtType.STRING);
+            for (int i = 0; i < loreList.size(); i++) {
+                loreList.setTag(i, StringTag.of(this.translateTextJson(loreList.getString(i))));
+            }
+        }
+
+        return display;
+    }
+
+    private String translateTextJson(String json) {
+        MutableText text = Text.Serializer.fromJson(json);
+        return Text.Serializer.toJson(text);
     }
 
     @Unique
