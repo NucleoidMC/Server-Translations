@@ -31,7 +31,7 @@ public class PacketByteBufMixin {
     )
     private PacketByteBuf writeItemStackTag(PacketByteBuf buf, CompoundTag tag, ItemStack stack) {
         LocalizationTarget target = LocalizationTarget.forPacket();
-        if (target == null || this.hasCustomName(tag)) {
+        if (target == null) {
             return buf.writeCompoundTag(tag);
         }
 
@@ -41,10 +41,12 @@ public class PacketByteBufMixin {
             tag.put("display", display);
         }
 
-        Text name = stack.getItem().getName(stack);
-        Text localized = LocalizableText.asLocalizedFor(name, target);
-        if (!name.equals(localized)) {
-            tag = this.addNameToTag(tag, localized);
+        if (!this.hasCustomName(tag)) {
+            Text name = stack.getItem().getName(stack);
+            Text localized = LocalizableText.asLocalizedFor(name, target);
+            if (!name.equals(localized)) {
+                tag = this.addNameToTag(tag, localized);
+            }
         }
 
         return buf.writeCompoundTag(tag);
