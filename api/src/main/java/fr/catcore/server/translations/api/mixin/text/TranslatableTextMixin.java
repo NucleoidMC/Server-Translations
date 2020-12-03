@@ -109,7 +109,11 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
         List<StringVisitable> translations = this.buildTranslations(target);
         if (translations == null) {
-            visitor.accept(this.copy().setStyle(this.getStyle()));
+            if (this.getSiblings().isEmpty()) {
+                visitor.accept(this);
+            } else {
+                visitor.accept(this.copy().setStyle(this.getStyle()));
+            }
             return;
         }
 
