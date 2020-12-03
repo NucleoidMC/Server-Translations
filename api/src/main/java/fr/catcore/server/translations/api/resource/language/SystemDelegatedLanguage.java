@@ -25,8 +25,7 @@ public final class SystemDelegatedLanguage extends Language {
 
     @Override
     public String get(String key) {
-        // TODO: for client, this needs to be remote. for server, this needs to be local
-        String override = this.getSystemLanguage().remote.getOrNull(key);
+        String override = this.getSystemLanguage().local.getOrNull(key);
         if (override != null) {
             return override;
         }
