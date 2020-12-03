@@ -1,17 +1,22 @@
 package fr.catcore.server.translations.api.text;
 
-import fr.catcore.server.translations.api.LocalizationTarget;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Style;
 
 import java.util.Optional;
 
 public interface LocalizedTextVisitor {
-    void accept(LocalizationTarget target, Style style, String string);
+    void accept(MutableText text);
 
-    default <T> StringVisitable.Visitor<T> asGeneric(LocalizationTarget target, Style style) {
+    default void acceptLiteral(String string, Style style) {
+        this.accept(new LiteralText(string).setStyle(style));
+    }
+
+    default <T> StringVisitable.Visitor<T> asGeneric(Style style) {
         return string -> {
-            this.accept(target, style, string);
+            this.acceptLiteral(string, style);
             return Optional.empty();
         };
     }

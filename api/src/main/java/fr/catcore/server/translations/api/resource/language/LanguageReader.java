@@ -1,50 +1,82 @@
 package fr.catcore.server.translations.api.resource.language;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import fr.catcore.server.translations.api.ServerTranslations;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Map;
+import java.util.function.Supplier;
 
 public final class LanguageReader {
-    private static final JsonParser PARSER = new JsonParser();
+    public static TranslationMap read(InputStream stream) {
+        TranslationMap map = new TranslationMap();
+        Language.load(stream, map::put);
+        return map;
+    }
 
-    public static LanguageMap read(InputStream stream) throws IOException {
-        try (BufferedReader read = new BufferedReader(new InputStreamReader(stream))) {
-            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject();
-            LanguageMap map = new LanguageMap();
-            for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                map.put(entry.getKey(), entry.getValue().getAsString());
+    public static TranslationMap readLegacy(InputStream input) {
+        TranslationMap map = new TranslationMap();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        reader.lines().forEach(line -> {
+            if (line.startsWith("\n") || line.startsWith("#") || line.startsWith("/")) {
+                return;
             }
-            return map;
+
+            String key = line.split("=")[0];
+            int values = line.split("=").length;
+
+            StringBuilder value = new StringBuilder();
+            for (int i = 1; i < values; i++) {
+                value.append(line.split("=")[i]);
+            }
+
+            map.put(key, value.toString());
+        });
+
+        return map;
+    }
+
+    public static TranslationMap loadVanillaTranslations() {
+        try (InputStream input = Language.class.getResourceAsStream("/assets/minecraft/lang/" + ServerLanguageDefinition.DEFAULT_CODE + ".json")) {
+            return LanguageReader.read(input);
+        } catch (IOException e) {
+            ServerTranslations.LOGGER.warn("Failed to load default language", e);
+            return new TranslationMap();
         }
     }
 
-    public static LanguageMap readLegacy(InputStream input) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
-            LanguageMap map = new LanguageMap();
+    public static Multimap<String, Supplier<TranslationMap>> collectTranslationSuppliers(ResourceManager manager) {
+        Multimap<String, Supplier<TranslationMap>> translationSuppliers = HashMultimap.create();
 
-            reader.lines().forEach(line -> {
-                if (line.startsWith("\n") || line.startsWith("#") || line.startsWith("/")) {
-                    return;
+        for (Identifier path : manager.findResources("lang", path -> path.endsWith(".json"))) {
+            String code = getLanguageCodeForPath(path);
+
+            translationSuppliers.put(code, () -> {
+                TranslationMap map = new TranslationMap();
+                try {
+                    for (Resource resource : manager.getAllResources(path)) {
+                        map.putAll(read(resource.getInputStream()));
+                    }
+                } catch (RuntimeException | IOException e) {
+                    ServerTranslations.LOGGER.warn("Failed to load language resource at {}", path, e);
                 }
-
-                String key = line.split("=")[0];
-                int values = line.split("=").length;
-
-                StringBuilder value = new StringBuilder();
-                for (int a = 1; a < values; a++) {
-                    value.append(line.split("=")[a]);
-                }
-
-                map.put(key, value.toString());
+                return map;
             });
-
-            return map;
         }
+
+        return translationSuppliers;
+    }
+
+    private static String getLanguageCodeForPath(Identifier file) {
+        String path = file.getPath();
+        return path.substring("lang".length() + 1, path.length() - ".json".length());
     }
 }

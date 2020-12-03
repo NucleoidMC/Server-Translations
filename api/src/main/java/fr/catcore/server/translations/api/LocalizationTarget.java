@@ -1,6 +1,6 @@
 package fr.catcore.server.translations.api;
 
-import net.minecraft.util.Language;
+import fr.catcore.server.translations.api.resource.language.ServerLanguage;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
@@ -13,7 +13,7 @@ public interface LocalizationTarget {
 
     String getLanguageCode();
 
-    default Language getLanguage() {
+    default ServerLanguage getLanguage() {
         return ServerTranslations.INSTANCE.getLanguage(this);
     }
 }

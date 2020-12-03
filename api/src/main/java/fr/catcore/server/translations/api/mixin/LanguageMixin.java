@@ -1,6 +1,6 @@
 package fr.catcore.server.translations.api.mixin;
 
-import fr.catcore.server.translations.api.resource.language.DelegatedLanguage;
+import fr.catcore.server.translations.api.resource.language.SystemDelegatedLanguage;
 import net.minecraft.util.Language;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,7 +15,7 @@ public class LanguageMixin {
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void init(CallbackInfo ci) {
-        DelegatedLanguage.INSTANCE.setVanilla(instance);
-        instance = DelegatedLanguage.INSTANCE;
+        SystemDelegatedLanguage.INSTANCE.setVanilla(instance);
+        instance = SystemDelegatedLanguage.INSTANCE;
     }
 }

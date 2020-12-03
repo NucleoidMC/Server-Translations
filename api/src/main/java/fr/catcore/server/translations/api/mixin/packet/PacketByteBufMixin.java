@@ -1,7 +1,7 @@
 package fr.catcore.server.translations.api.mixin.packet;
 
-import fr.catcore.server.translations.api.LocalizableText;
 import fr.catcore.server.translations.api.LocalizationTarget;
+import fr.catcore.server.translations.api.text.LocalizableText;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -51,6 +51,7 @@ public class PacketByteBufMixin {
             tag.put("display", display = new CompoundTag());
         }
 
+        // TODO: attach tag such that we know to strip custom name when receiving an itemstack from the client
         display.putString("Name", Text.Serializer.toJson(name));
 
         return tag;

@@ -1,10 +1,9 @@
-package fr.catcore.server.translations.api;
+package fr.catcore.server.translations.api.text;
 
-import fr.catcore.server.translations.api.text.LocalizedLiteralBuilder;
-import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
-import net.minecraft.text.LiteralText;
+import fr.catcore.server.translations.api.LocalizationTarget;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 public interface LocalizableText extends Text {
     static Text asLocalizedFor(Text text, LocalizationTarget target) {
@@ -26,14 +25,18 @@ public interface LocalizableText extends Text {
             return this;
         }
 
-        LocalizedLiteralBuilder builder = new LocalizedLiteralBuilder();
+        LocalizedTextBuilder builder = new LocalizedTextBuilder();
         this.visitLocalized(builder, target, this.getStyle());
 
         return builder.getResult();
     }
 
     default boolean shouldLocalize() {
-        return !(this instanceof LiteralText && this.getSiblings().isEmpty());
+        return this.shouldLocalizeSelf() || !this.getSiblings().isEmpty();
+    }
+
+    default boolean shouldLocalizeSelf() {
+        return this instanceof TranslatableText;
     }
 
     void visitLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style);

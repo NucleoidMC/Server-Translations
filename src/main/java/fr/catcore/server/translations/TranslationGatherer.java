@@ -4,20 +4,23 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fr.catcore.server.translations.api.resource.language.LanguageMap;
+import fr.catcore.server.translations.api.ServerTranslations;
+import fr.catcore.server.translations.api.resource.language.TranslationMap;
 import fr.catcore.server.translations.api.resource.language.LanguageReader;
 import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
-import fr.catcore.server.translations.api.ServerTranslations;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.util.Language;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 public class TranslationGatherer {
@@ -41,7 +44,7 @@ public class TranslationGatherer {
             VanillaAssets assets = VanillaAssets.get();
             Iterable<ServerLanguageDefinition> languages = ServerTranslations.INSTANCE.getAllLanguages();
             for (ServerLanguageDefinition language : languages) {
-                Supplier<LanguageMap> supplier = () -> loadVanillaLanguage(assets, language);
+                Supplier<TranslationMap> supplier = () -> loadVanillaLanguage(assets, language);
                 ServerTranslations.INSTANCE.addTranslations(language.getCode(), supplier);
             }
             getModTranslationFromGithub();
@@ -50,39 +53,48 @@ public class TranslationGatherer {
         }
     }
 
-    private static LanguageMap loadVanillaLanguage(VanillaAssets assets, ServerLanguageDefinition language) {
+    private static TranslationMap loadVanillaLanguage(VanillaAssets assets, ServerLanguageDefinition language) {
         try {
             ModContainer vanilla = FabricLoader.getInstance().getModContainer("minecraft").get();
             SemanticVersion minecraftVersion = SemanticVersion.parse(vanilla.getMetadata().getVersion().getFriendlyString());
 
             if (minecraftVersion.compareTo(SemanticVersion.parse("1.13-Snapshot.17.48.a")) >= 0) {
                 InputStream stream;
-                if (ServerTranslations.DEFAULT.equals(language)) {
+                if (ServerLanguageDefinition.DEFAULT.equals(language)) {
                     stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.json");
                 } else {
                     stream = assets.openStream("minecraft/lang/" + language.getCode() + ".json");
                 }
-                return LanguageReader.read(stream);
+
+                try {
+                    return LanguageReader.read(stream);
+                } finally {
+                    stream.close();
+                }
             } else {
                 InputStream stream;
                 if (minecraftVersion.compareTo(SemanticVersion.parse("1.11-Snapshot.16.32.a")) >= 0) {
-                    if (ServerTranslations.DEFAULT.equals(language)) {
+                    if (ServerLanguageDefinition.DEFAULT.equals(language)) {
                         stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
                     } else {
                         stream = assets.openStream("minecraft/lang/" + language.getCode() + ".lang");
                     }
                 } else {
-                    if (ServerTranslations.DEFAULT.equals(language)) {
+                    if (ServerLanguageDefinition.DEFAULT.equals(language)) {
                         stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
                     } else {
                         stream = assets.openStream("minecraft/lang/" + language.getCode().split("_")[0] + "_" + language.getCode().split("_")[1].toUpperCase(Locale.ROOT) + ".lang");
                     }
                 }
 
-                return LanguageReader.readLegacy(stream);
+                try {
+                    return LanguageReader.readLegacy(stream);
+                } finally {
+                    stream.close();
+                }
             }
         } catch (VersionParsingException | IOException e) {
-            e.printStackTrace();
+            ServerTranslations.LOGGER.warn("Failed to load vanilla language", e);
             return null;
         }
     }

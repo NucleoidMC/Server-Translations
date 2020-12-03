@@ -11,12 +11,12 @@ import net.minecraft.util.Language;
 
 import java.util.Optional;
 
-public final class DelegatedLanguage extends Language {
-    public static final DelegatedLanguage INSTANCE = new DelegatedLanguage();
+public final class SystemDelegatedLanguage extends Language {
+    public static final SystemDelegatedLanguage INSTANCE = new SystemDelegatedLanguage();
 
     private Language vanilla = Language.getInstance();
 
-    private DelegatedLanguage() {
+    private SystemDelegatedLanguage() {
     }
 
     public void setVanilla(Language language) {
@@ -25,8 +25,9 @@ public final class DelegatedLanguage extends Language {
 
     @Override
     public String get(String key) {
-        String override = ServerTranslations.INSTANCE.getSystemLanguage().get(key);
-        if (override != key) {
+        // TODO: for client, this needs to be remote. for server, this needs to be local
+        String override = this.getSystemLanguage().remote.getOrNull(key);
+        if (override != null) {
             return override;
         }
         return this.vanilla.get(key);
@@ -34,12 +35,16 @@ public final class DelegatedLanguage extends Language {
 
     @Override
     public boolean hasTranslation(String key) {
-        return this.vanilla.hasTranslation(key) || ServerTranslations.INSTANCE.getSystemLanguage().hasTranslation(key);
+        return this.vanilla.hasTranslation(key) || this.getSystemLanguage().remote.contains(key);
     }
 
     @Override
     public boolean isRightToLeft() {
-        return ServerTranslations.INSTANCE.getSystemLanguage().isRightToLeft();
+        return this.getSystemLanguage().definition.isRightToLeft();
+    }
+
+    private ServerLanguage getSystemLanguage() {
+        return ServerTranslations.INSTANCE.getSystemLanguage();
     }
 
     @Override

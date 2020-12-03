@@ -1,16 +1,12 @@
 package fr.catcore.server.translations.api;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import fr.catcore.server.translations.api.resource.language.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
-import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloadListener;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Language;
 import net.minecraft.util.profiler.Profiler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,46 +14,31 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public final class ServerTranslations implements ResourceReloadListener {
-    public static final String DEFAULT_CODE = "en_us";
-    public static final ServerLanguageDefinition DEFAULT = new ServerLanguageDefinition(DEFAULT_CODE, "US", "English", false);
-
-    private static final Logger LOGGER = LogManager.getLogger(ServerTranslations.class);
+    public static final Logger LOGGER = LogManager.getLogger(ServerTranslations.class);
 
     public static final ServerTranslations INSTANCE = new ServerTranslations();
 
-    private final Multimap<String, Supplier<LanguageMap>> languageSuppliers = HashMultimap.create();
-
     private final SortedMap<String, ServerLanguageDefinition> supportedLanguages = new Object2ObjectRBTreeMap<>();
+
+    private final TranslationStore translations = new TranslationStore();
     private final Map<String, ServerLanguage> languages = new Object2ObjectOpenHashMap<>();
 
+    private TranslationMap vanillaTranslations;
+
+    private ServerLanguage defaultLanguage;
     private ServerLanguage systemLanguage;
 
     private final List<TranslationsReloadListener> reloadListeners = new ArrayList<>();
 
     private ServerTranslations() {
         this.loadSupportedLanguages();
-        this.addTranslations(DEFAULT_CODE, ServerTranslations::loadDefaultLanguage);
-
-        this.systemLanguage = this.createLanguage(DEFAULT);
-    }
-
-    private static LanguageMap loadDefaultLanguage() {
-        LanguageMap translations = new LanguageMap();
-
-        try (InputStream input = Language.class.getResourceAsStream("/assets/minecraft/lang/" + DEFAULT.getCode() + ".json")) {
-            Language.load(input, translations::put);
-        } catch (IOException e) {
-            LOGGER.warn("Failed to load default language", e);
-        }
-
-        return translations;
+        this.reload();
     }
 
     private void loadSupportedLanguages() {
@@ -71,21 +52,26 @@ public final class ServerTranslations implements ResourceReloadListener {
         }
     }
 
-    public void addTranslations(String code, Supplier<LanguageMap> supplier) {
-        ServerLanguage language = this.languages.get(code);
-        if (language != null) {
-            LanguageMap map = supplier.get();
-            if (map != null) {
-                language.putAll(map);
-            }
+    private void reload() {
+        this.translations.clear();
+        this.languages.clear();
+
+        this.vanillaTranslations = LanguageReader.loadVanillaTranslations();
+        this.translations.add(ServerLanguageDefinition.DEFAULT_CODE, () -> this.vanillaTranslations);
+
+        this.defaultLanguage = this.createLanguage(ServerLanguageDefinition.DEFAULT);
+
+        if (this.systemLanguage != null) {
+            this.setSystemLanguage(this.systemLanguage.definition);
         } else {
-            this.languageSuppliers.put(code, supplier);
+            this.setSystemLanguage(ServerLanguageDefinition.DEFAULT);
         }
+
+        this.reloadListeners.forEach(TranslationsReloadListener::reload);
     }
 
-    private void clearTranslations() {
-        this.languageSuppliers.clear();
-        this.languages.values().forEach(ServerLanguage::clearTranslations);
+    public void addTranslations(String code, Supplier<TranslationMap> supplier) {
+        this.translations.add(code, supplier);
     }
 
     @NotNull
@@ -96,7 +82,7 @@ public final class ServerTranslations implements ResourceReloadListener {
     @NotNull
     public ServerLanguage getLanguage(@Nullable String code) {
         if (code == null) {
-            return this.systemLanguage;
+            return this.defaultLanguage;
         }
 
         ServerLanguage language = this.languages.get(code);
@@ -108,49 +94,43 @@ public final class ServerTranslations implements ResourceReloadListener {
         if (definition != null) {
             return this.createLanguage(definition);
         } else {
-            return this.systemLanguage;
+            return this.defaultLanguage;
         }
     }
 
     @NotNull
     public ServerLanguageDefinition getLanguageDefinition(@Nullable String code) {
         if (code == null) {
-            return this.systemLanguage.getDefinition();
+            return ServerLanguageDefinition.DEFAULT;
         }
-        return this.supportedLanguages.getOrDefault(code, this.systemLanguage.getDefinition());
+        return this.supportedLanguages.getOrDefault(code, ServerLanguageDefinition.DEFAULT);
     }
 
     private ServerLanguage createLanguage(ServerLanguageDefinition definition) {
-        ServerLanguage language = new ServerLanguage(definition);
+        TranslationMap translations = this.translations.get(definition.getCode());
+        TranslationMap defaultTranslations = this.translations.get(ServerLanguageDefinition.DEFAULT_CODE);
+
+        TranslationAccess remote = translations.union(defaultTranslations);
+        TranslationAccess local = remote.subtract(this.vanillaTranslations);
+
+        ServerLanguage language = new ServerLanguage(definition, remote, local);
         this.languages.put(definition.getCode(), language);
-
-        // we add all the default translation keys to other languages
-        if (!definition.equals(DEFAULT)) {
-            ServerLanguage defaultLanguage = this.getDefaultLanguage();
-            language.putAll(defaultLanguage.getMap());
-        }
-
-        Collection<Supplier<LanguageMap>> suppliers = this.languageSuppliers.removeAll(definition.getCode());
-        for (Supplier<LanguageMap> supplier : suppliers) {
-            LanguageMap map = supplier.get();
-            if (map != null) {
-                language.putAll(map);
-            }
-        }
 
         return language;
     }
 
     public void setSystemLanguage(ServerLanguageDefinition definition) {
-        this.systemLanguage = this.getLanguage(definition.getCode());
+        this.systemLanguage = Objects.requireNonNull(this.getLanguage(definition.getCode()));
     }
 
+    @NotNull
     public ServerLanguage getSystemLanguage() {
         return this.systemLanguage;
     }
 
+    @NotNull
     public ServerLanguage getDefaultLanguage() {
-        return this.languages.get(DEFAULT_CODE);
+        return this.defaultLanguage;
     }
 
     public Iterable<ServerLanguageDefinition> getAllLanguages() {
@@ -161,50 +141,24 @@ public final class ServerTranslations implements ResourceReloadListener {
         this.reloadListeners.add(reloadListener);
     }
 
+    private int getTranslationKeyCount() {
+        return this.translations.get(this.systemLanguage.definition.getCode()).size();
+    }
+
     @Override
     public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
-        CompletableFuture<Multimap<String, Supplier<LanguageMap>>> future = CompletableFuture.supplyAsync(() -> {
-            this.clearTranslations();
-            this.addTranslations(DEFAULT_CODE, ServerTranslations::loadDefaultLanguage);
-            this.reloadListeners.forEach(TranslationsReloadListener::reload);
-
-            return this.collectLanguageSuppliers(manager);
+        CompletableFuture<Multimap<String, Supplier<TranslationMap>>> future = CompletableFuture.supplyAsync(() -> {
+            this.reload();
+            return LanguageReader.collectTranslationSuppliers(manager);
         });
 
         return future.thenCompose(synchronizer::whenPrepared)
                 .thenAcceptAsync(v -> {
-                    Multimap<String, Supplier<LanguageMap>> languageSuppliers = future.join();
-                    languageSuppliers.forEach(this::addTranslations);
+                    Multimap<String, Supplier<TranslationMap>> languageSuppliers = future.join();
+                    languageSuppliers.forEach(this.translations::add);
 
-                    int keyCount = ServerTranslations.INSTANCE.getSystemLanguage().getKeyCount();
+                    int keyCount = ServerTranslations.INSTANCE.getTranslationKeyCount();
                     LOGGER.info(new TranslatableText("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
                 });
-    }
-
-    private Multimap<String, Supplier<LanguageMap>> collectLanguageSuppliers(ResourceManager manager) {
-        Multimap<String, Supplier<LanguageMap>> languageSuppliers = HashMultimap.create();
-
-        for (Identifier path : manager.findResources("lang", path -> path.endsWith(".json"))) {
-            String code = this.getLanguageCodeForPath(path);
-
-            languageSuppliers.put(code, () -> {
-                LanguageMap map = new LanguageMap();
-                try {
-                    for (Resource resource : manager.getAllResources(path)) {
-                        map.putAll(LanguageReader.read(resource.getInputStream()));
-                    }
-                } catch (RuntimeException | IOException e) {
-                    LOGGER.warn("Failed to load language resource at {}", path, e);
-                }
-                return map;
-            });
-        }
-
-        return languageSuppliers;
-    }
-
-    private String getLanguageCodeForPath(Identifier file) {
-        String path = file.getPath();
-        return path.substring("lang".length() + 1, path.length() - ".json".length());
     }
 }
