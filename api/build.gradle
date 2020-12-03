@@ -8,8 +8,8 @@ repositories {
 }
 
 dependencies {
-  modImplementation 'xyz.nucleoid:packet-tweaker:0.1.0'
-  include 'xyz.nucleoid:packet-tweaker:0.1.0'
+  modImplementation 'xyz.nucleoid:packet-tweaker:0.1.1'
+  include 'xyz.nucleoid:packet-tweaker:0.1.1'
 }
 
 publishing {
