@@ -32,7 +32,7 @@ public class PacketByteBufMixin {
             return buf.writeCompoundTag(tag);
         }
 
-        Text name = stack.getName();
+        Text name = stack.getItem().getName(stack);
         Text localized = LocalizableText.asLocalizedFor(name, target);
         if (!name.equals(localized)) {
             tag = this.addNameToTag(tag, localized);
@@ -73,7 +73,7 @@ public class PacketByteBufMixin {
 
     @Unique
     private boolean hasCustomName(CompoundTag tag) {
-        return tag != null && tag.contains("display", NbtType.COMPOUND) && tag.contains("Name", NbtType.STRING);
+        return tag != null && tag.contains("display", NbtType.COMPOUND) && tag.getCompound("display").contains("Name", NbtType.STRING);
     }
 
     @Inject(method = "readItemStack", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
