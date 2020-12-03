@@ -32,7 +32,17 @@ public interface LocalizableText extends Text {
     }
 
     default boolean shouldLocalize() {
-        return this.shouldLocalizeSelf() || !this.getSiblings().isEmpty();
+        if (this.shouldLocalizeSelf()) {
+            return true;
+        }
+
+        for (Text sibling : this.getSiblings()) {
+            if (LocalizableText.shouldLocalize(sibling)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     default boolean shouldLocalizeSelf() {

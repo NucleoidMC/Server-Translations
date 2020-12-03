@@ -24,7 +24,7 @@ public abstract class TextSerializerMixin {
             LocalizationTarget target = LocalizationTarget.forPacket();
             if (target != null) {
                 Text localized = ((LocalizableText) text).asLocalizedFor(target);
-                if (text != localized) {
+                if (!text.equals(localized)) {
                     ci.setReturnValue(this.serialize(localized, localized.getClass(), ctx));
                 }
             }
