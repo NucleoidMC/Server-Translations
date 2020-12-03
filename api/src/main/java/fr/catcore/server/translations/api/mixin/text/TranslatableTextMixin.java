@@ -5,30 +5,41 @@ import fr.catcore.server.translations.api.ServerTranslations;
 import fr.catcore.server.translations.api.resource.language.TranslationAccess;
 import fr.catcore.server.translations.api.text.LocalizableText;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.StringVisitable;
+import net.minecraft.text.Style;
+import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Mixin(TranslatableText.class)
 public abstract class TranslatableTextMixin implements LocalizableText, MutableText {
     @Shadow
     @Final
+    private static Pattern ARG_FORMAT;
+    @Shadow
+    @Final
+    private static StringVisitable LITERAL_PERCENT_SIGN;
+
+    @Shadow
+    @Final
     private String key;
     @Shadow
-    @Mutable
     @Final
-    private List<StringVisitable> translations;
-
-    @Unique
-    private final List<StringVisitable> translationsSwap = new ArrayList<>();
+    private Object[] args;
 
     @Shadow
-    protected abstract void setTranslation(String translation);
+    protected abstract StringVisitable getArg(int index);
 
-    @Shadow @Final private Object[] args;
+    @Shadow
+    public abstract TranslatableText copy();
 
     @Nullable
     private List<StringVisitable> buildTranslations(@Nullable LocalizationTarget target) {
@@ -38,18 +49,49 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
             return null;
         }
 
-        List<StringVisitable> result = this.translationsSwap;
-        result.clear();
+        List<StringVisitable> result = new ArrayList<>();
 
-        List<StringVisitable> previousTranslations = this.translations;
-        this.translations = result;
+        // Copy from vanilla TranslatableText#setTranslation to not mutate for thread-safety
+        Matcher argumentMatcher = ARG_FORMAT.matcher(translation);
 
-        try {
-            this.setTranslation(translation);
-        } catch (TranslationException e) {
-            return null;
-        } finally {
-            this.translations = previousTranslations;
+        int currentCharIndex = 0;
+        int currentArgumentIndex = 0;
+
+        while (argumentMatcher.find(currentCharIndex)) {
+            int argumentStart = argumentMatcher.start();
+            int argumentEnd = argumentMatcher.end();
+
+            if (argumentStart > currentCharIndex) {
+                String literal = translation.substring(currentCharIndex, argumentStart);
+                if (literal.indexOf('%') != -1) {
+                    return null;
+                }
+                result.add(StringVisitable.plain(literal));
+            }
+
+            String formatType = argumentMatcher.group(2);
+            String literal = translation.substring(argumentStart, argumentEnd);
+            if ("%".equals(formatType) && "%%".equals(literal)) {
+                result.add(LITERAL_PERCENT_SIGN);
+            } else {
+                if (!"s".equals(formatType)) {
+                    return null;
+                }
+                String matchedArgumentIndex = argumentMatcher.group(1);
+                int argumentIndex = matchedArgumentIndex != null ? Integer.parseInt(matchedArgumentIndex) - 1 : currentArgumentIndex++;
+                if (argumentIndex < this.args.length) {
+                    result.add(this.getArg(argumentIndex));
+                }
+            }
+            currentCharIndex = argumentEnd;
+        }
+
+        if (currentCharIndex < translation.length()) {
+            String remaining = translation.substring(currentCharIndex);
+            if (remaining.indexOf('%') != -1) {
+                return null;
+            }
+            result.add(StringVisitable.plain(remaining));
         }
 
         return result;
@@ -67,7 +109,7 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
         List<StringVisitable> translations = this.buildTranslations(target);
         if (translations == null) {
-            visitor.accept(new TranslatableText(this.key, this.args));
+            visitor.accept(this.copy().setStyle(this.getStyle()));
             return;
         }
 
