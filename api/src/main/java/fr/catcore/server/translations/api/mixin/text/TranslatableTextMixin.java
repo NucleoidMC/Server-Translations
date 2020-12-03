@@ -28,6 +28,8 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     @Shadow
     protected abstract void setTranslation(String translation);
 
+    @Shadow @Final private Object[] args;
+
     @Nullable
     private List<StringVisitable> buildTranslations(@Nullable LocalizationTarget target) {
         TranslationAccess translations = this.getTranslationsFor(target);
@@ -65,7 +67,7 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
         List<StringVisitable> translations = this.buildTranslations(target);
         if (translations == null) {
-            visitor.accept(this);
+            visitor.accept(new TranslatableText(this.key, this.args));
             return;
         }
 
