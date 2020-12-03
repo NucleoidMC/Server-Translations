@@ -76,7 +76,7 @@ public class PacketByteBufMixin {
         return tag != null && tag.contains("display", NbtType.COMPOUND) && tag.contains("Name", NbtType.STRING);
     }
 
-    @Inject(method = "readItemStack", at = @At("RETURN"), locals = LocalCapture.PRINT)
+    @Inject(method = "readItemStack", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void readItemStack(CallbackInfoReturnable<ItemStack> ci, int id, int count, ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag != null && tag.contains(TRANSLATED_TAG, NbtType.BYTE)) {
