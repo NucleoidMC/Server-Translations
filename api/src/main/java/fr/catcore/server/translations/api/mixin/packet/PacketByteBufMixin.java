@@ -10,10 +10,15 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(PacketByteBuf.class)
 public class PacketByteBufMixin {
+    private static final String TRANSLATED_TAG = "server_translated";
+
     @Redirect(
             method = "writeItemStack",
             at = @At(
@@ -51,8 +56,9 @@ public class PacketByteBufMixin {
             tag.put("display", display = new CompoundTag());
         }
 
-        // TODO: attach tag such that we know to strip custom name when receiving an itemstack from the client
         display.putString("Name", Text.Serializer.toJson(name));
+
+        display.putBoolean(TRANSLATED_TAG, true);
 
         return tag;
     }
@@ -68,5 +74,14 @@ public class PacketByteBufMixin {
     @Unique
     private boolean hasCustomName(CompoundTag tag) {
         return tag != null && tag.contains("display", NbtType.COMPOUND) && tag.contains("Name", NbtType.STRING);
+    }
+
+    @Inject(method = "readItemStack", at = @At("RETURN"), locals = LocalCapture.PRINT)
+    private void readItemStack(CallbackInfoReturnable<ItemStack> ci, int id, int count, ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains(TRANSLATED_TAG, NbtType.BYTE)) {
+            tag.getCompound("display").remove("Name");
+            tag.remove(TRANSLATED_TAG);
+        }
     }
 }
