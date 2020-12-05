@@ -5,7 +5,7 @@ import net.minecraft.text.*;
 import java.util.Optional;
 
 public interface LocalizedTextVisitor {
-    void accept(Text text);
+    void accept(MutableText text);
 
     default void acceptLiteral(String string, Style style) {
         this.accept(new LiteralText(string).setStyle(style));
