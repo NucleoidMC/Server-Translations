@@ -35,16 +35,23 @@ public class PacketByteBufMixin {
             return buf.writeCompoundTag(tag);
         }
 
+        boolean hasCustomName = false;
+        boolean copied = false;
+
         if (tag != null && tag.contains("display", NbtType.COMPOUND)) {
+            tag = tag.copy();
+            copied = true;
+
             CompoundTag display = tag.getCompound("display");
-            display = this.translateDisplay(display);
-            tag.put("display", display);
+            hasCustomName = this.translateCustomName(display);
+            this.translateLore(display);
         }
 
-        if (!this.hasCustomName(tag)) {
+        if (!hasCustomName) {
             Text name = stack.getItem().getName(stack);
             Text localized = LocalizableText.asLocalizedFor(name, target);
             if (!name.equals(localized)) {
+                if (!copied && tag != null) tag = tag.copy();
                 tag = this.addNameToTag(tag, localized);
             }
         }
@@ -52,19 +59,22 @@ public class PacketByteBufMixin {
         return buf.writeCompoundTag(tag);
     }
 
-    private CompoundTag translateDisplay(CompoundTag display) {
+    private boolean translateCustomName(CompoundTag display) {
         if (display.contains("Name", NbtType.STRING)) {
             display.putString("Name", this.translateTextJson(display.getString("Name")));
+            return true;
+        } else {
+            return false;
         }
+    }
 
+    private void translateLore(CompoundTag display) {
         if (display.contains("Lore", NbtType.LIST)) {
             ListTag loreList = display.getList("Lore", NbtType.STRING);
             for (int i = 0; i < loreList.size(); i++) {
                 loreList.setTag(i, StringTag.of(this.translateTextJson(loreList.getString(i))));
             }
         }
-
-        return display;
     }
 
     private String translateTextJson(String json) {
@@ -100,11 +110,6 @@ public class PacketByteBufMixin {
             return name.shallowCopy().styled(style -> style.withItalic(false));
         }
         return name;
-    }
-
-    @Unique
-    private boolean hasCustomName(CompoundTag tag) {
-        return tag != null && tag.contains("display", NbtType.COMPOUND) && tag.getCompound("display").contains("Name", NbtType.STRING);
     }
 
     @Inject(method = "readItemStack", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
