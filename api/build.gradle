@@ -4,7 +4,7 @@ archivesBaseName = "server-translations-api"
 
 repositories {
   mavenLocal()
-  maven { url = 'https://maven.gegy.dev/' }
+  maven { url = 'https://maven.nucleoid.xyz/' }
 }
 
 dependencies {
@@ -12,10 +12,11 @@ dependencies {
   include 'xyz.nucleoid:packet-tweaker:0.1.1'
 }
 
+def env = System.getenv()
+
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      artifactId = 'server-translations-api'
       artifact(remapJar) {
         builtBy remapJar
       }
@@ -26,13 +27,13 @@ publishing {
   }
 
   repositories {
-    if (project.hasProperty("mavenUrl")) {
+    if (env.MAVEN_URL) {
       maven {
         credentials {
-          username project.mavenUsername ?: ""
-          password project.mavenPassword ?: ""
+          username env.MAVEN_USERNAME
+          password env.MAVEN_PASSWORD
         }
-        url project.mavenUrl ?: ""
+        url env.MAVEN_URL
       }
     } else {
       mavenLocal()
