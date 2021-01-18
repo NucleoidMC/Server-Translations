@@ -1,10 +1,21 @@
 package fr.catcore.server.translations.api.resource.language;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import fr.catcore.server.translations.api.ServerTranslations;
 
-import java.util.Locale;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class ServerLanguageDefinition implements Comparable<ServerLanguageDefinition> {
+    public static final String DEFAULT_CODE = "en_us";
+    public static final ServerLanguageDefinition DEFAULT = new ServerLanguageDefinition(DEFAULT_CODE, "US", "English", false);
+
+    private static final JsonParser PARSER = new JsonParser();
+
     private final String code;
     private final String name;
     private final String region;
@@ -19,6 +30,21 @@ public class ServerLanguageDefinition implements Comparable<ServerLanguageDefini
 
     public String getCode() {
         return this.code;
+    }
+
+    public static List<ServerLanguageDefinition> loadLanguageDefinitions() throws IOException {
+        List<ServerLanguageDefinition> languageDefinitions = new ArrayList<>();
+
+        try (BufferedReader read = new BufferedReader(new InputStreamReader(ServerTranslations.class.getResourceAsStream("/minecraft_languages.json")))) {
+            JsonObject root = PARSER.parse(read).getAsJsonObject().getAsJsonObject("language");
+
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+                ServerLanguageDefinition definition = ServerLanguageDefinition.parse(entry.getKey(), (JsonObject) entry.getValue());
+                languageDefinitions.add(definition);
+            }
+        }
+
+        return languageDefinitions;
     }
 
     public static ServerLanguageDefinition parse(String code, JsonObject jsonObject) {
@@ -40,10 +66,12 @@ public class ServerLanguageDefinition implements Comparable<ServerLanguageDefini
         return this.rightToLeft;
     }
 
+    @Override
     public String toString() {
         return String.format("%s (%s)", this.region, this.name);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -52,10 +80,12 @@ public class ServerLanguageDefinition implements Comparable<ServerLanguageDefini
         }
     }
 
+    @Override
     public int hashCode() {
         return this.code.hashCode();
     }
 
+    @Override
     public int compareTo(ServerLanguageDefinition languageDefinition) {
         return this.code.compareTo(languageDefinition.code);
     }
