@@ -16,6 +16,13 @@
   "entrypoints": {
     "main": ["fr.catcore.server.translations.ServerTranslationsInitializer"]
   },
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ]
+    }
+  },
   "depends": {
     "minecraft": ">=1.16",
     "fabricloader": ">=0.9.0+build.204",
