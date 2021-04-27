@@ -1,1 +1,1 @@
-TranslatedServerLog
+Server-Translations
