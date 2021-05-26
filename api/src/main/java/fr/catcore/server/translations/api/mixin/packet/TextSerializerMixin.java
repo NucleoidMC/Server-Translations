@@ -20,13 +20,11 @@ public abstract class TextSerializerMixin {
 
     @Inject(method = "serialize", at = @At("HEAD"), cancellable = true)
     private void serializeTranslatableText(Text text, Type type, JsonSerializationContext ctx, CallbackInfoReturnable<JsonElement> ci) {
-        if (text instanceof LocalizableText) {
-            LocalizationTarget target = LocalizationTarget.forPacket();
-            if (target != null) {
-                Text localized = ((LocalizableText) text).asLocalizedFor(target);
-                if (!text.equals(localized)) {
-                    ci.setReturnValue(this.serialize(localized, localized.getClass(), ctx));
-                }
+        LocalizationTarget target = LocalizationTarget.forPacket();
+        if (target != null) {
+            Text localized = LocalizableText.asLocalizedFor(text, target);
+            if (!text.equals(localized)) {
+                ci.setReturnValue(this.serialize(localized, localized.getClass(), ctx));
             }
         }
     }

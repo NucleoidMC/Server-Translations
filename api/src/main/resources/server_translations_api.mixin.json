@@ -8,13 +8,15 @@
     "ServerPlayerEntityMixin",
     "ServerResourceManagerMixin",
     "packet.ClientSettingsC2SPacketAccessor",
-    "packet.PacketByteBufMixin",
-    "packet.TextSerializerMixin",
     "text.BaseTextMixin",
     "text.TranslatableTextMixin"
   ],
   "client": [
     "client.LanguageMixin"
+  ],
+  "server": [
+    "packet.PacketByteBufMixin",
+    "packet.TextSerializerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

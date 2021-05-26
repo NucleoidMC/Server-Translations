@@ -20,6 +20,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public final class ServerTranslations implements ResourceReloadListener {
+    public static final String ID = "server_translations_api";
     public static final Logger LOGGER = LogManager.getLogger(ServerTranslations.class);
 
     public static final ServerTranslations INSTANCE = new ServerTranslations();
