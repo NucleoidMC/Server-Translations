@@ -59,8 +59,13 @@ public final class NbtLocalizer {
     }
 
     public boolean contains(String key, int type) {
-        CompoundTag result = this.getResultTag();
-        return result != null && result.contains(key, type);
+        if (this.result != null) {
+            return this.result.contains(key, type);
+        } else if (this.tag != null) {
+            return this.tag.contains(key, type);
+        } else {
+            return false;
+        }
     }
 
     private void trackSet(String key, Tag previous) {
