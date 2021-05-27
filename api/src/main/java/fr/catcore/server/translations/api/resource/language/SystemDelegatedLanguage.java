@@ -34,7 +34,7 @@ public final class SystemDelegatedLanguage extends Language {
 
     @Override
     public boolean hasTranslation(String key) {
-        return this.vanilla.hasTranslation(key) || this.getSystemLanguage().remote.contains(key);
+        return this.vanilla.hasTranslation(key) || this.getSystemLanguage().local.contains(key);
     }
 
     @Override

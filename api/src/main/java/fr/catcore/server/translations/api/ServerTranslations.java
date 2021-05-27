@@ -114,7 +114,7 @@ public final class ServerTranslations implements ResourceReloadListener {
         TranslationAccess remote = translations.union(defaultTranslations);
         TranslationAccess local = remote.subtract(this.vanillaTranslations);
 
-        ServerLanguage language = new ServerLanguage(definition, remote, local);
+        ServerLanguage language = new ServerLanguage(definition, local, remote);
         this.languages.put(definition.getCode(), language);
 
         return language;
