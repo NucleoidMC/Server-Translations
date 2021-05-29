@@ -8,14 +8,14 @@
     "CatCore"
   ],
   "contributors": [
-    "László Gaming", "Samekichi", "MightyKnight"
+    "László Gaming", "Samekichi", "MightyKnight", "Patbox"
   ],
   "contact": {},
   "license": "MIT",
   "environment": "*",
   "entrypoints": {},
   "depends": {
-    "minecraft": ">=1.16",
+    "minecraft": "1.17.x",
     "fabricloader": ">=0.9.0+build.204",
     "fabric": "*"
   },
