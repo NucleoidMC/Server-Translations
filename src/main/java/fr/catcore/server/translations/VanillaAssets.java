@@ -78,7 +78,7 @@ public final class VanillaAssets {
             }
             for (JsonObject version : versionObjects) {
                 try {
-                    if (version.get("id").getAsString().equals(MinecraftVersion.field_25319.getName())) {
+                    if (version.get("id").getAsString().equals(MinecraftVersion.GAME_VERSION.getName())) {
                         return new URL(version.get("url").getAsString());
                     }
                 } catch (NoSuchFieldError error) {

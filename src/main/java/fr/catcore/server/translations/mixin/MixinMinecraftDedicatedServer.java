@@ -23,7 +23,7 @@ public class MixinMinecraftDedicatedServer {
 
     @ModifyArg(method = "setupServer", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;)V", ordinal = 0), index = 0)
     private String translated_gamemode(String string, Object p0) {
-        return new TranslatableText("text.translated_server.loading.gamemode", ((GameMode)p0).getTranslatableName().getString()).getString();
+        return new TranslatableText("text.translated_server.loading.gamemode", p0).getString();
     }
 
     @ModifyArg(method = "setupServer", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", ordinal = 2), index = 0)

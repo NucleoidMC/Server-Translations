@@ -5,7 +5,7 @@ import fr.catcore.server.translations.api.resource.language.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloadListener;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.profiler.Profiler;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public final class ServerTranslations implements ResourceReloadListener {
+public final class ServerTranslations implements ResourceReloader {
     public static final String ID = "server_translations_api";
     public static final Logger LOGGER = LogManager.getLogger(ServerTranslations.class);
 
@@ -161,5 +161,10 @@ public final class ServerTranslations implements ResourceReloadListener {
                     int keyCount = ServerTranslations.INSTANCE.getTranslationKeyCount();
                     LOGGER.info(new TranslatableText("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
                 });
+    }
+
+    @Override
+    public String getName() {
+        return ResourceReloader.super.getName();
     }
 }
