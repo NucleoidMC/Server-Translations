@@ -7,7 +7,6 @@
     "LanguageMixin",
     "ServerPlayerEntityMixin",
     "ServerResourceManagerMixin",
-    "packet.ClientSettingsC2SPacketAccessor",
     "text.BaseTextMixin",
     "text.TranslatableTextMixin"
   ],

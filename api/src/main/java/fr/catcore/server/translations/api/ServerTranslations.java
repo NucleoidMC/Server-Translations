@@ -4,6 +4,8 @@ import com.google.common.collect.Multimap;
 import fr.catcore.server.translations.api.resource.language.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.text.TranslatableText;
@@ -114,7 +116,9 @@ public final class ServerTranslations implements ResourceReloader {
         TranslationAccess remote = translations.union(defaultTranslations);
         TranslationAccess local = remote.subtract(this.vanillaTranslations);
 
-        ServerLanguage language = new ServerLanguage(definition, local, remote);
+        boolean isClient = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+
+        ServerLanguage language = new ServerLanguage(definition, isClient ? local : remote, isClient ? remote : local);
         this.languages.put(definition.getCode(), language);
 
         return language;
