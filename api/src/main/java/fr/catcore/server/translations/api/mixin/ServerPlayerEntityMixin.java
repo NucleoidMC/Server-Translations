@@ -1,7 +1,6 @@
 package fr.catcore.server.translations.api.mixin;
 
 import fr.catcore.server.translations.api.LocalizationTarget;
-import fr.catcore.server.translations.api.mixin.packet.ClientSettingsC2SPacketAccessor;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
