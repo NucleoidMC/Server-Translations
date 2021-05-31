@@ -25,7 +25,7 @@ public final class SystemDelegatedLanguage extends Language {
 
     @Override
     public String get(String key) {
-        String override = this.getSystemLanguage().local.getOrNull(key);
+        String override = this.getSystemLanguage().local().getOrNull(key);
         if (override != null) {
             return override;
         }
@@ -34,12 +34,12 @@ public final class SystemDelegatedLanguage extends Language {
 
     @Override
     public boolean hasTranslation(String key) {
-        return this.vanilla.hasTranslation(key) || this.getSystemLanguage().local.contains(key);
+        return this.vanilla.hasTranslation(key) || this.getSystemLanguage().local().contains(key);
     }
 
     @Override
     public boolean isRightToLeft() {
-        return this.getSystemLanguage().definition.isRightToLeft();
+        return this.getSystemLanguage().definition().rightToLeft();
     }
 
     private ServerLanguage getSystemLanguage() {

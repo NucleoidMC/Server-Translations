@@ -7,15 +7,15 @@ import net.minecraft.text.TranslatableText;
 
 public interface LocalizableText extends Text {
     static Text asLocalizedFor(Text text, LocalizationTarget target) {
-        if (text instanceof LocalizableText) {
-            return ((LocalizableText) text).asLocalizedFor(target);
+        if (text instanceof LocalizableText localizableText) {
+            return localizableText.asLocalizedFor(target);
         }
         return text;
     }
 
     static boolean shouldLocalize(Text text) {
-        if (text instanceof LocalizableText) {
-            return ((LocalizableText) text).shouldLocalize();
+        if (text instanceof LocalizableText localizableText) {
+            return localizableText.shouldLocalize();
         }
         return false;
     }

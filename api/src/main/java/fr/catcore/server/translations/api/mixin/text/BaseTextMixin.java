@@ -16,8 +16,8 @@ public abstract class BaseTextMixin implements LocalizableText {
         this.visitSelfLocalized(visitor, target, selfStyle);
 
         for (Text sibling : this.getSiblings()) {
-            if (sibling instanceof LocalizableText) {
-                ((LocalizableText) sibling).visitLocalized(visitor, target, selfStyle);
+            if (sibling instanceof LocalizableText localizableText) {
+                localizableText.visitLocalized(visitor, target, selfStyle);
             } else {
                 sibling.visit(visitor.asGeneric(selfStyle));
             }

@@ -97,9 +97,9 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
 
     private TranslationAccess getTranslationsFor(@Nullable LocalizationTarget target) {
         if (target != null) {
-            return target.getLanguage().remote;
+            return target.getLanguage().remote();
         } else {
-            return ServerTranslations.INSTANCE.getSystemLanguage().local;
+            return ServerTranslations.INSTANCE.getSystemLanguage().local();
         }
     }
 
@@ -116,8 +116,8 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     private void visitSelfTranslated(LocalizedTextVisitor visitor, LocalizationTarget target, Style style, List<StringVisitable> translations) {
         visitor.acceptLiteral("", style);
         for (StringVisitable translation : translations) {
-            if (translation instanceof LocalizableText) {
-                ((LocalizableText) translation).visitLocalized(visitor, target, style);
+            if (translation instanceof LocalizableText localizableText) {
+                localizableText.visitLocalized(visitor, target, style);
             } else {
                 translation.visit(visitor.asGeneric(style));
             }

@@ -45,7 +45,7 @@ public class TranslationGatherer {
             Iterable<ServerLanguageDefinition> languages = ServerTranslations.INSTANCE.getAllLanguages();
             for (ServerLanguageDefinition language : languages) {
                 Supplier<TranslationMap> supplier = () -> loadVanillaLanguage(assets, language);
-                ServerTranslations.INSTANCE.addTranslations(language.getCode(), supplier);
+                ServerTranslations.INSTANCE.addTranslations(language.code(), supplier);
             }
             getModTranslationFromGithub();
         } catch (Exception e) {
@@ -63,7 +63,7 @@ public class TranslationGatherer {
                 if (ServerLanguageDefinition.DEFAULT.equals(language)) {
                     stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.json");
                 } else {
-                    stream = assets.openStream("minecraft/lang/" + language.getCode() + ".json");
+                    stream = assets.openStream("minecraft/lang/" + language.code() + ".json");
                 }
 
                 try {
@@ -77,13 +77,13 @@ public class TranslationGatherer {
                     if (ServerLanguageDefinition.DEFAULT.equals(language)) {
                         stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
                     } else {
-                        stream = assets.openStream("minecraft/lang/" + language.getCode() + ".lang");
+                        stream = assets.openStream("minecraft/lang/" + language.code() + ".lang");
                     }
                 } else {
                     if (ServerLanguageDefinition.DEFAULT.equals(language)) {
                         stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
                     } else {
-                        stream = assets.openStream("minecraft/lang/" + language.getCode().split("_")[0] + "_" + language.getCode().split("_")[1].toUpperCase(Locale.ROOT) + ".lang");
+                        stream = assets.openStream("minecraft/lang/" + language.code().split("_")[0] + "_" + language.code().split("_")[1].toUpperCase(Locale.ROOT) + ".lang");
                     }
                 }
 

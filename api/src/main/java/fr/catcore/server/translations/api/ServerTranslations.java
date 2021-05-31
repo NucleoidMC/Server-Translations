@@ -48,7 +48,7 @@ public final class ServerTranslations implements ResourceReloader {
         try {
             List<ServerLanguageDefinition> definitions = ServerLanguageDefinition.loadLanguageDefinitions();
             for (ServerLanguageDefinition language : definitions) {
-                this.supportedLanguages.put(language.getCode(), language);
+                this.supportedLanguages.put(language.code(), language);
             }
         } catch (IOException e) {
             LOGGER.error("Failed to load server language definitions", e);
@@ -65,7 +65,7 @@ public final class ServerTranslations implements ResourceReloader {
         this.defaultLanguage = this.createLanguage(ServerLanguageDefinition.DEFAULT);
 
         if (this.systemLanguage != null) {
-            this.setSystemLanguage(this.systemLanguage.definition);
+            this.setSystemLanguage(this.systemLanguage.definition());
         } else {
             this.setSystemLanguage(ServerLanguageDefinition.DEFAULT);
         }
@@ -110,7 +110,7 @@ public final class ServerTranslations implements ResourceReloader {
     }
 
     private ServerLanguage createLanguage(ServerLanguageDefinition definition) {
-        TranslationMap translations = this.translations.get(definition.getCode());
+        TranslationMap translations = this.translations.get(definition.code());
         TranslationMap defaultTranslations = this.translations.get(ServerLanguageDefinition.DEFAULT_CODE);
 
         TranslationAccess remote = translations.union(defaultTranslations);
@@ -119,13 +119,13 @@ public final class ServerTranslations implements ResourceReloader {
         boolean isClient = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
 
         ServerLanguage language = new ServerLanguage(definition, isClient ? local : remote, isClient ? remote : local);
-        this.languages.put(definition.getCode(), language);
+        this.languages.put(definition.code(), language);
 
         return language;
     }
 
     public void setSystemLanguage(ServerLanguageDefinition definition) {
-        this.systemLanguage = Objects.requireNonNull(this.getLanguage(definition.getCode()));
+        this.systemLanguage = Objects.requireNonNull(this.getLanguage(definition.code()));
     }
 
     @NotNull
@@ -147,7 +147,7 @@ public final class ServerTranslations implements ResourceReloader {
     }
 
     private int getTranslationKeyCount() {
-        return this.translations.get(this.systemLanguage.definition.getCode()).size();
+        return this.translations.get(this.systemLanguage.definition().code()).size();
     }
 
     @Override
