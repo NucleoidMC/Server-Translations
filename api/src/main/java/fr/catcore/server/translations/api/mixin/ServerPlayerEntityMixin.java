@@ -17,7 +17,7 @@ public class ServerPlayerEntityMixin implements LocalizationTarget {
 
     @Inject(at = @At("RETURN"), method = "setClientSettings")
     private void setLanguage(ClientSettingsC2SPacket packet, CallbackInfo ci) {
-        this.language = ((ClientSettingsC2SPacketAccessor) packet).getLanguage();
+        this.language = packet.getLanguage();
     }
 
     @Override
