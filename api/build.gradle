@@ -8,8 +8,8 @@ repositories {
 }
 
 dependencies {
-  modImplementation 'xyz.nucleoid:packet-tweaker:0.2.0'
-  include 'xyz.nucleoid:packet-tweaker:0.2.0'
+  modImplementation 'xyz.nucleoid:packet-tweaker:0.2.0-1.17-pre1'
+  include 'xyz.nucleoid:packet-tweaker:0.2.0-1.17-pre1'
 }
 
 def env = System.getenv()

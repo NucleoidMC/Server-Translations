@@ -46,4 +46,9 @@ public class MixinMinecraftServer {
     private static String translated_forcingVanilla(String string) {
         return new TranslatableText("text.translated_server.force").getString();
     }
+
+    @ModifyArg(method = "generateKeyPair", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", ordinal = 0), index = 0)
+    private String translated_generatingKeypair(String string) {
+        return new TranslatableText("text.translated_server.generate.keypair").getString();
+    }
 }
