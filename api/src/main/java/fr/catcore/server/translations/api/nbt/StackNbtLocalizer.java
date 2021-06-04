@@ -21,7 +21,7 @@ public final class StackNbtLocalizer {
 
         CompoundTag revertTag = nbt.getRevertTag();
         if (revertTag != null) {
-            tag.put(TRANSLATED_TAG, revertTag);
+            nbt.set(TRANSLATED_TAG, revertTag);
         }
 
         return nbt.getResultTag();
