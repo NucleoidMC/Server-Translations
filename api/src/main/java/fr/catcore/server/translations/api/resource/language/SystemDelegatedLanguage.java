@@ -47,10 +47,15 @@ public final class SystemDelegatedLanguage extends Language {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public OrderedText reorder(StringVisitable text) {
-        return visitor -> text.visit((style, string) -> {
-            return TextVisitFactory.visitFormatted(string, style, visitor) ? Optional.empty() : StringVisitable.TERMINATE_VISIT;
-        }, Style.EMPTY).isPresent();
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            return ReorderingUtil.reorder(text, this.isRightToLeft());
+        } else {
+            return (visitor) -> {
+                return text.visit((style, string) -> {
+                    return TextVisitFactory.visitFormatted(string, style, visitor) ? Optional.empty() : StringVisitable.TERMINATE_VISIT;
+                }, Style.EMPTY).isPresent();
+            };
+        }
     }
 }

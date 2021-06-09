@@ -11,7 +11,8 @@
     "text.TranslatableTextMixin"
   ],
   "client": [
-    "client.LanguageMixin"
+    "client.LanguageMixin",
+    "client.I18nMixin"
   ],
   "server": [
     "packet.PacketByteBufMixin",
