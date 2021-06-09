@@ -1,26 +1,27 @@
 package fr.catcore.server.translations.api.resource.language;
 
 import fr.catcore.server.translations.api.ServerTranslations;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.font.TextVisitFactory;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Style;
 import net.minecraft.util.Language;
-
-import java.util.Optional;
 
 public final class SystemDelegatedLanguage extends Language {
     public static final SystemDelegatedLanguage INSTANCE = new SystemDelegatedLanguage();
 
     private Language vanilla = Language.getInstance();
 
+    private boolean changed = false;
+
     private SystemDelegatedLanguage() {
     }
 
     public void setVanilla(Language language) {
         this.vanilla = language;
+        this.changed = true;
+    }
+
+    public boolean languageChanged() {
+        return this.changed;
     }
 
     @Override
@@ -48,14 +49,6 @@ public final class SystemDelegatedLanguage extends Language {
 
     @Override
     public OrderedText reorder(StringVisitable text) {
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            return ReorderingUtil.reorder(text, this.isRightToLeft());
-        } else {
-            return (visitor) -> {
-                return text.visit((style, string) -> {
-                    return TextVisitFactory.visitFormatted(string, style, visitor) ? Optional.empty() : StringVisitable.TERMINATE_VISIT;
-                }, Style.EMPTY).isPresent();
-            };
-        }
+        return this.vanilla.reorder(text);
     }
 }
