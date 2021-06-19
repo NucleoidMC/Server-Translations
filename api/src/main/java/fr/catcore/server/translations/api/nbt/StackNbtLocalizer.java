@@ -17,18 +17,22 @@ public final class StackNbtLocalizer {
             return null;
         }
 
-        NbtLocalizer nbt = new NbtLocalizer(tag);
+        try {
+            NbtLocalizer nbt = new NbtLocalizer(tag);
 
-        translateDisplay(target, nbt);
-        translateBook(target, nbt);
-        translateItemName(stack, target, nbt);
+            translateDisplay(target, nbt);
+            translateBook(target, nbt);
+            translateItemName(stack, target, nbt);
 
-        NbtCompound revertTag = nbt.getRevertNbtElement();
-        if (revertTag != null) {
-            tag.put(TRANSLATED_TAG, revertTag);
+            NbtCompound revertTag = nbt.getRevertNbtElement();
+            if (revertTag != null) {
+                tag.put(TRANSLATED_TAG, revertTag);
+            }
+
+            return nbt.getResultNbtElement();
+        } catch (Exception e) {
+            return tag;
         }
-
-        return nbt.getResultNbtElement();
     }
 
     public static NbtCompound unlocalize(NbtCompound tag) {
