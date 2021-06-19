@@ -13,36 +13,36 @@ public final class NbtLocalizer {
     private static final String EMPTY_STRING = ServerTranslations.ID + ":empty";
     private static final NbtString EMPTY_NbtElement = NbtString.of(EMPTY_STRING);
 
-    private final NbtCompound NbtElement;
+    private final NbtCompound nbtElement;
     private boolean copiedNbtElement;
 
     private NbtCompound result;
     private NbtCompound revert;
 
-    public NbtLocalizer(NbtCompound NbtElement) {
-        this.NbtElement = NbtElement;
+    public NbtLocalizer(NbtCompound nbtElement) {
+        this.nbtElement = nbtElement;
     }
 
-    public static void applyRevert(NbtCompound NbtElement, NbtCompound revert) {
+    public static void applyRevert(NbtCompound nbtElement, NbtCompound revert) {
         for (String key : revert.getKeys()) {
             NbtElement revertNbtElement = Objects.requireNonNull(revert.get(key));
             if (!isEmptyNbtElement(revertNbtElement)) {
-                NbtElement.put(key, revertNbtElement);
+                nbtElement.put(key, revertNbtElement);
             } else {
-                NbtElement.remove(key);
+                nbtElement.remove(key);
             }
         }
     }
 
-    private static boolean isEmptyNbtElement(NbtElement NbtElement) {
-        return NbtElement.getType() == NbtElement.STRING_TYPE && NbtElement.asString().equals(EMPTY_STRING);
+    private static boolean isEmptyNbtElement(NbtElement nbtElement) {
+        return nbtElement.getType() == NbtElement.STRING_TYPE && nbtElement.asString().equals(EMPTY_STRING);
     }
 
-    public void set(String key, NbtElement NbtElement) {
+    public void set(String key, NbtElement nbtElement) {
         NbtCompound result = this.getOrCreateResultNbtElement();
 
-        NbtElement previous = result.put(key, NbtElement);
-        if (!Objects.equals(NbtElement, previous)) {
+        NbtElement previous = result.put(key, nbtElement);
+        if (!Objects.equals(nbtElement, previous)) {
             this.trackSet(key, previous);
         }
     }
@@ -60,8 +60,8 @@ public final class NbtLocalizer {
     public boolean contains(String key, int type) {
         if (this.result != null) {
             return this.result.contains(key, type);
-        } else if (this.NbtElement != null) {
-            return this.NbtElement.contains(key, type);
+        } else if (this.nbtElement != null) {
+            return this.nbtElement.contains(key, type);
         } else {
             return false;
         }
@@ -93,7 +93,7 @@ public final class NbtLocalizer {
     @Nullable
     public NbtCompound getResultNbtElement() {
         if (!this.copiedNbtElement) {
-            this.result = this.NbtElement != null ? this.NbtElement.copy() : null;
+            this.result = this.nbtElement != null ? this.nbtElement.copy() : null;
             this.copiedNbtElement = true;
         }
 
