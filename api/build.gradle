@@ -7,8 +7,8 @@ repositories {
 }
 
 dependencies {
-  modImplementation 'xyz.nucleoid:packet-tweaker:0.2.0+1.17.1'
-  include 'xyz.nucleoid:packet-tweaker:0.2.0+1.17.1'
+  modImplementation /*'com.github.arthurbambou:packet-tweaker:1.18-SNAPSHOT'*/ 'xyz.nucleoid:packet-tweaker:0.2.0+1.17.1'
+  include /*'com.github.arthurbambou:packet-tweaker:1.18-SNAPSHOT'*/ 'xyz.nucleoid:packet-tweaker:0.2.0+1.17.1'
 }
 
 def env = System.getenv()

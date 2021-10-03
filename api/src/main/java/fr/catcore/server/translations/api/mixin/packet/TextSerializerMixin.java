@@ -18,7 +18,7 @@ public abstract class TextSerializerMixin {
     @Shadow
     public abstract JsonElement serialize(Text text, Type type, JsonSerializationContext ctx);
 
-    @Inject(method = "serialize", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "serialize(Lnet/minecraft/text/Text;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement;", at = @At("HEAD"), cancellable = true)
     private void serializeTranslatableText(Text text, Type type, JsonSerializationContext ctx, CallbackInfoReturnable<JsonElement> ci) {
         LocalizationTarget target = LocalizationTarget.forPacket();
         if (target != null) {

@@ -8,9 +8,9 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "1.4.5+1.17"
-    static def mcVersion = "1.17.1"
-    static def yarnVersion = "+build.61"
+    static def baseVersion = "1.4.6+1.17"
+    static def mcVersion = "21w39a"
+    static def yarnVersion = "+build.11"
 }
 
 archivesBaseName = "Server-Translations"
@@ -39,13 +39,17 @@ allprojects {
             name = 'mojang'
             url = 'https://libraries.minecraft.net/'
         }
+        maven {
+            name = "Jitpack"
+            url = "https://jitpack.io"
+        }
         mavenLocal()
     }
 
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modCompileOnly "net.fabricmc:fabric-loader:0.11.6"
+        modCompileOnly "net.fabricmc:fabric-loader:0.11.7"
 //        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.40.1+1.17"
     }
 
