@@ -32,7 +32,7 @@ public class PacketByteBufMixin {
 
     @Inject(method = "readItemStack", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
     private void readItemStack(CallbackInfoReturnable<ItemStack> ci, int id, int count, ItemStack stack) {
-        NbtCompound tag = StackNbtLocalizer.unlocalize(stack.getTag());
-        stack.setTag(tag);
+        NbtCompound tag = StackNbtLocalizer.unlocalize(stack.getNbt());
+        stack.setNbt(tag);
     }
 }

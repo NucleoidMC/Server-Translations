@@ -3,14 +3,14 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '0.8-SNAPSHOT' apply false
+    id 'fabric-loom' version '0.10-SNAPSHOT' apply false
     id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
     static def baseVersion = "1.4.5+1.17"
-    static def mcVersion = "1.17"
-    static def yarnVersion = "+build.5"
+    static def mcVersion = "1.17.1"
+    static def yarnVersion = "+build.61"
 }
 
 archivesBaseName = "Server-Translations"
@@ -26,6 +26,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven { url = 'https://maven.nucleoid.xyz/' }
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
@@ -44,8 +45,8 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modCompileOnly "net.fabricmc:fabric-loader:0.11.3"
-        modRuntime "net.fabricmc.fabric-api:fabric-api:0.34.9+1.17"
+        modCompileOnly "net.fabricmc:fabric-loader:0.11.6"
+//        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.40.1+1.17"
     }
 
     processResources {
@@ -78,13 +79,7 @@ allprojects {
     if (it.name != "api") remapJar.dependsOn ':api:remapJar'
 }
 
-repositories {
-    flatDir {
-        dirs 'api/build/libs'
-    }
-}
-
 dependencies {
     implementation project(':api')
-    include (name: 'server-translations-api', version: project(':api').version, ext: 'jar')
+    include project(':api'/*name: 'server-translations-api', version: project(':api').version, ext: 'jar'*/)
 }

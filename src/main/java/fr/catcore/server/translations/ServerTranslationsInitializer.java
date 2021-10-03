@@ -28,5 +28,9 @@ public class ServerTranslationsInitializer implements ModInitializer {
         LOGGER.info(new TranslatableText("text.translated_server.language.set", language.code(), language.name(), language.region()).getString());
 
         ServerTranslations.INSTANCE.registerReloadListener(TranslationGatherer::init);
+        ServerTranslations.INSTANCE.registerReloadListener(() -> {
+            ServerLanguageDefinition lang = ServerTranslations.INSTANCE.getLanguageDefinition(systemCode);
+            ServerTranslations.INSTANCE.setSystemLanguage(lang);
+        });
     }
 }
