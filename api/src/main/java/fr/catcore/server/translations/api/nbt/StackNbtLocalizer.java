@@ -111,7 +111,13 @@ public final class StackNbtLocalizer {
     }
 
     private static String localizeTextJson(String json, LocalizationTarget target) {
-        Text text = Text.Serializer.fromJson(json);
+        Text text;
+        try {
+            text = Text.Serializer.fromLenientJson(json);
+        } catch (Exception e) {
+            text = null;
+        }
+
         if (text == null) {
             return json;
         }
