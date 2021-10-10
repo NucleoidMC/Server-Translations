@@ -2,6 +2,7 @@ package fr.catcore.server.translations.api.mixin.packet;
 
 import fr.catcore.server.translations.api.LocalizationTarget;
 import fr.catcore.server.translations.api.text.LocalizableText;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.text.Text;
@@ -15,16 +16,14 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(BlockEntityUpdateS2CPacket.class)
 public class BlockEntityUpdateS2CPacketMixin {
 
-    @Shadow @Final private int blockEntityType;
-
-    @Shadow @Final public static int SIGN;
+    @Shadow @Final private BlockEntityType<?> blockEntityType;
 
     @ModifyArg(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/network/PacketByteBuf;"))
     private NbtCompound translateNbt(NbtCompound nbtCompound) {
-        System.out.println("-1");
+//        System.out.println("-1");
         var target = LocalizationTarget.forPacket();
 
-        if (this.blockEntityType == SIGN && target != null) {
+        if (this.blockEntityType == BlockEntityType.SIGN && target != null) {
             var nbt = nbtCompound.copy();
             nbt.putString("Text1", this.parseText(nbt.getString("Text1"), target));
             nbt.putString("Text2", this.parseText(nbt.getString("Text2"), target));

@@ -8,7 +8,7 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "1.4.6"
+    static def baseVersion = "1.4.7"
     static def mcVersion = "21w39a"
     static def yarnVersion = "+build.11"
 }
@@ -66,6 +66,7 @@ allprojects {
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
+        options.release = 16
     }
 
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
