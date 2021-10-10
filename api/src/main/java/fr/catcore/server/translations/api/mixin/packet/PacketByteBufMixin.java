@@ -6,28 +6,45 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(PacketByteBuf.class)
 public class PacketByteBufMixin {
-    @Redirect(
+    @Unique
+    private ItemStack stapi_cachedStack;
+
+    @Inject(
+            method = "writeItemStack",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/network/PacketByteBuf;",
+                    shift = At.Shift.BEFORE
+            )
+    )
+    private void cacheStack(ItemStack stack, CallbackInfoReturnable<PacketByteBuf> cir) {
+        this.stapi_cachedStack = stack;
+    }
+
+    @ModifyArg(
             method = "writeItemStack",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/network/PacketByteBuf;"
             )
     )
-    private PacketByteBuf writeItemStackTag(PacketByteBuf buf, NbtCompound tag, ItemStack stack) {
+    private NbtCompound writeItemStackTag(NbtCompound tag) {
         LocalizationTarget target = LocalizationTarget.forPacket();
         if (target != null) {
-            tag = StackNbtLocalizer.localize(stack, tag, target);
+            tag = StackNbtLocalizer.localize(this.stapi_cachedStack, tag, target);
         }
+        this.stapi_cachedStack = null;
 
-        return buf.writeNbt(tag);
+        return tag;
     }
 
     @Inject(method = "readItemStack", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)

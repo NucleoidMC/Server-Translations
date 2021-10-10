@@ -10,18 +10,15 @@ public final class SystemDelegatedLanguage extends Language {
 
     private Language vanilla = Language.getInstance();
 
-    private boolean changed = false;
-
     private SystemDelegatedLanguage() {
     }
 
     public void setVanilla(Language language) {
         this.vanilla = language;
-        this.changed = true;
     }
 
-    public boolean languageChanged() {
-        return this.changed;
+    public Language getVanilla() {
+        return this.vanilla;
     }
 
     @Override
