@@ -7,16 +7,17 @@
     "LanguageMixin",
     "ServerPlayerEntityMixin",
     "ServerResourceManagerMixin",
+    "packet.BlockEntityUpdateS2CPacketMixin",
+    "packet.PacketByteBufMixin",
+    "packet.TextSerializerMixin",
     "text.BaseTextMixin",
+    "text.HoverEventMixin",
     "text.TranslatableTextMixin"
   ],
   "client": [
+    "client.BaseTextMixin",
     "client.LanguageMixin",
     "client.TranslatableTextMixin"
-  ],
-  "server": [
-    "packet.PacketByteBufMixin",
-    "packet.TextSerializerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

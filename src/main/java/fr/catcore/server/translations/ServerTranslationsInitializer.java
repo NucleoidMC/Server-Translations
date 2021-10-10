@@ -10,7 +10,7 @@ import net.minecraft.text.TranslatableText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Environment(EnvType.SERVER)
+//@Environment(EnvType.SERVER)
 public class ServerTranslationsInitializer implements ModInitializer {
 
     private static final Logger LOGGER = LogManager.getLogger();
