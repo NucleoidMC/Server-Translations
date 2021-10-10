@@ -1,9 +1,12 @@
 package fr.catcore.server.translations.api.mixin.text;
 
 import fr.catcore.server.translations.api.LocalizationTarget;
+import fr.catcore.server.translations.api.nbt.StackNbtLocalizer;
+import fr.catcore.server.translations.api.text.LocalizableHoverEvent;
 import fr.catcore.server.translations.api.text.LocalizableText;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
 import net.minecraft.text.BaseText;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,6 +16,14 @@ public abstract class BaseTextMixin implements LocalizableText {
     @Override
     public void visitLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
         Style selfStyle = this.getStyle().withParent(style);
+        var hoverEvent = selfStyle.getHoverEvent();
+        if (hoverEvent != null) {
+            var localizableHoverEvent = (LocalizableHoverEvent) hoverEvent;
+            if (!localizableHoverEvent.shouldSkipLocalization()) {
+                selfStyle = selfStyle.withHoverEvent(localizableHoverEvent.asLocalizedFor(target));
+            }
+        }
+
         this.visitSelfLocalized(visitor, target, selfStyle);
 
         for (Text sibling : this.getSiblings()) {

@@ -12,7 +12,7 @@
   ],
   "contact": {},
   "license": "MIT",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "main": ["fr.catcore.server.translations.ServerTranslationsInitializer"]
   },
