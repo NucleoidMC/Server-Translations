@@ -132,7 +132,7 @@ public final class StackNbtLocalizer {
 
         Text localized = LocalizableText.asLocalizedFor(text, target);
         if (!localized.equals(text)) {
-            return Text.Serializer.toJson(text);
+            return Text.Serializer.toJson(localized);
         } else {
             return json;
         }
