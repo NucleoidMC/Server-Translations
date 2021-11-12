@@ -31,7 +31,7 @@ public class TranslationGatherer {
     static {
         URL languageList;
         try {
-            languageList = new URL("https://github.com/arthurbambou/Server-Translations/raw/master/src/main/resources/data/server_translations/language_list.json");
+            languageList = new URL("https://github.com/arthurbambou/Server-Translations/raw/1.18/src/main/resources/data/server_translations/language_list.json");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             languageList = null;
@@ -125,7 +125,7 @@ public class TranslationGatherer {
 
     private static URL getLanguageURL(String code) {
         try {
-            return new URL("https://github.com/arthurbambou/Server-Translations/raw/master/src/main/resources/data/server_translations/lang/" + code + ".json");
+            return new URL("https://github.com/arthurbambou/Server-Translations/raw/1.18/src/main/resources/data/server_translations/lang/" + code + ".json");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
