@@ -9,8 +9,8 @@ plugins {
 
 class Globals {
     static def baseVersion = "1.4.7"
-    static def mcVersion = "21w39a"
-    static def yarnVersion = "+build.11"
+    static def mcVersion = "1.18-pre1"
+    static def yarnVersion = "+build.5"
 }
 
 archivesBaseName = "Server-Translations"
@@ -49,7 +49,7 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modCompileOnly "net.fabricmc:fabric-loader:0.11.7"
+        modImplementation "net.fabricmc:fabric-loader:0.12.5"
 //        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.40.1+1.17"
     }
 
@@ -85,6 +85,6 @@ allprojects {
 }
 
 dependencies {
-    implementation project(':api')
+    implementation project(path: ':api', configuration: "namedElements")
     include project(':api'/*name: 'server-translations-api', version: project(':api').version, ext: 'jar'*/)
 }
