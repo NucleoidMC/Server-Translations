@@ -20,7 +20,6 @@ public class BlockEntityUpdateS2CPacketMixin {
 
     @ModifyArg(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/network/PacketByteBuf;"))
     private NbtCompound translateNbt(NbtCompound nbtCompound) {
-//        System.out.println("-1");
         var target = LocalizationTarget.forPacket();
 
         if (this.blockEntityType == BlockEntityType.SIGN && target != null) {

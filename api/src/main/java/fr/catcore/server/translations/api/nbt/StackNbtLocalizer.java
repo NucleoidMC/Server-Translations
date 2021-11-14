@@ -12,6 +12,7 @@ import net.minecraft.text.Text;
 public final class StackNbtLocalizer {
     private static final String TRANSLATED_TAG = "server_translated";
 
+    // While stack is unused, it's kept for backward compatibility and future proofing
     public static NbtCompound localize(ItemStack stack, NbtCompound tag, LocalizationTarget target) {
         if (tag == null) {
             return null;
@@ -22,7 +23,6 @@ public final class StackNbtLocalizer {
 
             translateDisplay(target, nbt);
             translateBook(target, nbt);
-            translateItemName(stack, target, nbt);
 
             NbtCompound revertTag = nbt.getRevertNbtElement();
             if (revertTag != null) {
@@ -43,19 +43,6 @@ public final class StackNbtLocalizer {
         }
 
         return tag;
-    }
-
-    private static void translateItemName(ItemStack stack, LocalizationTarget target, NbtLocalizer nbt) {
-        boolean hasCustomName = nbt.contains("display", NbtElement.COMPOUND_TYPE)
-                && nbt.getCompound("display").contains("Name", NbtElement.STRING_TYPE);
-
-        if (!hasCustomName) {
-            Text name = stack.getItem().getName(stack);
-            Text localized = LocalizableText.asLocalizedFor(name, target);
-            if (!name.equals(localized)) {
-                addNameToTag(nbt, localized);
-            }
-        }
     }
 
     private static void translateDisplay(LocalizationTarget target, NbtLocalizer nbt) {
@@ -132,7 +119,7 @@ public final class StackNbtLocalizer {
 
         Text localized = LocalizableText.asLocalizedFor(text, target);
         if (!localized.equals(text)) {
-            return Text.Serializer.toJson(text);
+            return Text.Serializer.toJson(localized);
         } else {
             return json;
         }
