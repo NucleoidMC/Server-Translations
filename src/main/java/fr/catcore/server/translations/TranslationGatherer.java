@@ -31,7 +31,7 @@ public class TranslationGatherer {
     static {
         URL languageList;
         try {
-            languageList = new URL("https://github.com/arthurbambou/Server-Translations/raw/master/src/main/resources/data/server_translations/language_list.json");
+            languageList = new URL("https://github.com/arthurbambou/Server-Translations/raw/1.17/src/main/resources/data/server_translations/language_list.json");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             languageList = null;
