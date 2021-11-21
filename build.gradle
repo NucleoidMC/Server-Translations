@@ -9,8 +9,8 @@ plugins {
 
 class Globals {
     static def baseVersion = "1.4.8"
-    static def mcVersion = "1.18-pre1"
-    static def yarnVersion = "+build.5"
+    static def mcVersion = "1.18-pre5"
+    static def yarnVersion = "+build.4"
 }
 
 archivesBaseName = "Server-Translations"
@@ -19,8 +19,8 @@ allprojects {
     apply plugin: 'fabric-loom'
 
     version = Globals.baseVersion + "+" + Globals.mcVersion
-    sourceCompatibility = 16
-    targetCompatibility = 16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     group = "fr.catcore"
 
@@ -66,21 +66,23 @@ allprojects {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
-        options.release = 16
+        // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+        options.release = 17
     }
 
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this task, sources will not be generated.
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = "sources"
-        from sourceSets.main.allSource
+    java {
+        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+        // if it is present.
+        // If you remove this line, sources will not be generated.
+        withSourcesJar()
     }
 
     jar {
-        from "LICENSE"
+        from("LICENSE") {
+            rename { "${it}_${project.archivesBaseName}"}
+        }
     }
 
     if (it.name != "api") remapJar.dependsOn ':api:remapJar'

@@ -16,7 +16,8 @@
   "entrypoints": {},
   "depends": {
     "minecraft": "1.18.x",
-    "fabricloader": ">=0.12.5"
+    "fabricloader": ">=0.12.5",
+    "java": ">=17"
   },
   "mixins": [
     "server_translations_api.mixin.json"
