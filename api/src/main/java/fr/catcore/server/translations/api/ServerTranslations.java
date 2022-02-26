@@ -1,6 +1,7 @@
 package fr.catcore.server.translations.api;
 
 import com.google.common.collect.Multimap;
+import com.mojang.logging.LogUtils;
 import fr.catcore.server.translations.api.resource.language.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
@@ -10,10 +11,9 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.profiler.Profiler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.*;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 public final class ServerTranslations implements ResourceReloader {
     public static final String ID = "server_translations_api";
-    public static final Logger LOGGER = LogManager.getLogger(ServerTranslations.class);
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ServerTranslations INSTANCE = new ServerTranslations();
 

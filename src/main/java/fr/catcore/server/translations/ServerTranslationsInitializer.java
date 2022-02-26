@@ -1,19 +1,16 @@
 package fr.catcore.server.translations;
 
+import com.mojang.logging.LogUtils;
 import fr.catcore.server.translations.api.ServerTranslations;
 import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
 import fr.catcore.server.translations.config.ConfigManager;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.text.TranslatableText;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
-//@Environment(EnvType.SERVER)
 public class ServerTranslationsInitializer implements ModInitializer {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     @Override
     public void onInitialize() {

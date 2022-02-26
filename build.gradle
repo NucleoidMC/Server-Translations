@@ -3,14 +3,14 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '0.10-SNAPSHOT' apply false
+    id 'fabric-loom' version '0.11-SNAPSHOT' apply false
     id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
-    static def baseVersion = "1.4.7"
-    static def mcVersion = "1.18-pre1"
-    static def yarnVersion = "+build.5"
+    static def baseVersion = "1.4.9"
+    static def mcVersion = "1.18.2-rc1"
+    static def yarnVersion = "+build.2"
 }
 
 archivesBaseName = "Server-Translations"
@@ -19,8 +19,8 @@ allprojects {
     apply plugin: 'fabric-loom'
 
     version = Globals.baseVersion + "+" + Globals.mcVersion
-    sourceCompatibility = 16
-    targetCompatibility = 16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     group = "fr.catcore"
 
@@ -49,10 +49,12 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modImplementation "net.fabricmc:fabric-loader:0.12.5"
+        modImplementation "net.fabricmc:fabric-loader:0.13.3"
 
         modImplementation 'xyz.nucleoid:packet-tweaker:0.2.0+1.18-pre1'
         include 'xyz.nucleoid:packet-tweaker:0.2.0+1.18-pre1'
+
+        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.47.8+1.18.2"
     }
 
     processResources {
@@ -68,19 +70,21 @@ allprojects {
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = 16
+        // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+        options.release = 17
     }
 
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this task, sources will not be generated.
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = "sources"
-        from sourceSets.main.allSource
+    java {
+        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+        // if it is present.
+        // If you remove this line, sources will not be generated.
+        withSourcesJar()
     }
 
     jar {
-        from "LICENSE"
+        from("LICENSE") {
+            rename { "${it}_${project.archivesBaseName}"}
+        }
     }
 
     if (it.name != "api") remapJar.dependsOn ':api:remapJar'

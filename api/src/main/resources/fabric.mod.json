@@ -15,8 +15,8 @@
   "environment": "*",
   "entrypoints": {},
   "depends": {
-    "minecraft": "1.18.x",
-    "fabricloader": ">=0.12.5"
+    "minecraft": ">1.18.1",
+    "fabricloader": ">=0.12.12"
   },
   "mixins": [
     "server_translations_api.mixin.json"

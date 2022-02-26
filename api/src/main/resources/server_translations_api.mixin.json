@@ -2,11 +2,11 @@
   "required": true,
   "minVersion": "0.8",
   "package": "fr.catcore.server.translations.api.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "LanguageMixin",
     "ServerPlayerEntityMixin",
-    "ServerResourceManagerMixin",
+    "DataPackContentsMixin",
     "packet.BlockEntityUpdateS2CPacketMixin",
     "packet.PacketByteBufMixin",
     "packet.TextSerializerMixin",
