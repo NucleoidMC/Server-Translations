@@ -77,6 +77,8 @@ public final class LanguageReader {
 
     private static String getLanguageCodeForPath(Identifier file) {
         String path = file.getPath();
-        return path.substring("lang".length() + 1, path.length() - ".json".length());
+        path = path.substring("lang".length() + 1, path.length() - ".json".length());
+
+        return ServerTranslations.INSTANCE.getCodeAlias(path);
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fr.catcore.server.translations.api.ServerTranslations;
+import net.minecraft.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,21 +16,27 @@ public record ServerLanguageDefinition(String code, String region, String name,
     public static final String DEFAULT_CODE = "en_us";
     public static final ServerLanguageDefinition DEFAULT = new ServerLanguageDefinition(DEFAULT_CODE, "US", "English", false);
 
-    private static final JsonParser PARSER = new JsonParser();
-
-    public static List<ServerLanguageDefinition> loadLanguageDefinitions() throws IOException {
+    public static Pair<List<ServerLanguageDefinition>, Map<String, String>> loadLanguageDefinitions() throws IOException {
         List<ServerLanguageDefinition> languageDefinitions = new ArrayList<>();
+        Map<String, String> aliasList = new HashMap<>();
 
         try (BufferedReader read = new BufferedReader(new InputStreamReader(ServerTranslations.class.getResourceAsStream("/minecraft_languages.json")))) {
-            JsonObject root = PARSER.parse(read).getAsJsonObject().getAsJsonObject("language");
+            JsonObject root = JsonParser.parseReader(read).getAsJsonObject();
+            JsonObject languageRoot = root.getAsJsonObject("language");
 
-            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+            for (Map.Entry<String, JsonElement> entry : languageRoot.entrySet()) {
                 ServerLanguageDefinition definition = ServerLanguageDefinition.parse(entry.getKey(), (JsonObject) entry.getValue());
                 languageDefinitions.add(definition);
             }
+
+            JsonObject aliasRoot = root.getAsJsonObject("alias");
+
+            for (Map.Entry<String, JsonElement> entry : aliasRoot.entrySet()) {
+                aliasList.put(entry.getKey(), entry.getValue().getAsString());
+            }
         }
 
-        return languageDefinitions;
+        return new Pair(languageDefinitions, aliasList);
     }
 
     public static ServerLanguageDefinition parse(String code, JsonObject jsonObject) {

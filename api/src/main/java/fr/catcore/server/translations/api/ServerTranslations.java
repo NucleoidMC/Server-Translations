@@ -10,6 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Pair;
 import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +40,8 @@ public final class ServerTranslations implements ResourceReloader {
 
     private final List<TranslationsReloadListener> reloadListeners = new ArrayList<>();
 
+    private final Map<String, String> CODE_ALIAS = new HashMap<>();
+
     private ServerTranslations() {
         this.loadSupportedLanguages();
         this.reload();
@@ -46,10 +49,13 @@ public final class ServerTranslations implements ResourceReloader {
 
     private void loadSupportedLanguages() {
         try {
-            List<ServerLanguageDefinition> definitions = ServerLanguageDefinition.loadLanguageDefinitions();
+            Pair<List<ServerLanguageDefinition>, Map<String, String>> pair = ServerLanguageDefinition.loadLanguageDefinitions();
+            List<ServerLanguageDefinition> definitions = pair.getLeft();
             for (ServerLanguageDefinition language : definitions) {
                 this.supportedLanguages.put(language.code(), language);
             }
+
+            CODE_ALIAS.putAll(pair.getRight());
         } catch (IOException e) {
             LOGGER.error("Failed to load server language definitions", e);
         }
@@ -170,5 +176,9 @@ public final class ServerTranslations implements ResourceReloader {
     @Override
     public String getName() {
         return ResourceReloader.super.getName();
+    }
+
+    public String getCodeAlias(String code) {
+        return CODE_ALIAS.getOrDefault(code, code);
     }
 }
