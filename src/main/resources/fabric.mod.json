@@ -24,7 +24,6 @@
     }
   },
   "depends": {
-    "minecraft": "1.18.x",
     "fabricloader": ">=0.12.5",
     "server_translations_api": "*"
   },

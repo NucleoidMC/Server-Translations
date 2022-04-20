@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class LanguageReader {
@@ -56,7 +57,7 @@ public final class LanguageReader {
     public static Multimap<String, Supplier<TranslationMap>> collectTranslationSuppliers(ResourceManager manager) {
         Multimap<String, Supplier<TranslationMap>> translationSuppliers = HashMultimap.create();
 
-        for (Identifier path : manager.findResources("lang", path -> path.endsWith(".json"))) {
+        for (Identifier path : manager.findResources("lang", path -> path.getPath().endsWith(".json")).keySet()) {
             String code = getLanguageCodeForPath(path);
 
             translationSuppliers.put(code, () -> {

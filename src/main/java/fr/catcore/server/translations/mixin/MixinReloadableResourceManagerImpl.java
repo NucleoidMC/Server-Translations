@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(ReloadableResourceManagerImpl.class)
 public class MixinReloadableResourceManagerImpl {
 
-    @ModifyArg(method = "reload", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;[Lorg/apache/logging/log4j/util/Supplier;)V", ordinal = 0, remap = false), index = 0)
+    @ModifyArg(method = "reload", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;info(Ljava/lang/String;[Lorg/apache/logging/log4j/util/Supplier;)V", ordinal = 0, remap = false), index = 0)
     private String translated_loading(String string, Supplier<?>... p0) {
         StringBuilder str = new StringBuilder();
         boolean bol = false;

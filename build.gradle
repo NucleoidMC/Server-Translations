@@ -9,8 +9,8 @@ plugins {
 
 class Globals {
     static def baseVersion = "1.4.10"
-    static def mcVersion = "1.18.2"
-    static def yarnVersion = "+build.1"
+    static def mcVersion = "22w14a"
+    static def yarnVersion = "+build.12"
 }
 
 archivesBaseName = "Server-Translations"
@@ -51,10 +51,10 @@ allprojects {
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
         modImplementation "net.fabricmc:fabric-loader:0.13.3"
 
-        modImplementation 'xyz.nucleoid:packet-tweaker:0.2.0+1.18-pre1'
-        include 'xyz.nucleoid:packet-tweaker:0.2.0+1.18-pre1'
+        modImplementation 'xyz.nucleoid:packet-tweaker:0.2.0+22w14a'
+        include 'xyz.nucleoid:packet-tweaker:0.2.0+22w14a'
 
-        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.47.8+1.18.2"
+        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.51.1+1.19"
     }
 
     processResources {
