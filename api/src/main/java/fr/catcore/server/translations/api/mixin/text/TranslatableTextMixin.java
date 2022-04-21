@@ -3,9 +3,14 @@ package fr.catcore.server.translations.api.mixin.text;
 import fr.catcore.server.translations.api.LocalizationTarget;
 import fr.catcore.server.translations.api.ServerTranslations;
 import fr.catcore.server.translations.api.resource.language.TranslationAccess;
-import fr.catcore.server.translations.api.text.LocalizableText;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
-import net.minecraft.text.*;
+import fr.catcore.server.translations.api.text.LocalizableText;
+import fr.catcore.server.translations.api.text.LocalizableMutableText;
+import net.minecraft.class_7417;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.StringVisitable;
+import net.minecraft.text.Style;
+import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,17 +22,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Mixin(TranslatableText.class)
-public abstract class TranslatableTextMixin implements LocalizableText, MutableText {
-    @Shadow
-    @Final
-    private static Pattern ARG_FORMAT;
+public abstract class TranslatableTextMixin implements class_7417, LocalizableText {
+
     @Shadow
     @Final
     private static StringVisitable LITERAL_PERCENT_SIGN;
 
-    @Shadow
-    @Final
-    private String key;
     @Shadow
     @Final
     private Object[] args;
@@ -35,9 +35,16 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     @Shadow
     protected abstract StringVisitable getArg(int index);
 
-    @Override
     @Shadow
-    public abstract TranslatableText copy();
+    @Final
+    private static Pattern ARG_FORMAT;
+
+    @Shadow
+    @Final
+    private String key;
+
+    @Shadow
+    private List<StringVisitable> translations;
 
     @Nullable
     private List<StringVisitable> buildTranslations(@Nullable LocalizationTarget target) {
@@ -104,6 +111,16 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     }
 
     @Override
+    public void visitLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
+        visitor.acceptLiteral("", style);
+        for (StringVisitable translation : translations) {
+            if (translation instanceof LocalizableMutableText localizableText) {
+                localizableText.visitLocalizedText(visitor, target, style);
+            }
+        }
+    }
+
+    @Override
     public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
         List<StringVisitable> translations = this.buildTranslations(target);
         if (translations != null) {
@@ -116,8 +133,8 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     private void visitSelfTranslated(LocalizedTextVisitor visitor, LocalizationTarget target, Style style, List<StringVisitable> translations) {
         visitor.acceptLiteral("", style);
         for (StringVisitable translation : translations) {
-            if (translation instanceof LocalizableText localizableText) {
-                localizableText.visitLocalized(visitor, target, style);
+            if (translation instanceof LocalizableMutableText localizableText) {
+                localizableText.visitLocalizedText(visitor, target, style);
             } else {
                 translation.visit(visitor.asGeneric(style));
             }
@@ -125,6 +142,7 @@ public abstract class TranslatableTextMixin implements LocalizableText, MutableT
     }
 
     private void visitSelfUntranslated(LocalizedTextVisitor visitor, Style style) {
-        visitor.accept(this.copy().setStyle(style));
+        visitor.accept(MutableText.method_43477(this).setStyle(style));
     }
+
 }

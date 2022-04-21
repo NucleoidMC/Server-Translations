@@ -1,3 +1,5 @@
+// TODO:
+/*
 package fr.catcore.server.translations.api.mixin.client;
 
 import fr.catcore.server.translations.api.resource.language.SystemDelegatedLanguage;
@@ -51,3 +53,4 @@ public class BaseTextMixin {
         }
     }
 }
+*/

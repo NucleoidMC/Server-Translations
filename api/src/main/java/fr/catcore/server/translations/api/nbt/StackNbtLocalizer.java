@@ -1,7 +1,7 @@
 package fr.catcore.server.translations.api.nbt;
 
 import fr.catcore.server.translations.api.LocalizationTarget;
-import fr.catcore.server.translations.api.text.LocalizableText;
+import fr.catcore.server.translations.api.text.LocalizableMutableText;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -117,7 +117,7 @@ public final class StackNbtLocalizer {
             return json;
         }
 
-        Text localized = LocalizableText.asLocalizedFor(text, target);
+        Text localized = LocalizableMutableText.asLocalizedFor(text, target);
         if (!localized.equals(text)) {
             return Text.Serializer.toJson(localized);
         } else {

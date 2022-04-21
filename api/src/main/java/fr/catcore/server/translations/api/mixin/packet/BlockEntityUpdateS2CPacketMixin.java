@@ -1,7 +1,7 @@
 package fr.catcore.server.translations.api.mixin.packet;
 
 import fr.catcore.server.translations.api.LocalizationTarget;
-import fr.catcore.server.translations.api.text.LocalizableText;
+import fr.catcore.server.translations.api.text.LocalizableMutableText;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -35,7 +35,7 @@ public class BlockEntityUpdateS2CPacketMixin {
 
     @Unique
     private String parseText(String text, LocalizationTarget target) {
-        var parsed = (LocalizableText) Text.Serializer.fromLenientJson(text);
+        var parsed = (LocalizableMutableText) Text.Serializer.fromLenientJson(text);
 
         if (parsed != null && parsed.shouldLocalize()) {
             return Text.Serializer.toJson(parsed.asLocalizedFor(target));

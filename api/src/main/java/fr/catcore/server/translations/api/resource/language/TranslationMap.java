@@ -48,7 +48,7 @@ public final class TranslationMap implements TranslationAccess {
         return this.map.entrySet();
     }
 
-    protected void clear() {
+    private void clear() {
         this.map.clear();
     }
 

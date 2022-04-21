@@ -5,7 +5,7 @@ import fr.catcore.server.translations.api.ServerTranslations;
 import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
 import fr.catcore.server.translations.config.ConfigManager;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.slf4j.Logger;
 
 public class ServerTranslationsInitializer implements ModInitializer {
@@ -22,7 +22,7 @@ public class ServerTranslationsInitializer implements ModInitializer {
         ServerLanguageDefinition language = ServerTranslations.INSTANCE.getLanguageDefinition(systemCode);
         ServerTranslations.INSTANCE.setSystemLanguage(language);
 
-        LOGGER.info(new TranslatableText("text.translated_server.language.set", language.code(), language.name(), language.region()).getString());
+        LOGGER.info(Text.translatable("text.translated_server.language.set", language.code(), language.name(), language.region()).getString());
 
         ServerTranslations.INSTANCE.registerReloadListener(TranslationGatherer::init);
         ServerTranslations.INSTANCE.registerReloadListener(() -> {

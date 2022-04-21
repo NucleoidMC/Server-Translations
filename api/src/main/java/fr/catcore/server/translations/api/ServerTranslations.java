@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.NotNull;
@@ -169,7 +169,7 @@ public final class ServerTranslations implements ResourceReloader {
                     languageSuppliers.forEach(this.translations::add);
 
                     int keyCount = ServerTranslations.INSTANCE.getTranslationKeyCount();
-                    LOGGER.info(new TranslatableText("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
+                    LOGGER.info(Text.translatable("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
                 });
     }
 
