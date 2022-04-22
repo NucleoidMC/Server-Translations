@@ -5,10 +5,10 @@ import fr.catcore.server.translations.api.text.LocalizableHoverEvent;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
 import fr.catcore.server.translations.api.text.LocalizableText;
 import fr.catcore.server.translations.api.text.LocalizableMutableText;
-import net.minecraft.class_7417;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextContent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -18,13 +18,12 @@ import java.util.List;
 public abstract class MutableTextMixin implements Text, LocalizableMutableText {
 
     @Shadow
-    public abstract class_7417 method_10851();
-
-    @Shadow
     public abstract List<Text> getSiblings();
 
     @Shadow
     public abstract Style getStyle();
+
+    @Shadow public abstract TextContent getContent();
 
     @Override
     public void visitLocalizedText(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
@@ -37,14 +36,14 @@ public abstract class MutableTextMixin implements Text, LocalizableMutableText {
             }
         }
 
-        if (this.method_10851() instanceof LocalizableText localizableText) {
+        if (this.getContent() instanceof LocalizableText localizableText) {
             localizableText.visitSelfLocalized(visitor, target, selfStyle);
         } else {
-            visitor.acceptLiteral(this.getString(), style);
+            visitor.acceptLiteral(this.getString(), selfStyle);
         }
 
         for (Text sibling : this.getSiblings()) {
-            if (sibling.method_10851() instanceof LocalizableText localizableText) {
+            if (sibling.getContent() instanceof LocalizableText localizableText) {
                 localizableText.visitLocalized(visitor, target, selfStyle);
             }
         }

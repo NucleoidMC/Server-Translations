@@ -2,7 +2,6 @@ package fr.catcore.server.translations.mixin;
 
 import net.minecraft.advancement.AdvancementManager;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;

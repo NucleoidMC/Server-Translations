@@ -12,11 +12,11 @@
     "packet.TextSerializerMixin",
     "text.HoverEventMixin",
     "text.MutableTextMixin",
-    "text.TranslatableTextMixin"
+    "text.TranslatableTextContentMixin"
   ],
   "client": [
     "client.LanguageMixin",
-    "client.TranslatableTextMixin"
+    "client.TranslatableTextContentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

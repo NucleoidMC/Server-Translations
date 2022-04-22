@@ -1,10 +1,7 @@
 package fr.catcore.server.translations.mixin;
 
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
-import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class MixinThreadedAnvilChunkStorage {

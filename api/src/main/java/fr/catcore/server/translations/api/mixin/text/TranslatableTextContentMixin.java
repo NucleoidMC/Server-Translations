@@ -6,11 +6,7 @@ import fr.catcore.server.translations.api.resource.language.TranslationAccess;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
 import fr.catcore.server.translations.api.text.LocalizableText;
 import fr.catcore.server.translations.api.text.LocalizableMutableText;
-import net.minecraft.class_7417;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Style;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,8 +17,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Mixin(TranslatableText.class)
-public abstract class TranslatableTextMixin implements class_7417, LocalizableText {
+@Mixin(TranslatableTextContent.class)
+public abstract class TranslatableTextContentMixin implements TextContent, LocalizableText {
 
     @Shadow
     @Final
@@ -142,7 +138,7 @@ public abstract class TranslatableTextMixin implements class_7417, LocalizableTe
     }
 
     private void visitSelfUntranslated(LocalizedTextVisitor visitor, Style style) {
-        visitor.accept(MutableText.method_43477(this).setStyle(style));
+        visitor.accept(MutableText.of(this).setStyle(style));
     }
 
 }

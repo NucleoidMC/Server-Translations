@@ -47,7 +47,7 @@ public interface LocalizableMutableText extends Text {
     }
 
     default boolean shouldLocalizeSelf() {
-        return method_10851() instanceof LocalizableText;
+        return getContent() instanceof LocalizableText;
     }
 
     void visitLocalizedText(LocalizedTextVisitor visitor, LocalizationTarget target, Style style);
