@@ -5,7 +5,6 @@ import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public interface LocalizedTextVisitor {

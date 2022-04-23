@@ -1,7 +1,7 @@
 package fr.catcore.server.translations.api.mixin.packet;
 
-import fr.catcore.server.translations.api.nbt.StackNbtLocalizer;
 import fr.catcore.server.translations.api.LocalizationTarget;
+import fr.catcore.server.translations.api.nbt.StackNbtLocalizer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
