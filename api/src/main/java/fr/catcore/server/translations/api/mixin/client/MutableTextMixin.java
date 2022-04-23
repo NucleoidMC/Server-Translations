@@ -1,9 +1,7 @@
-// TODO:
-/*
 package fr.catcore.server.translations.api.mixin.client;
 
 import fr.catcore.server.translations.api.resource.language.SystemDelegatedLanguage;
-import net.minecraft.text.BaseText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.util.Language;
 import org.objectweb.asm.Opcodes;
@@ -15,9 +13,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(BaseText.class)
-public class BaseTextMixin {
-    @Shadow private OrderedText orderedText;
+@Mixin(MutableText.class)
+public class MutableTextMixin {
+    @Shadow
+    private OrderedText ordered;
     @Unique
     private Language stapi_cachedLanguageVanilla;
 
@@ -25,11 +24,11 @@ public class BaseTextMixin {
             method = "asOrderedText",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/text/BaseText;previousLanguage:Lnet/minecraft/util/Language;",
+                    target = "Lnet/minecraft/text/MutableText;language:Lnet/minecraft/util/Language;",
                     opcode = Opcodes.GETFIELD
             )
     )
-    private Language markAsAlwaysTrue(BaseText baseText) {
+    private Language markAsAlwaysTrue(MutableText mutableText) {
         return null;
     }
 
@@ -37,7 +36,7 @@ public class BaseTextMixin {
             method = "asOrderedText",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/text/BaseText;orderedText:Lnet/minecraft/text/OrderedText;",
+                    target = "Lnet/minecraft/text/MutableText;ordered:Lnet/minecraft/text/OrderedText;",
                     opcode = Opcodes.PUTFIELD,
                     shift = At.Shift.BEFORE
             ),
@@ -49,8 +48,7 @@ public class BaseTextMixin {
         if (language instanceof SystemDelegatedLanguage delegatedLanguage && delegatedLanguage.getVanilla() != this.stapi_cachedLanguageVanilla) {
             this.stapi_cachedLanguageVanilla = delegatedLanguage.getVanilla();
         } else {
-            cir.setReturnValue(this.orderedText);
+            cir.setReturnValue(this.ordered);
         }
     }
 }
-*/

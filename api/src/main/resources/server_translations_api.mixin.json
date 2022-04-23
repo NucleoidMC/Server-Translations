@@ -10,12 +10,12 @@
     "packet.BlockEntityUpdateS2CPacketMixin",
     "packet.PacketByteBufMixin",
     "packet.TextSerializerMixin",
-    "text.HoverEventMixin",
     "text.MutableTextMixin",
     "text.TranslatableTextContentMixin"
   ],
   "client": [
     "client.LanguageMixin",
+    "client.MutableTextMixin",
     "client.TranslatableTextContentMixin"
   ],
   "injectors": {

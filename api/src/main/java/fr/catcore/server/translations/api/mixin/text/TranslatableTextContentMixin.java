@@ -3,9 +3,8 @@ package fr.catcore.server.translations.api.mixin.text;
 import fr.catcore.server.translations.api.LocalizationTarget;
 import fr.catcore.server.translations.api.ServerTranslations;
 import fr.catcore.server.translations.api.resource.language.TranslationAccess;
+import fr.catcore.server.translations.api.text.LocalizableTextContent;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
-import fr.catcore.server.translations.api.text.LocalizableText;
-import fr.catcore.server.translations.api.text.LocalizableMutableText;
 import net.minecraft.text.*;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -18,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Mixin(TranslatableTextContent.class)
-public abstract class TranslatableTextContentMixin implements TextContent, LocalizableText {
+public abstract class TranslatableTextContentMixin implements TextContent, LocalizableTextContent {
 
     @Shadow
     @Final
@@ -38,9 +37,6 @@ public abstract class TranslatableTextContentMixin implements TextContent, Local
     @Shadow
     @Final
     private String key;
-
-    @Shadow
-    private List<StringVisitable> translations;
 
     @Nullable
     private List<StringVisitable> buildTranslations(@Nullable LocalizationTarget target) {
@@ -107,30 +103,20 @@ public abstract class TranslatableTextContentMixin implements TextContent, Local
     }
 
     @Override
-    public void visitLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
-        visitor.acceptLiteral("", style);
-        for (StringVisitable translation : translations) {
-            if (translation instanceof LocalizableMutableText localizableText) {
-                localizableText.visitLocalizedText(visitor, target, style);
-            }
-        }
-    }
-
-    @Override
     public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
         List<StringVisitable> translations = this.buildTranslations(target);
         if (translations != null) {
-            this.visitSelfTranslated(visitor, target, style, translations);
+            this.visitSelfTranslated(visitor, style, translations);
         } else {
             this.visitSelfUntranslated(visitor, style);
         }
     }
 
-    private void visitSelfTranslated(LocalizedTextVisitor visitor, LocalizationTarget target, Style style, List<StringVisitable> translations) {
+    private void visitSelfTranslated(LocalizedTextVisitor visitor, Style style, List<StringVisitable> translations) {
         visitor.acceptLiteral("", style);
         for (StringVisitable translation : translations) {
-            if (translation instanceof LocalizableMutableText localizableText) {
-                localizableText.visitLocalizedText(visitor, target, style);
+            if (translation instanceof MutableText mutableText) {
+                visitor.accept(mutableText);
             } else {
                 translation.visit(visitor.asGeneric(style));
             }
