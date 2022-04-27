@@ -6,10 +6,15 @@ import fr.catcore.server.translations.api.resource.language.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public final class ServerTranslations implements ResourceReloader {
+public final class ServerTranslations implements IdentifiableResourceReloadListener, ModInitializer {
     public static final String ID = "server_translations_api";
     public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -175,10 +180,20 @@ public final class ServerTranslations implements ResourceReloader {
 
     @Override
     public String getName() {
-        return ResourceReloader.super.getName();
+        return IdentifiableResourceReloadListener.super.getName();
     }
 
     public String getCodeAlias(String code) {
         return CODE_ALIAS.getOrDefault(code, code);
+    }
+
+    @Override
+    public void onInitialize() {
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(ServerTranslations.INSTANCE);
+    }
+
+    @Override
+    public Identifier getFabricId() {
+        return new Identifier(ID, "translations");
     }
 }

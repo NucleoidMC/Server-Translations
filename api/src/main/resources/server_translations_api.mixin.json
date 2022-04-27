@@ -6,7 +6,6 @@
   "mixins": [
     "LanguageMixin",
     "ServerPlayerEntityMixin",
-    "DataPackContentsMixin",
     "packet.BlockEntityUpdateS2CPacketMixin",
     "packet.PacketByteBufMixin",
     "packet.TextSerializerMixin",
