@@ -13,11 +13,15 @@
   "contact": {},
   "license": "MIT",
   "environment": "*",
-  "entrypoints": {},
+  "entrypoints": {
+    "main": [
+      "fr.catcore.server.translations.api.ServerTranslations::INSTANCE"
+    ]
+  },
   "depends": {
     "minecraft": ">1.18.1",
     "fabricloader": ">=0.12.12",
-    "fabric": "*"
+    "fabric-resource-loader-v0": "*"
   },
   "mixins": [
     "server_translations_api.mixin.json"
