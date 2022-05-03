@@ -30,7 +30,7 @@ public abstract class MutableTextMixin implements LocalizableText {
         Style selfStyle = this.getStyle().withParent(style);
 
         if (this.getContent() instanceof LocalizableTextContent localizableTextContent) {
-            localizableTextContent.visitSelfLocalized(visitor, target, selfStyle);
+            localizableTextContent.visitSelfLocalized(visitor, target, this, selfStyle);
         } else {
             visitor.accept((MutableText) (Object) this);
         }

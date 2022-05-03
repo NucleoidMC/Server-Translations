@@ -103,12 +103,12 @@ public abstract class TranslatableTextContentMixin implements TextContent, Local
     }
 
     @Override
-    public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
+    public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Text text, Style style) {
         List<StringVisitable> translations = this.buildTranslations(target);
         if (translations != null) {
             this.visitSelfTranslated(visitor, style, translations);
         } else {
-            this.visitSelfUntranslated(visitor, style);
+            this.visitSelfUntranslated(visitor, text, style);
         }
     }
 
@@ -123,8 +123,8 @@ public abstract class TranslatableTextContentMixin implements TextContent, Local
         }
     }
 
-    private void visitSelfUntranslated(LocalizedTextVisitor visitor, Style style) {
-        visitor.accept(MutableText.of(this).setStyle(style));
+    private void visitSelfUntranslated(LocalizedTextVisitor visitor, Text text, Style style) {
+        visitor.accept(text.shallowCopy().setStyle(style));
     }
 
 }
