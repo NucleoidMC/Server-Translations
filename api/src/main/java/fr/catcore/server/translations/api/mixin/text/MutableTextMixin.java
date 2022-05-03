@@ -1,6 +1,7 @@
 package fr.catcore.server.translations.api.mixin.text;
 
 import fr.catcore.server.translations.api.LocalizationTarget;
+import fr.catcore.server.translations.api.text.LocalizableHoverEvent;
 import fr.catcore.server.translations.api.text.LocalizableText;
 import fr.catcore.server.translations.api.text.LocalizableTextContent;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
@@ -28,6 +29,11 @@ public abstract class MutableTextMixin implements LocalizableText {
     @Override
     public void visitText(LocalizedTextVisitor visitor, LocalizationTarget target, Style style) {
         Style selfStyle = this.getStyle().withParent(style);
+        var hoverEvent = selfStyle.getHoverEvent();
+        if (hoverEvent != null) {
+            var localizableHoverEvent = (LocalizableHoverEvent) hoverEvent;
+            selfStyle = selfStyle.withHoverEvent(localizableHoverEvent.asLocalizedFor(target));
+        }
 
         if (this.getContent() instanceof LocalizableTextContent localizableTextContent) {
             localizableTextContent.visitSelfLocalized(visitor, target, this, selfStyle);
