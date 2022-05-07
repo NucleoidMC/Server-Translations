@@ -4,7 +4,6 @@
   "package": "fr.catcore.server.translations.api.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DataPackContentsMixin",
     "LanguageMixin",
     "ServerPlayerEntityMixin",
     "packet.BlockEntityUpdateS2CPacketMixin",

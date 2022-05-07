@@ -8,7 +8,7 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "1.4.10"
+    static def baseVersion = "1.4.12"
     static def mcVersion = "22w17a"
     static def yarnVersion = "+build.11"
 }
@@ -54,7 +54,7 @@ allprojects {
         modImplementation 'xyz.nucleoid:packet-tweaker:0.2.0+1.18-pre1'
         include 'xyz.nucleoid:packet-tweaker:0.2.0+1.18-pre1'
 
-        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.51.1+1.19"
+        modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:0.52.1+1.19"
     }
 
     processResources {
