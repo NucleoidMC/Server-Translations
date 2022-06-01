@@ -20,6 +20,5 @@
   "text.translated_server.saved": "pǝʌɐs ǝɹɐ sʞunɥɔ ll∀ :(%s) ǝƃɐɹoʇSʞunɥƆlᴉʌu∀pǝpɐǝɹɥ┴",
   "text.translated_server.preparing.dimension.old": "%s lǝʌǝl ɹoɟ uoᴉƃǝɹ ʇɹɐʇs ƃuᴉɹɐdǝɹԀ",
   "text.translated_server.progress.old": "%%s :ɐǝɹɐ uʍɐds ƃuᴉɹɐdǝɹԀ",
-
-  "text.translated_server.language.set": "Language set to %1$s: %2$s (%3$s)"
+  "text.translated_server.language.set": "(%3$s) %2$s :%1$s oʇ ʇǝs ǝƃɐnƃuɐ˥"
 }

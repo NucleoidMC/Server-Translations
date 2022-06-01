@@ -124,7 +124,7 @@ public abstract class TranslatableTextContentMixin implements TextContent, Local
     }
 
     private void visitSelfUntranslated(LocalizedTextVisitor visitor, Text text, Style style) {
-        visitor.accept(text.shallowCopy().setStyle(style));
+        visitor.accept(text.copy().setStyle(style));
     }
 
 }
