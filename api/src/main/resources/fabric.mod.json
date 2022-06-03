@@ -8,7 +8,7 @@
     "CatCore", "Gegy"
   ],
   "contributors": [
-    "László Gaming", "Samekichi", "MightyKnight", "Patbox"
+    "László Gaming", "Samekichi", "MightyKnight", "Patbox", "DrexHD"
   ],
   "contact": {},
   "license": "MIT",
@@ -19,7 +19,7 @@
     ]
   },
   "depends": {
-    "minecraft": ">1.18.1",
+    "minecraft": ">=1.19-alpha.22.16.a",
     "fabricloader": ">=0.12.12",
     "fabric-resource-loader-v0": "*"
   },

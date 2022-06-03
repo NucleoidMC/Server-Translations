@@ -83,28 +83,6 @@ public final class StackNbtLocalizer {
         }
     }
 
-    private static void addNameToTag(NbtLocalizer nbt, Text name) {
-        name = removeItalicsFromCustomName(name);
-
-        NbtCompound display;
-        if (nbt.contains("display", NbtElement.COMPOUND_TYPE)) {
-            display = nbt.getCompound("display");
-        } else {
-            display = new NbtCompound();
-        }
-
-        display.putString("Name", Text.Serializer.toJson(name));
-
-        nbt.set("display", display);
-    }
-
-    private static Text removeItalicsFromCustomName(Text name) {
-        if (!name.getStyle().isItalic()) {
-            return name.shallowCopy().styled(style -> style.withItalic(false));
-        }
-        return name;
-    }
-
     private static String localizeTextJson(String json, LocalizationTarget target) {
         Text text;
         try {

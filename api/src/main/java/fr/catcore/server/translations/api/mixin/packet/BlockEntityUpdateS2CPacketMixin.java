@@ -37,7 +37,7 @@ public class BlockEntityUpdateS2CPacketMixin {
     private String parseText(String text, LocalizationTarget target) {
         var parsed = (LocalizableText) Text.Serializer.fromLenientJson(text);
 
-        if (parsed != null && parsed.shouldLocalize()) {
+        if (parsed != null) {
             return Text.Serializer.toJson(parsed.asLocalizedFor(target));
         } else {
             return text;

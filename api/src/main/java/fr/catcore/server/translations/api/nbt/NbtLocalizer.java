@@ -2,9 +2,9 @@ package fr.catcore.server.translations.api.nbt;
 
 import fr.catcore.server.translations.api.ServerTranslations;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.nbt.NbtElement;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

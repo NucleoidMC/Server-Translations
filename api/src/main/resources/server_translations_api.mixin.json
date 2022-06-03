@@ -9,14 +9,14 @@
     "packet.BlockEntityUpdateS2CPacketMixin",
     "packet.PacketByteBufMixin",
     "packet.TextSerializerMixin",
-    "text.BaseTextMixin",
     "text.HoverEventMixin",
-    "text.TranslatableTextMixin"
+    "text.MutableTextMixin",
+    "text.TranslatableTextContentMixin"
   ],
   "client": [
-    "client.BaseTextMixin",
     "client.LanguageMixin",
-    "client.TranslatableTextMixin"
+    "client.MutableTextMixin",
+    "client.TranslatableTextContentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

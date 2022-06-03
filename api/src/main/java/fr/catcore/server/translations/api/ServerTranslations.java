@@ -11,9 +11,8 @@ import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.profiler.Profiler;
@@ -174,7 +173,7 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
                     languageSuppliers.forEach(this.translations::add);
 
                     int keyCount = ServerTranslations.INSTANCE.getTranslationKeyCount();
-                    LOGGER.info(new TranslatableText("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
+                    LOGGER.info(Text.translatable("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
                 });
     }
 

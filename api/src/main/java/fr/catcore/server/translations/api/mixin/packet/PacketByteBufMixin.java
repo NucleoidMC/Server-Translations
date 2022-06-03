@@ -1,7 +1,8 @@
 package fr.catcore.server.translations.api.mixin.packet;
 
-import fr.catcore.server.translations.api.nbt.StackNbtLocalizer;
 import fr.catcore.server.translations.api.LocalizationTarget;
+import fr.catcore.server.translations.api.nbt.StackNbtLocalizer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -48,7 +49,7 @@ public class PacketByteBufMixin {
     }
 
     @Inject(method = "readItemStack", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void readItemStack(CallbackInfoReturnable<ItemStack> ci, int id, int count, ItemStack stack) {
+    private void readItemStack(CallbackInfoReturnable<ItemStack> ci, Item item, int count, ItemStack stack) {
         NbtCompound tag = StackNbtLocalizer.unlocalize(stack.getNbt());
         stack.setNbt(tag);
     }
