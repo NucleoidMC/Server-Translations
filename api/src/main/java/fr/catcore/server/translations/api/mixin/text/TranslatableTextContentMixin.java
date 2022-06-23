@@ -3,7 +3,9 @@ package fr.catcore.server.translations.api.mixin.text;
 import fr.catcore.server.translations.api.LocalizationTarget;
 import fr.catcore.server.translations.api.ServerTranslations;
 import fr.catcore.server.translations.api.resource.language.TranslationAccess;
+import fr.catcore.server.translations.api.text.LocalizableText;
 import fr.catcore.server.translations.api.text.LocalizableTextContent;
+import fr.catcore.server.translations.api.text.LocalizedTextBuilder;
 import fr.catcore.server.translations.api.text.LocalizedTextVisitor;
 import net.minecraft.text.*;
 import org.jetbrains.annotations.Nullable;
@@ -106,17 +108,19 @@ public abstract class TranslatableTextContentMixin implements TextContent, Local
     public void visitSelfLocalized(LocalizedTextVisitor visitor, LocalizationTarget target, Text text, Style style) {
         List<StringVisitable> translations = this.buildTranslations(target);
         if (translations != null) {
-            this.visitSelfTranslated(visitor, style, translations);
+            this.visitSelfTranslated(visitor, target, style, translations);
         } else {
             this.visitSelfUntranslated(visitor, text, style);
         }
     }
 
-    private void visitSelfTranslated(LocalizedTextVisitor visitor, Style style, List<StringVisitable> translations) {
+    private void visitSelfTranslated(LocalizedTextVisitor visitor, LocalizationTarget target, Style style, List<StringVisitable> translations) {
         visitor.acceptLiteral("", style);
         for (StringVisitable translation : translations) {
             if (translation instanceof MutableText mutableText) {
-                visitor.accept(mutableText);
+                var visitor2 = new LocalizedTextBuilder();
+                ((LocalizableText) mutableText).visitText(visitor2, target, mutableText.getStyle());
+                visitor.accept((MutableText) visitor2.getResult());
             } else {
                 translation.visit(visitor.asGeneric(style));
             }
@@ -124,7 +128,7 @@ public abstract class TranslatableTextContentMixin implements TextContent, Local
     }
 
     private void visitSelfUntranslated(LocalizedTextVisitor visitor, Text text, Style style) {
-        visitor.accept(text.copy().setStyle(style));
+        visitor.accept(text.copyContentOnly());
     }
 
 }
