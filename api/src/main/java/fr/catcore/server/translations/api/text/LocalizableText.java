@@ -15,11 +15,15 @@ public interface LocalizableText extends Text {
 
     default Text asLocalizedFor(LocalizationTarget target) {
         LocalizedTextBuilder builder = new LocalizedTextBuilder();
-        this.visitText(builder, target, this.getStyle());
-
-        return builder.getResult();
+        this.visitText(builder, target, Style.EMPTY);
+        var result = builder.getResult();
+        ((LocalizableText) result).setLocalized(true);
+        return result;
     }
 
     void visitText(LocalizedTextVisitor visitor, LocalizationTarget target, Style style);
 
+    boolean isLocalized();
+
+    void setLocalized(boolean value);
 }

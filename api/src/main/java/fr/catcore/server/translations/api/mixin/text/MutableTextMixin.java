@@ -15,6 +15,8 @@ import java.util.List;
 @Mixin(MutableText.class)
 public abstract class MutableTextMixin implements LocalizableText {
 
+    private boolean sta$isLocalized = false;
+
     @Shadow
     public abstract List<Text> getSiblings();
 
@@ -35,17 +37,28 @@ public abstract class MutableTextMixin implements LocalizableText {
             selfStyle = selfStyle.withHoverEvent(localizableHoverEvent.asLocalizedFor(target));
         }
 
+        var vis = new LocalizedTextBuilder();
+
         if (this.getContent() instanceof LocalizableTextContent localizableTextContent) {
-            var vis = new LocalizedTextBuilder();
             localizableTextContent.visitSelfLocalized(vis, target, this, selfStyle);
-            visitor.accept((MutableText) vis.getResult());
         } else {
-            visitor.accept(this.copyContentOnly().setStyle(selfStyle));
+            vis.accept(this.copyContentOnly().setStyle(selfStyle));
         }
 
         for (var sibling : this.siblings) {
-            ((LocalizableText) sibling).visitText(visitor, target, selfStyle);
+            ((LocalizableText) sibling).visitText(vis, target, Style.EMPTY);
         }
+
+        visitor.accept((MutableText) vis.getResult());
     }
 
+    @Override
+    public boolean isLocalized() {
+        return this.sta$isLocalized;
+    }
+
+    @Override
+    public void setLocalized(boolean value) {
+        this.sta$isLocalized = value;
+    }
 }
