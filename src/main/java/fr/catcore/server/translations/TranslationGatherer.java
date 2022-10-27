@@ -24,8 +24,6 @@ import java.util.Locale;
 import java.util.function.Supplier;
 
 public class TranslationGatherer {
-
-    private static final JsonParser PARSER = new JsonParser();
     private static final URL LANGUAGE_LIST;
 
     static {
@@ -101,7 +99,7 @@ public class TranslationGatherer {
 
     private static void getModTranslationFromGithub() {
         try (BufferedReader read = new BufferedReader(new InputStreamReader(LANGUAGE_LIST.openStream()))) {
-            JsonObject jsonObject = PARSER.parse(read).getAsJsonObject();
+            JsonObject jsonObject = JsonParser.parseReader(read).getAsJsonObject();
             JsonArray languageArray = jsonObject.getAsJsonArray("languages");
 
             for (JsonElement entry : languageArray) {

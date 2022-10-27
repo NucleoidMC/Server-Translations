@@ -14,7 +14,7 @@ public class LanguageMixin {
     private static Language instance;
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
-    private static void init(CallbackInfo ci) {
+    private static void stapi$init(CallbackInfo ci) {
         SystemDelegatedLanguage.INSTANCE.setVanilla(instance);
         instance = SystemDelegatedLanguage.INSTANCE;
     }

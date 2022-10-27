@@ -4,14 +4,16 @@ import fr.catcore.server.translations.api.text.LocalizableText;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.util.Optional;
 
+@Pseudo
 @Mixin(SignedMessage.class)
 public class SignedMessageMixin {
-    @ModifyArg(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketByteBuf;writeOptional(Ljava/util/Optional;Lnet/minecraft/network/PacketByteBuf$PacketWriter;)V"))
+    @ModifyArg(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketByteBuf;writeOptional(Ljava/util/Optional;Lnet/minecraft/network/PacketByteBuf$PacketWriter;)V"), require = 0)
     private <T> Optional<T> stapi$dontLocalize(Optional<T> text) {
         if (text.isPresent()) {
             var copy = ((Text) text.get()).copy();

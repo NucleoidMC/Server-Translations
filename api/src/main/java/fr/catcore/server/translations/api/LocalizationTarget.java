@@ -11,6 +11,7 @@ public interface LocalizationTarget {
         return (LocalizationTarget) context.getTarget();
     }
 
+    @Nullable
     String getLanguageCode();
 
     default ServerLanguage getLanguage() {
