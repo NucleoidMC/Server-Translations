@@ -17,9 +17,6 @@
     "text.TranslatableTextContentMixin"
   ],
   "client": [
-    "client.LanguageMixin",
-    "client.MutableTextMixin",
-    "client.TranslatableTextContentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

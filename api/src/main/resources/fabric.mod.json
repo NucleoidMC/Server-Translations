@@ -16,6 +16,9 @@
   "entrypoints": {
     "main": [
       "fr.catcore.server.translations.api.ServerTranslations::INSTANCE"
+    ],
+    "client": [
+      "fr.catcore.server.translations.api.client.ServerTranslationsClient"
     ]
   },
   "depends": {
