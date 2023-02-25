@@ -4,10 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fr.catcore.server.translations.api.ServerTranslations;
-import fr.catcore.server.translations.api.resource.language.LanguageReader;
-import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
-import fr.catcore.server.translations.api.resource.language.TranslationMap;
+import xyz.nucleoid.server.translations.impl.ServerTranslations;
+import xyz.nucleoid.server.translations.impl.language.LanguageReader;
+import xyz.nucleoid.server.translations.api.language.ServerLanguageDefinition;
+import xyz.nucleoid.server.translations.impl.language.TranslationMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.SemanticVersion;
@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Locale;
 import java.util.function.Supplier;
 
 public class TranslationGatherer {
@@ -70,26 +69,7 @@ public class TranslationGatherer {
                     stream.close();
                 }
             } else {
-                InputStream stream;
-                if (minecraftVersion.compareTo(SemanticVersion.parse("1.11-Snapshot.16.32.a")) >= 0) {
-                    if (ServerLanguageDefinition.DEFAULT.equals(language)) {
-                        stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
-                    } else {
-                        stream = assets.openStream("minecraft/lang/" + language.code() + ".lang");
-                    }
-                } else {
-                    if (ServerLanguageDefinition.DEFAULT.equals(language)) {
-                        stream = Language.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
-                    } else {
-                        stream = assets.openStream("minecraft/lang/" + language.code().split("_")[0] + "_" + language.code().split("_")[1].toUpperCase(Locale.ROOT) + ".lang");
-                    }
-                }
-
-                try {
-                    return LanguageReader.readLegacy(stream);
-                } finally {
-                    stream.close();
-                }
+                throw new IllegalArgumentException("Lauguage file uses legacy format!");
             }
         } catch (VersionParsingException | IOException e) {
             ServerTranslations.LOGGER.warn("Failed to load vanilla language", e);

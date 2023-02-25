@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "fr.catcore.server.translations.api.mixin",
+  "package": "xyz.nucleoid.server.translations.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "LanguageMixin",
@@ -10,14 +10,10 @@
     "packet.BlockEntityUpdateS2CPacketMixin",
     "packet.PacketByteBufMixin",
     "packet.TextSerializerMixin",
-    "text.HoverEventMixin",
-    "text.MutableTextMixin",
-    "text.TranslatableTextContentMixin"
+    "text.MutableTextMixin"
   ],
   "client": [
-    "client.LanguageMixin",
-    "client.MutableTextMixin",
-    "client.TranslatableTextContentMixin"
+    "client.LanguageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,8 +1,8 @@
 package fr.catcore.server.translations;
 
 import com.mojang.logging.LogUtils;
-import fr.catcore.server.translations.api.ServerTranslations;
-import fr.catcore.server.translations.api.resource.language.ServerLanguageDefinition;
+import xyz.nucleoid.server.translations.impl.ServerTranslations;
+import xyz.nucleoid.server.translations.api.language.ServerLanguageDefinition;
 import fr.catcore.server.translations.config.ConfigManager;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.text.Text;

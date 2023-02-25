@@ -5,22 +5,22 @@
   "name": "Server Translations API",
   "description": "",
   "authors": [
-    "CatCore", "Gegy"
+    "CatCore", "Gegy", "Patbox"
   ],
   "contributors": [
-    "László Gaming", "Samekichi", "MightyKnight", "Patbox", "DrexHD"
+    "László Gaming", "Samekichi", "MightyKnight", "DrexHD"
   ],
   "contact": {},
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "fr.catcore.server.translations.api.ServerTranslations::INSTANCE"
+      "xyz.nucleoid.server.translations.impl.ServerTranslations::INSTANCE"
     ]
   },
   "depends": {
-    "minecraft": ">=1.19-alpha.22.16.a",
-    "fabricloader": ">=0.12.12",
+    "minecraft": ">=1.19.4-",
+    "fabricloader": ">=0.14.14",
     "fabric-resource-loader-v0": "*"
   },
   "mixins": [
