@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(PacketByteBuf.class)
 public class PacketByteBufMixin {
     @Unique
-    private ItemStack stapi_cachedStack;
+    private ItemStack stapi$cachedStack;
 
     @Inject(
             method = "writeItemStack",
@@ -27,8 +27,8 @@ public class PacketByteBufMixin {
                     shift = At.Shift.BEFORE
             )
     )
-    private void cacheStack(ItemStack stack, CallbackInfoReturnable<PacketByteBuf> cir) {
-        this.stapi_cachedStack = stack;
+    private void stapi$cacheStack(ItemStack stack, CallbackInfoReturnable<PacketByteBuf> cir) {
+        this.stapi$cachedStack = stack;
     }
 
     @ModifyArg(
@@ -38,18 +38,18 @@ public class PacketByteBufMixin {
                     target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/network/PacketByteBuf;"
             )
     )
-    private NbtCompound writeItemStackTag(NbtCompound tag) {
+    private NbtCompound stapi$writeItemStackTag(NbtCompound tag) {
         LocalizationTarget target = LocalizationTarget.forPacket();
         if (target != null) {
-            tag = StackNbtLocalizer.localize(this.stapi_cachedStack, tag, target);
+            tag = StackNbtLocalizer.localize(this.stapi$cachedStack, tag, target);
         }
-        this.stapi_cachedStack = null;
+        this.stapi$cachedStack = null;
 
         return tag;
     }
 
     @Inject(method = "readItemStack", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void readItemStack(CallbackInfoReturnable<ItemStack> ci, Item item, int count, ItemStack stack) {
+    private void stapi$readItemStack(CallbackInfoReturnable<ItemStack> ci, Item item, int count, ItemStack stack) {
         NbtCompound tag = StackNbtLocalizer.unlocalize(stack.getNbt());
         stack.setNbt(tag);
     }

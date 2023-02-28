@@ -9,7 +9,7 @@ plugins {
 
 class Globals {
     static def baseVersion = "2.0.0-beta.1"
-    static def mcVersion = "1.19.4-pre1"
+    static def mcVersion = "1.19.4-pre2"
     static def yarnVersion = "+build.1"
 }
 
@@ -22,7 +22,7 @@ allprojects {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 
-    group = "fr.catcore"
+    group = "xyz.nucleoid"
 
     repositories {
         mavenCentral()

@@ -20,7 +20,7 @@ public final class LanguageReader {
         return map;
     }
 
-    public static TranslationMap loadVanillaTranslations() {
+    public static TranslationMap loadBuiltInTranslation() {
         try (InputStream input = Language.class.getResourceAsStream("/assets/minecraft/lang/" + ServerLanguageDefinition.DEFAULT_CODE + ".json")) {
             return LanguageReader.read(input);
         } catch (IOException e) {
@@ -29,7 +29,7 @@ public final class LanguageReader {
         }
     }
 
-    public static Multimap<String, Supplier<TranslationMap>> collectTranslationSuppliers(ResourceManager manager) {
+    public static Multimap<String, Supplier<TranslationMap>> collectDataPackTranslations(ResourceManager manager) {
         Multimap<String, Supplier<TranslationMap>> translationSuppliers = HashMultimap.create();
 
         for (Identifier path : manager.findResources("lang", path -> path.getPath().endsWith(".json")).keySet()) {

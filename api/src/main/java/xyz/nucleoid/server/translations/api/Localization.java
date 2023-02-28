@@ -50,18 +50,18 @@ public final class Localization {
     }
 
     public static Text text(Text text, ServerLanguage language) {
-        return text(text, true, language);
+        return text(text, language, true);
     }
 
-    public static Text text(Text text, boolean full, ServerPlayerEntity target) {
-        return text(text, full, (LocalizationTarget) target);
+    public static Text text(Text text, ServerPlayerEntity target, boolean deep) {
+        return text(text, (LocalizationTarget) target, deep);
     }
 
-    public static Text text(Text text, boolean full, LocalizationTarget target) {
-        return text(text, full, target.getLanguage());
+    public static Text text(Text text, LocalizationTarget target, boolean deep) {
+        return text(text, target.getLanguage(), deep);
     }
 
-    public static Text text(Text text, boolean full, ServerLanguage language) {
-        return LocalizableText.asLocalizedFor(text, language, full);
+    public static Text text(Text text, ServerLanguage language, boolean deep) {
+        return LocalizableText.asLocalizedFor(text, language, deep);
     }
 }

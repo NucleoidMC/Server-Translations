@@ -21,7 +21,7 @@ public class BlockEntityUpdateS2CPacketMixin {
     private NbtCompound translateNbt(NbtCompound nbtCompound) {
         var target = LocalizationTarget.forPacket();
 
-        if ((this.blockEntityType == BlockEntityType.SIGN || this.blockEntityType == BlockEntityType.HANGING_SIGN)&& target != null) {
+        if (target != null && (this.blockEntityType == BlockEntityType.SIGN || this.blockEntityType == BlockEntityType.HANGING_SIGN)) {
             var nbt = nbtCompound.copy();
             nbt.putString("Text1", this.parseText(nbt.getString("Text1"), target));
             nbt.putString("Text2", this.parseText(nbt.getString("Text2"), target));
