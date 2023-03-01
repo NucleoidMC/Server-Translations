@@ -40,7 +40,7 @@ public interface LocalizableText extends Text {
 
             var out = MutableText.of(content);
             if (translateDeeply) {
-                for (var sibling : out.getSiblings()) {
+                for (var sibling : text.getSiblings()) {
                     out.append(asLocalizedFor(sibling, language, true));
                 }
             } else {
