@@ -8,8 +8,8 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "2.0.0-beta.2"
-    static def mcVersion = "1.19.4-pre2"
+    static def baseVersion = "2.0.0"
+    static def mcVersion = "1.20"
     static def yarnVersion = "+build.1"
 }
 
@@ -49,11 +49,11 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modImplementation "net.fabricmc:fabric-loader:0.14.11"
+        modImplementation "net.fabricmc:fabric-loader:0.14.21"
 
-        modImplementation include("xyz.nucleoid:packet-tweaker:0.3.1+23w06a")
+        modImplementation include("xyz.nucleoid:packet-tweaker:0.4.0+1.19.4")
 
-        modImplementation "net.fabricmc.fabric-api:fabric-api:0.74.2+1.19.4"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:0.83.0+1.20"
     }
 
     processResources {

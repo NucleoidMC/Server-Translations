@@ -37,6 +37,7 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
 
     private final TranslationStore translations = new TranslationStore();
     private final Map<String, ServerLanguage> serverLanguages = new Object2ObjectOpenHashMap<>();
+    public final LocalizationTarget systemTarget = () -> this.getSystemLanguage().definition().code();
 
     private ServerLanguage defaultLanguage;
     private ServerLanguage systemLanguage;
@@ -119,7 +120,7 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
         TranslationMap translations = this.translations.get(definition.code());
         TranslationMap defaultTranslations = this.translations.get(ServerLanguageDefinition.DEFAULT_CODE);
 
-        ServerLanguage language = new ServerLanguage(definition,  translations.union(defaultTranslations));
+        ServerLanguage language = new ServerLanguage(definition, translations.union(defaultTranslations));
         this.serverLanguages.put(definition.code(), language);
 
         return language;

@@ -64,4 +64,19 @@ public final class Localization {
     public static Text text(Text text, ServerLanguage language, boolean deep) {
         return LocalizableText.asLocalizedFor(text, language, deep);
     }
+
+    @Nullable
+    public static String raw(String key, ServerPlayerEntity target) {
+        return raw(key, (LocalizationTarget) target);
+    }
+
+    @Nullable
+    public static String raw(String key, LocalizationTarget target) {
+        return raw(key, target.getLanguage());
+    }
+
+    @Nullable
+    public static String raw(String key, ServerLanguage language) {
+        return language.serverTranslations().get(key);
+    }
 }
