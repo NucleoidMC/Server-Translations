@@ -8,8 +8,8 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "2.0.0"
-    static def mcVersion = "1.20"
+    static def baseVersion = "2.1.0"
+    static def mcVersion = "1.20.2-rc2"
     static def yarnVersion = "+build.1"
 }
 
@@ -43,17 +43,17 @@ allprojects {
             name = "Jitpack"
             url = "https://jitpack.io"
         }
-        mavenLocal()
+        //mavenLocal()
     }
 
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modImplementation "net.fabricmc:fabric-loader:0.14.21"
+        modImplementation "net.fabricmc:fabric-loader:0.14.22"
 
-        modImplementation include("xyz.nucleoid:packet-tweaker:0.4.0+1.19.4")
+        modImplementation include("xyz.nucleoid:packet-tweaker:0.5.0+1.20.2-rc1")
 
-        modImplementation "net.fabricmc.fabric-api:fabric-api:0.83.0+1.20"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:0.88.5+1.20.2"
     }
 
     processResources {

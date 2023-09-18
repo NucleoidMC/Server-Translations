@@ -17,17 +17,13 @@ public final class SystemDelegatedLanguage extends Language {
     public String get(String key) {
         String override = this.getSystemLanguage().serverTranslations().getOrNull(key);
         if (override != null) {
-            return override;
+            return this.vanilla.get(key, override);
         }
         return this.vanilla.get(key);
     }
 
     @Override
     public String get(String key, String fallback) {
-        String override = this.getSystemLanguage().serverTranslations().getOrNull(key);
-        if (override != null) {
-            return override;
-        }
         return this.vanilla.get(key, fallback);
     }
 

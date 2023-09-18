@@ -3,6 +3,7 @@ package xyz.nucleoid.server.translations.api;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import xyz.nucleoid.server.translations.api.language.ServerLanguage;
+import xyz.nucleoid.server.translations.impl.LanguageGetter;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
@@ -11,7 +12,13 @@ public interface LocalizationTarget {
     @Nullable
     static LocalizationTarget forPacket() {
         PacketContext context = PacketContext.get();
-        return (LocalizationTarget) context.getTarget();
+        if (context != null) {
+            var options = context.getClientOptions();
+            if (options != null) {
+                return options::language;
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -22,14 +29,18 @@ public interface LocalizationTarget {
     }
 
     static LocalizationTarget of(ServerPlayerEntity player) {
-        return (LocalizationTarget) player;
+        return ((LanguageGetter) player)::stapi$getLanguage;
     }
 
     static LocalizationTarget of(ServerPlayNetworkHandler handler) {
-        return (LocalizationTarget) handler;
+        return of(handler.getPlayer());
     }
 
-    static LocalizationTarget of() {
+    static LocalizationTarget ofSystem() {
         return ServerTranslations.INSTANCE.systemTarget;
+    }
+    @Deprecated
+    static LocalizationTarget of() {
+        return ofSystem();
     }
 }

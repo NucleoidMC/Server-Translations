@@ -31,10 +31,8 @@ public final class LanguageReader {
 
     public static Multimap<String, Supplier<TranslationMap>> collectDataPackTranslations(ResourceManager manager) {
         Multimap<String, Supplier<TranslationMap>> translationSuppliers = HashMultimap.create();
-
         for (Identifier path : manager.findResources("lang", path -> path.getPath().endsWith(".json")).keySet()) {
             String code = getLanguageCodeForPath(path);
-
             translationSuppliers.put(code, () -> {
                 TranslationMap map = new TranslationMap();
                 try {

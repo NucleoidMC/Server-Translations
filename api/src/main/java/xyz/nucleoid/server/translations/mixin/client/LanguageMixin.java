@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(Language.class)
 public class LanguageMixin {
-    @ModifyVariable(method = "setInstance", at = @At("HEAD"), argsOnly = true)
+    @ModifyVariable(method = "setInstance", at = @At("HEAD"))
     private static Language stapi$modifyLanguage(Language language) {
         String languageCode = MinecraftClient.getInstance().getLanguageManager().getLanguage();
         ServerLanguageDefinition languageDefinition = ServerTranslations.INSTANCE.getLanguageDefinition(languageCode);

@@ -1,5 +1,6 @@
 package xyz.nucleoid.server.translations.mixin.packet;
 
+import net.minecraft.nbt.NbtElement;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import xyz.nucleoid.server.translations.impl.nbt.StackNbtLocalizer;
 import net.minecraft.item.Item;
@@ -23,7 +24,7 @@ public class PacketByteBufMixin {
             method = "writeItemStack",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/network/PacketByteBuf;",
+                    target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/network/PacketByteBuf;",
                     shift = At.Shift.BEFORE
             )
     )
@@ -35,17 +36,18 @@ public class PacketByteBufMixin {
             method = "writeItemStack",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/network/PacketByteBuf;"
+                    target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/network/PacketByteBuf;"
             )
     )
-    private NbtCompound stapi$writeItemStackTag(NbtCompound tag) {
-        LocalizationTarget target = LocalizationTarget.forPacket();
-        if (target != null) {
-            tag = StackNbtLocalizer.localize(this.stapi$cachedStack, tag, target);
+    private NbtElement stapi$writeItemStackTag(NbtElement nbt) {
+        if (nbt instanceof NbtCompound tag) {
+            LocalizationTarget target = LocalizationTarget.forPacket();
+            if (target != null) {
+                nbt = StackNbtLocalizer.localize(this.stapi$cachedStack, tag, target);
+            }
+            this.stapi$cachedStack = null;
         }
-        this.stapi$cachedStack = null;
-
-        return tag;
+        return nbt;
     }
 
     @Inject(method = "readItemStack", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)

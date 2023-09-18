@@ -14,7 +14,7 @@ public final class Localization {
 
     @Nullable
     public static NbtCompound itemStackNbt(ItemStack stack, ServerPlayerEntity target) {
-        return itemStackNbt(stack, (LocalizationTarget) target);
+        return itemStackNbt(stack, LocalizationTarget.of(target));
     }
 
     @Nullable
@@ -28,7 +28,7 @@ public final class Localization {
     }
 
     public static ItemStack itemStack(ItemStack stack, ServerPlayerEntity target) {
-        return itemStack(stack, (LocalizationTarget) target);
+        return itemStack(stack, LocalizationTarget.of(target));
     }
 
     public static ItemStack itemStack(ItemStack stack, LocalizationTarget target) {
@@ -42,7 +42,7 @@ public final class Localization {
     }
 
     public static Text text(Text text, ServerPlayerEntity target) {
-        return text(text, (LocalizationTarget) target);
+        return text(text, LocalizationTarget.of(target));
     }
 
     public static Text text(Text text, LocalizationTarget target) {
@@ -54,7 +54,7 @@ public final class Localization {
     }
 
     public static Text text(Text text, ServerPlayerEntity target, boolean deep) {
-        return text(text, (LocalizationTarget) target, deep);
+        return text(text, LocalizationTarget.of(target), deep);
     }
 
     public static Text text(Text text, LocalizationTarget target, boolean deep) {
@@ -67,7 +67,7 @@ public final class Localization {
 
     @Nullable
     public static String raw(String key, ServerPlayerEntity target) {
-        return raw(key, (LocalizationTarget) target);
+        return raw(key, LocalizationTarget.of(target));
     }
 
     @Nullable

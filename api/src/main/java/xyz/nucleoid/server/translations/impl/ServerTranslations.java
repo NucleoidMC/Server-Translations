@@ -2,6 +2,8 @@ package xyz.nucleoid.server.translations.impl;
 
 import com.google.common.collect.Multimap;
 import com.mojang.logging.LogUtils;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.MinecraftServer;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
@@ -27,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public final class ServerTranslations implements IdentifiableResourceReloadListener, ModInitializer {
+public final class ServerTranslations implements IdentifiableResourceReloadListener, ModInitializer, ServerLifecycleEvents.ServerStopped {
     public static final String ID = "server_translations_api";
     public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -181,10 +183,17 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
     @Override
     public void onInitialize() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(ServerTranslations.INSTANCE);
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerTranslations.INSTANCE);
     }
 
     @Override
     public Identifier getFabricId() {
         return new Identifier(ID, "translations");
+    }
+
+    @Override
+    public void onServerStopped(MinecraftServer server) {
+        this.translations.clear();
+        this.serverLanguages.clear();
     }
 }
