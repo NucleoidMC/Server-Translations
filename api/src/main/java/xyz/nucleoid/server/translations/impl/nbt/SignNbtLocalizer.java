@@ -35,7 +35,7 @@ public class SignNbtLocalizer {
 
     private static void updateLines(NbtList messages, LocalizationTarget target) {
         for (int i = 0; i < messages.size(); i++) {
-            messages.set(i, NbtString.of(Text.Serializer.toJson(Localization.text(Text.Serializer.fromLenientJson(messages.getString(i)), target))));
+            messages.set(i, NbtString.of(Text.Serialization.toJsonString(Localization.text(Text.Serialization.fromLenientJson(messages.getString(i)), target))));
         }
     }
 }

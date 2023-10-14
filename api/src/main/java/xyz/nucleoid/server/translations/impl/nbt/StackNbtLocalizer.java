@@ -91,7 +91,7 @@ public final class StackNbtLocalizer {
     private static String localizeTextJson(String json, ServerLanguage target) {
         Text text;
         try {
-            text = Text.Serializer.fromLenientJson(json);
+            text = Text.Serialization.fromLenientJson(json);
         } catch (Exception e) {
             text = null;
         }
@@ -102,7 +102,7 @@ public final class StackNbtLocalizer {
 
         Text localized = LocalizableText.asLocalizedFor(text, target, true);
         if (!localized.equals(text)) {
-            return Text.Serializer.toJson(localized);
+            return Text.Serialization.toJsonString(localized);
         } else {
             return json;
         }
