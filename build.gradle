@@ -9,8 +9,8 @@ plugins {
 
 class Globals {
     static def baseVersion = "2.1.1"
-    static def mcVersion = "23w41a"
-    static def yarnVersion = "+build.5"
+    static def mcVersion = "23w42a"
+    static def yarnVersion = "+build.2"
 }
 
 archivesBaseName = "Server-Translations"

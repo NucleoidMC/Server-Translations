@@ -9,7 +9,7 @@
     "packet.BlockEntityDataMixin",
     "packet.BlockEntityUpdateS2CPacketMixin",
     "packet.PacketByteBufMixin",
-    "packet.TextSerializationMixin",
+    "packet.TextCodecsMixin",
     "text.MutableTextMixin"
   ],
   "client": [
