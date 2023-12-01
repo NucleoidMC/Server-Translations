@@ -59,8 +59,8 @@ public interface LocalizableText extends Text {
                     style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackContent(stack)));
                 } else if (translateDeeply && style.getHoverEvent().getAction() == HoverEvent.Action.SHOW_ENTITY) {
                     var value = style.getHoverEvent().getValue(HoverEvent.Action.SHOW_ENTITY);
-                    if (value.name != null) {
-                        style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ENTITY, new HoverEvent.EntityContent(value.entityType, value.uuid, asLocalizedFor(value.name, language, true))));
+                    if (value.name.isPresent()) {
+                        style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ENTITY, new HoverEvent.EntityContent(value.entityType, value.uuid, asLocalizedFor(value.name.get(), language, true))));
                     }
                 }
             }
