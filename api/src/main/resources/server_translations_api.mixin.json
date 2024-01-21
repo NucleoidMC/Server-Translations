@@ -8,7 +8,7 @@
     "ServerPlayerEntityMixin",
     "packet.BlockEntityDataMixin",
     "packet.BlockEntityUpdateS2CPacketMixin",
-    "packet.PacketByteBufMixin",
+    "packet.ItemStackMixin",
     "packet.TranslatableTextContentMixin",
     "text.MutableTextMixin"
   ],

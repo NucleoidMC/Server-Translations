@@ -1,13 +1,10 @@
 package xyz.nucleoid.server.translations.mixin.packet;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.text.TranslatableTextContent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 
 import java.util.function.Function;
@@ -32,5 +29,4 @@ public abstract class TranslatableTextContentMixin {
             return content;
         });
     }
-
 }
