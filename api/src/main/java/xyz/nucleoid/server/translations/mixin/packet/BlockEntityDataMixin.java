@@ -13,9 +13,11 @@ import xyz.nucleoid.server.translations.impl.nbt.SignNbtLocalizer;
 
 @Mixin(targets = "net/minecraft/network/packet/s2c/play/ChunkData$BlockEntityData")
 public class BlockEntityDataMixin {
-    @Shadow @Final private BlockEntityType<?> type;
+    @Shadow
+    @Final
+    BlockEntityType<?> type;
 
-    @ModifyArg(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketByteBuf;writeNbt(Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/network/PacketByteBuf;"))
+    @ModifyArg(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/RegistryByteBuf;writeNbt(Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/network/PacketByteBuf;"))
     private NbtElement stapi$translateNbt(NbtElement nbt) {
         if (SignNbtLocalizer.isSign(this.type) && nbt instanceof NbtCompound compound) {
             var target = LocalizationTarget.forPacket();

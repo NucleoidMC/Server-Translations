@@ -34,6 +34,7 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ServerTranslations INSTANCE = new ServerTranslations();
+    public static final ThreadLocal<ServerLanguage> TRANSLATION_CONTEXT = ThreadLocal.withInitial(() -> null);
 
     private final SortedMap<String, ServerLanguageDefinition> supportedLanguages = new Object2ObjectRBTreeMap<>();
 
