@@ -8,9 +8,7 @@
     "ServerPlayerEntityMixin",
     "packet.BlockEntityDataMixin",
     "packet.BlockEntityUpdateS2CPacketMixin",
-    "packet.ItemStackMixin",
-    "packet.TranslatableTextContentMixin",
-    "text.MutableTextMixin"
+    "packet.TranslatableTextContentMixin"
   ],
   "client": [
     "client.LanguageMixin"
