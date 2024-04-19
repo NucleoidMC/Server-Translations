@@ -2,7 +2,6 @@ name: Build
 
 on:
   push:
-    branches: [ "1.16", "1.17", "1.18", "1.18.2" ]
 
 jobs:
   build:
@@ -23,7 +22,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 21
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
