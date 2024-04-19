@@ -3,14 +3,14 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.5.+' apply false
+    id 'fabric-loom' version '1.6.+' apply false
     id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
-    static def baseVersion = "2.2.0"
-    static def mcVersion = "24w09a"
-    static def yarnVersion = "+build.6"
+    static def baseVersion = "2.3.0"
+    static def mcVersion = "1.20.5-rc2"
+    static def yarnVersion = "+build.1"
 }
 
 archivesBaseName = "Server-Translations"
@@ -51,9 +51,9 @@ allprojects {
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
         modImplementation "net.fabricmc:fabric-loader:0.15.7"
 
-        modImplementation include("xyz.nucleoid:packet-tweaker:0.5.0+1.20.2-rc1")
+        modImplementation include("xyz.nucleoid:packet-tweaker:0.5.1+24w03b")
 
-        modImplementation "net.fabricmc.fabric-api:fabric-api:0.96.5+1.20.5"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:0.97.3+1.20.5"
     }
 
     processResources {

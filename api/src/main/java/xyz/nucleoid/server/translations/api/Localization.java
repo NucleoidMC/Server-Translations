@@ -33,6 +33,6 @@ public final class Localization {
 
     @Nullable
     public static String raw(String key, ServerLanguage language) {
-        return language.serverTranslations().get(key);
+        return language.serverTranslations().getOrNull(key);
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.TranslatableTextContent;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
@@ -169,6 +170,9 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
 
                     int keyCount = ServerTranslations.INSTANCE.getTranslationKeyCount();
                     LOGGER.info(Text.translatable("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
+
+                    //System.out.println(LocalizableText.asLocalizedFor(
+                    //        Text.translatable("text.translated_server.loaded.translation_key"), ServerLanguage.getLanguage("en_us")).getContent() instanceof TranslatableTextContent t ? t.getFallback() : "[FAIL]");
                 });
     }
 

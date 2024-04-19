@@ -6,9 +6,10 @@
   "mixins": [
     "LanguageMixin",
     "ServerPlayerEntityMixin",
+    "codec.CodecCacheMixin",
+    "codec.TranslatableTextContentMixin",
     "packet.BlockEntityDataMixin",
-    "packet.BlockEntityUpdateS2CPacketMixin",
-    "packet.TranslatableTextContentMixin"
+    "packet.BlockEntityUpdateS2CPacketMixin"
   ],
   "client": [
     "client.LanguageMixin"

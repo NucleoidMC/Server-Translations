@@ -1,4 +1,4 @@
-package xyz.nucleoid.server.translations.mixin.packet;
+package xyz.nucleoid.server.translations.mixin.codec;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.serialization.MapCodec;
@@ -21,7 +21,22 @@ public abstract class TranslatableTextContentMixin {
         )
     )
     private static MapCodec<TranslatableTextContent> stapi$addTranslationFallback(MapCodec<TranslatableTextContent> original) {
-        return original.xmap(Function.identity(), (content) -> {
+        return original.xmap((content) -> {
+            if (content.getFallback() != null) {
+                ServerLanguage language = ServerTranslations.TRANSLATION_CONTEXT.get();
+                if (language == null) {
+                    var target = LocalizationTarget.forPacket();
+                    if (target != null) {
+                        language = target.getLanguage();
+                    }
+                }
+
+                if (language != null && content.getFallback().equals(language.serverTranslations().getOrNull(content.getKey()))) {
+                    return new TranslatableTextContent(content.getKey(), null, content.getArgs());
+                }
+            }
+            return content;
+        }, (content) -> {
             if (content.getFallback() == null) {
                 ServerLanguage language = ServerTranslations.TRANSLATION_CONTEXT.get();
                 if (language == null) {
