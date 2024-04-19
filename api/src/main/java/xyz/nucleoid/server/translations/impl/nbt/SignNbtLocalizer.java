@@ -5,6 +5,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Text;
 import xyz.nucleoid.server.translations.api.Localization;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
@@ -35,7 +36,7 @@ public class SignNbtLocalizer {
 
     private static void updateLines(NbtList messages, LocalizationTarget target) {
         for (int i = 0; i < messages.size(); i++) {
-            messages.set(i, NbtString.of(Text.Serialization.toJsonString(Localization.text(Text.Serialization.fromLenientJson(messages.getString(i)), target))));
+            messages.set(i, NbtString.of(Text.Serialization.toJsonString(Localization.text(Text.Serialization.fromLenientJson(messages.getString(i), DynamicRegistryManager.EMPTY), target), DynamicRegistryManager.EMPTY)));
         }
     }
 }

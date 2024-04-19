@@ -1,14 +1,13 @@
 package xyz.nucleoid.server.translations.mixin.packet;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.text.TranslatableTextContent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
+import xyz.nucleoid.server.translations.api.language.ServerLanguage;
+import xyz.nucleoid.server.translations.impl.ServerTranslations;
 
 import java.util.function.Function;
 
@@ -24,13 +23,18 @@ public abstract class TranslatableTextContentMixin {
     private static MapCodec<TranslatableTextContent> stapi$addTranslationFallback(MapCodec<TranslatableTextContent> original) {
         return original.xmap(Function.identity(), (content) -> {
             if (content.getFallback() == null) {
-                var target = LocalizationTarget.forPacket();
-                if (target != null) {
-                    return new TranslatableTextContent(content.getKey(), target.getLanguage().serverTranslations().get(content.getKey()), content.getArgs());
+                ServerLanguage language = ServerTranslations.TRANSLATION_CONTEXT.get();
+                if (language == null) {
+                    var target = LocalizationTarget.forPacket();
+                    if (target != null) {
+                        language = target.getLanguage();
+                    }
+                }
+                if (language != null) {
+                    return new TranslatableTextContent(content.getKey(), language.serverTranslations().get(content.getKey()), content.getArgs());
                 }
             }
             return content;
         });
     }
-
 }
