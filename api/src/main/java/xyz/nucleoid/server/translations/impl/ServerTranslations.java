@@ -193,7 +193,7 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
 
     @Override
     public Identifier getFabricId() {
-        return new Identifier(ID, "translations");
+        return Identifier.method_60655(ID, "translations");
     }
 
     @Override
