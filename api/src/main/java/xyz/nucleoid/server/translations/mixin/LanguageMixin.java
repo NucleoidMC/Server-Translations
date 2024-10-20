@@ -22,7 +22,7 @@ public class LanguageMixin {
     }
 
     @Environment(EnvType.SERVER)
-    @ModifyVariable(method = "setInstance", at = @At("HEAD"))
+    @ModifyVariable(method = "setInstance", at = @At("HEAD"), argsOnly = true)
     private static Language stapi$modifyLanguage(Language language) {
         return new SystemDelegatedLanguage(language);
     }

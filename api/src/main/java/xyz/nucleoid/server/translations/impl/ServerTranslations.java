@@ -157,7 +157,7 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
     }
 
     @Override
-    public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
+    public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Executor prepareExecutor, Executor applyExecutor) {
         CompletableFuture<Multimap<String, Supplier<TranslationMap>>> future = CompletableFuture.supplyAsync(() -> {
             this.reload();
             return LanguageReader.collectDataPackTranslations(manager);

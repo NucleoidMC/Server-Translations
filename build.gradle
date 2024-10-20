@@ -3,13 +3,13 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.6.+' apply false
+    id 'fabric-loom' version '1.7.+' apply false
     id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
-    static def baseVersion = "2.3.1"
-    static def mcVersion = "1.21-pre2"
+    static def baseVersion = "2.4.0"
+    static def mcVersion = "1.21.2-rc1"
     static def yarnVersion = "+build.1"
 }
 
@@ -19,8 +19,8 @@ allprojects {
     apply plugin: 'fabric-loom'
 
     version = Globals.baseVersion + "+" + Globals.mcVersion
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     group = "xyz.nucleoid"
 
@@ -49,11 +49,11 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modImplementation "net.fabricmc:fabric-loader:0.15.7"
+        modImplementation "net.fabricmc:fabric-loader:0.16.7"
 
-        modImplementation include("xyz.nucleoid:packet-tweaker:0.5.1+24w03b")
+        modImplementation include("xyz.nucleoid:packet-tweaker:0.6.0-pre.1+1.21.2-pre3")
 
-        modImplementation "net.fabricmc.fabric-api:fabric-api:0.97.3+1.20.5"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:0.106.0+1.21.2"
     }
 
     processResources {
@@ -70,7 +70,7 @@ allprojects {
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
         // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-        options.release.set(17)
+        options.release.set(21)
     }
 
     java {
