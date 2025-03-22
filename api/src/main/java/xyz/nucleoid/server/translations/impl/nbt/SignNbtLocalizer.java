@@ -2,11 +2,13 @@ package xyz.nucleoid.server.translations.impl.nbt;
 
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import xyz.nucleoid.server.translations.api.Localization;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 
@@ -16,27 +18,31 @@ public class SignNbtLocalizer {
         return type == BlockEntityType.SIGN || type == BlockEntityType.HANGING_SIGN;
     }
 
-    public static NbtCompound translateNbt(NbtCompound nbtCompound, LocalizationTarget target) {
+    public static NbtCompound translateNbt(NbtCompound nbtCompound, LocalizationTarget target, RegistryWrapper.WrapperLookup lookup) {
         var nbt = nbtCompound.copy();
-        updateSide(nbt.getCompound("front_text"), target);
-        updateSide(nbt.getCompound("back_text"), target);
+        updateSide(nbt.getCompoundOrEmpty("front_text"), target, lookup);
+        updateSide(nbt.getCompoundOrEmpty("back_text"), target, lookup);
         return nbt;
     }
 
-    private static void updateSide(NbtCompound nbt, LocalizationTarget target) {
+    private static void updateSide(NbtCompound nbt, LocalizationTarget target, RegistryWrapper.WrapperLookup lookup) {
         if (nbt == null || nbt.isEmpty()) {
             return;
         }
 
-        updateLines(nbt.getList("messages", NbtElement.STRING_TYPE), target);
-        if (nbt.contains("filtered_messages", NbtElement.LIST_TYPE)) {
-            updateLines(nbt.getList("filtered_messages", NbtElement.STRING_TYPE), target);
+        updateLines(nbt.getListOrEmpty("messages"), lookup);
+        if (nbt.contains("filtered_messages")) {
+            updateLines(nbt.getListOrEmpty("filtered_messages"), lookup);
         }
     }
 
-    private static void updateLines(NbtList messages, LocalizationTarget target) {
+    private static void updateLines(NbtList messages, RegistryWrapper.WrapperLookup lookup) {
+        var ops = lookup.getOps(NbtOps.INSTANCE);
         for (int i = 0; i < messages.size(); i++) {
-            messages.set(i, NbtString.of(Text.Serialization.toJsonString(Localization.text(Text.Serialization.fromLenientJson(messages.getString(i), DynamicRegistryManager.EMPTY), target), DynamicRegistryManager.EMPTY)));
+            var data = messages.get(i);
+            if (!(data instanceof NbtString)) {
+                messages.set(i, TextCodecs.CODEC.encodeStart(ops, TextCodecs.CODEC.decode(ops, data).getOrThrow().getFirst()).getOrThrow());
+            }
         }
     }
 }

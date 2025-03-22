@@ -3,13 +3,13 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.7.+' apply false
+    id 'fabric-loom' version '1.10.+' apply false
     id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
-    static def baseVersion = "2.4.0"
-    static def mcVersion = "1.21.2-rc1"
+    static def baseVersion = "2.5.0"
+    static def mcVersion = "1.21.5-rc1"
     static def yarnVersion = "+build.1"
 }
 
@@ -49,11 +49,11 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modImplementation "net.fabricmc:fabric-loader:0.16.7"
+        modImplementation "net.fabricmc:fabric-loader:0.16.10"
 
         modImplementation include("xyz.nucleoid:packet-tweaker:0.6.0-pre.1+1.21.2-pre3")
 
-        modImplementation "net.fabricmc.fabric-api:fabric-api:0.106.0+1.21.2"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:0.119.1+1.21.5"
     }
 
     processResources {

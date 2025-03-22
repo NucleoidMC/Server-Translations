@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
+import xyz.nucleoid.packettweaker.PacketContext;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import xyz.nucleoid.server.translations.impl.nbt.SignNbtLocalizer;
 
@@ -49,7 +50,7 @@ public class BlockEntityUpdateS2CPacketMixin {
                 var target = LocalizationTarget.forPacket();
 
                 if (target != null) {
-                    NbtCompound nbtCompound = SignNbtLocalizer.translateNbt(packet.getNbt(), LocalizationTarget.forPacket());
+                    NbtCompound nbtCompound = SignNbtLocalizer.translateNbt(packet.getNbt(), target, PacketContext.get().getRegistryWrapperLookup());
                     return invokeInit(packet.getPos(), packet.getBlockEntityType(), nbtCompound);
                 }
             }

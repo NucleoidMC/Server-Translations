@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import xyz.nucleoid.packettweaker.PacketContext;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import xyz.nucleoid.server.translations.impl.nbt.SignNbtLocalizer;
 
@@ -23,7 +24,7 @@ public class BlockEntityDataMixin {
             var target = LocalizationTarget.forPacket();
 
             if (target != null) {
-                return SignNbtLocalizer.translateNbt(compound, LocalizationTarget.forPacket());
+                return SignNbtLocalizer.translateNbt(compound, target, PacketContext.get().getRegistryWrapperLookup());
             }
         }
         return nbt;
