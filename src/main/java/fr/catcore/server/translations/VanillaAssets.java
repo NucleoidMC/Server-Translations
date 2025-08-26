@@ -78,11 +78,11 @@ public final class VanillaAssets {
             }
             for (JsonObject version : versionObjects) {
                 try {
-                    if (version.get("id").getAsString().equals(MinecraftVersion.CURRENT.getName())) {
+                    if (version.get("id").getAsString().equals(MinecraftVersion.CURRENT.name())) {
                         return new URL(version.get("url").getAsString());
                     }
                 } catch (NoSuchFieldError error) {
-                    if (version.get("id").getAsString().equals(MinecraftVersion.create().getName())) {
+                    if (version.get("id").getAsString().equals(MinecraftVersion.create().name())) {
                         return new URL(version.get("url").getAsString());
                     }
                 } catch (NoClassDefFoundError error) {

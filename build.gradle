@@ -8,10 +8,10 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "2.5.1"
-    static def mcVersion = "1.21.5"
+    static def baseVersion = "2.5.2"
+    static def mcVersion = "1.21.8"
     static def yarnVersion = "+build.1"
-    static def apiVersion = "0.126.0+1.21.5"
+    static def apiVersion = "0.132.0+1.21.8"
 }
 
 archivesBaseName = "Server-Translations"
@@ -50,7 +50,7 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:$Globals.mcVersion"
         mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modImplementation "net.fabricmc:fabric-loader:0.16.10"
+        modImplementation "net.fabricmc:fabric-loader:0.17.2"
 
         modImplementation include("xyz.nucleoid:packet-tweaker:0.6.0-pre.1+1.21.2-pre3")
 
