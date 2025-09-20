@@ -7,8 +7,7 @@
     "MixinMinecraftDedicatedServer",
     "MixinMinecraftServer",
     "MixinRecipeManager",
-    "MixinReloadableResourceManagerImpl",
-    "MixinWorldGenerationProgressLogger"
+    "MixinReloadableResourceManagerImpl"
   ],
   "injectors": {
     "defaultRequire": 1

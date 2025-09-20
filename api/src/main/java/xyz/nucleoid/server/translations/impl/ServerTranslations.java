@@ -157,13 +157,13 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
     }
 
     @Override
-    public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Executor prepareExecutor, Executor applyExecutor) {
+    public CompletableFuture<Void> reload(Store store, Executor prepareExecutor, Synchronizer reloadSynchronizer, Executor applyExecutor) {
         CompletableFuture<Multimap<String, Supplier<TranslationMap>>> future = CompletableFuture.supplyAsync(() -> {
             this.reload();
-            return LanguageReader.collectDataPackTranslations(manager);
+            return LanguageReader.collectDataPackTranslations(store.getResourceManager());
         });
 
-        return future.thenCompose(synchronizer::whenPrepared)
+        return future.thenCompose(reloadSynchronizer::whenPrepared)
                 .thenAcceptAsync(v -> {
                     Multimap<String, Supplier<TranslationMap>> languageSuppliers = future.join();
                     languageSuppliers.forEach(this.translations::add);
