@@ -1,11 +1,11 @@
 package fr.catcore.server.translations;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.network.chat.Component;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 import xyz.nucleoid.server.translations.api.language.ServerLanguageDefinition;
 import fr.catcore.server.translations.config.ConfigManager;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.text.Text;
 import org.slf4j.Logger;
 
 public class ServerTranslationsInitializer implements ModInitializer {
@@ -22,7 +22,7 @@ public class ServerTranslationsInitializer implements ModInitializer {
         ServerLanguageDefinition language = ServerTranslations.INSTANCE.getLanguageDefinition(systemCode);
         ServerTranslations.INSTANCE.setSystemLanguage(language);
 
-        LOGGER.info(Text.translatable("text.translated_server.language.set", language.code(), language.name(), language.region()).getString());
+        LOGGER.info(Component.translatable("text.translated_server.language.set", language.code(), language.name(), language.region()).getString());
 
         ServerTranslations.INSTANCE.registerReloadListener(TranslationGatherer::init);
         ServerTranslations.INSTANCE.registerReloadListener(() -> {

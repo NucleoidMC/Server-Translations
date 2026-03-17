@@ -1,9 +1,8 @@
 package xyz.nucleoid.server.translations.impl.language;
 
+import org.jspecify.annotations.Nullable;
 import xyz.nucleoid.server.translations.api.language.TranslationAccess;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +28,6 @@ public final class TranslationMap implements TranslationAccess {
     }
 
     @Override
-    @NotNull
     public String get(String key) {
         return this.map.getOrDefault(key, key);
     }

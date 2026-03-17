@@ -1,7 +1,6 @@
 package xyz.nucleoid.server.translations.api.language;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface TranslationAccess {
     TranslationAccess EMPTY = new TranslationAccess() {
@@ -17,7 +16,6 @@ public interface TranslationAccess {
         }
     };
 
-    @NotNull
     default String get(String key) {
         String translation = this.getOrNull(key);
         return translation != null ? translation : key;

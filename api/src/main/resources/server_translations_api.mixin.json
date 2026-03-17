@@ -5,11 +5,13 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "LanguageMixin",
+    "ServerConfigurationPacketListenerImplMixin",
+    "ServerGamePacketListenerImplMixin",
     "ServerPlayerEntityMixin",
-    "codec.CodecCacheMixin",
-    "codec.TranslatableTextContentMixin",
-    "packet.BlockEntityDataMixin",
-    "packet.BlockEntityUpdateS2CPacketMixin"
+    "codec.EncoderCacheMixin",
+    "codec.TranslatableContentsMixin",
+    "packet.BlockEntityInfoMixin",
+    "packet.ClientboundBlockEntityDataPacketMixin"
   ],
   "client": [
     "client.LanguageMixin"

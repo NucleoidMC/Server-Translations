@@ -3,25 +3,28 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.11.+' apply false
+    id 'net.fabricmc.fabric-loom' version '1.15.+' apply false
     id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
-    static def baseVersion = "2.5.2"
-    static def mcVersion = "1.21.9-pre3"
-    static def yarnVersion = "+build.1"
-    static def apiVersion = "0.133.8+1.21.9"
+    static def baseVersion = "3.0.0"
+    static def mcVersion = "26.1-pre-3"
+    static def apiVersion = "0.143.14+26.1"
+    static def loaderVersion = "0.18.4"
 }
 
-archivesBaseName = "Server-Translations"
+base.archivesName = "Server-Translations"
 
 allprojects {
-    apply plugin: 'fabric-loom'
+    apply plugin: 'net.fabricmc.fabric-loom'
 
     version = Globals.baseVersion + "+" + Globals.mcVersion
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
+    }
 
     group = "xyz.nucleoid"
 
@@ -48,13 +51,10 @@ allprojects {
     }
 
     dependencies {
-        minecraft "com.mojang:minecraft:$Globals.mcVersion"
-        mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-        modImplementation "net.fabricmc:fabric-loader:0.17.2"
+        minecraft "com.mojang:minecraft:${Globals.mcVersion}"
+        implementation "net.fabricmc:fabric-loader:${Globals.loaderVersion}"
 
-        modImplementation include("xyz.nucleoid:packet-tweaker:0.6.0-pre.1+1.21.2-pre3")
-
-        modCompileOnly modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${Globals.apiVersion}")
+        compileOnly localRuntime("net.fabricmc.fabric-api:fabric-api:${Globals.apiVersion}")
     }
 
     processResources {
@@ -70,8 +70,8 @@ allprojects {
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-        options.release.set(21)
+        // Minecraft 26.1 upwards uses Java 25.
+        options.release.set(25)
     }
 
     java {
@@ -83,14 +83,12 @@ allprojects {
 
     jar {
         from("LICENSE") {
-            rename { "${it}_${project.archivesBaseName}"}
+            rename { "${it}_${project.base.archivesName}"}
         }
     }
-
-    if (it.name != "api") remapJar.dependsOn ':api:remapJar'
 }
 
 dependencies {
-    implementation project(path: ':api', configuration: "namedElements")
+    implementation project(':api')
     include project(':api'/*name: 'server-translations-api', version: project(':api').version, ext: 'jar'*/)
 }

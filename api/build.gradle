@@ -1,6 +1,6 @@
 apply plugin: 'maven-publish'
 
-archivesBaseName = "server-translations-api"
+base.archivesName = "server-translations-api"
 
 repositories {
   mavenLocal()

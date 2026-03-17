@@ -5,7 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.MinecraftVersion;
+import net.minecraft.DetectedVersion;
+import net.minecraft.SharedConstants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -78,11 +79,11 @@ public final class VanillaAssets {
             }
             for (JsonObject version : versionObjects) {
                 try {
-                    if (version.get("id").getAsString().equals(MinecraftVersion.CURRENT.id())) {
+                    if (version.get("id").getAsString().equals(SharedConstants.getCurrentVersion().id())) {
                         return new URL(version.get("url").getAsString());
                     }
                 } catch (NoSuchFieldError error) {
-                    if (version.get("id").getAsString().equals(MinecraftVersion.create().id())) {
+                    if (version.get("id").getAsString().equals(DetectedVersion.tryDetectVersion().id())) {
                         return new URL(version.get("url").getAsString());
                     }
                 } catch (NoClassDefFoundError error) {
