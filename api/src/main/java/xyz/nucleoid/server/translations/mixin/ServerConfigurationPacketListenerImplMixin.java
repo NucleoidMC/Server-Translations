@@ -25,6 +25,6 @@ public abstract class ServerConfigurationPacketListenerImplMixin extends ServerC
     )
     private void stapi$setPacketContextLang(ServerboundClientInformationPacket packet, CallbackInfo ci) {
         PacketContext context = this.connection.getPacketContext();
-        context.set(LocalizationTarget.LANGUAGE, packet.information().language());
+        context.set(LocalizationTarget.LANGUAGE_KEY, packet.information().language());
     }
 }
