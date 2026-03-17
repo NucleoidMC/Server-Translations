@@ -2,7 +2,7 @@ package xyz.nucleoid.server.translations.api;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import xyz.nucleoid.server.translations.api.language.ServerLanguage;
 import xyz.nucleoid.server.translations.impl.LocalizableComponent;
 
