@@ -31,13 +31,13 @@ dependencies {
 For `[TAG]`/translations api version I recommend you checking [this maven](https://maven.nucleoid.xyz/fr/catcore/server-translations-api/).
 
 ## Usage
-To use it, you just need to use vanilla `Text.translation(...)` with key specified by you in your code. 
+To use it, you just need to use vanilla's `Component.translatable(...)` with key specified by you in your code. 
 
 Then you just need to create `data/modid/lang` folder in your mod's resources.
 Then you can create there `en_us.json` for default translation and similar files for other languages (same format as vanilla translations).
 
 Example valid language file looks like this:
-```
+```json
 {
   "block.honeytech.pipe": "Pipe",
   "block.honeytech.item_extractor": "Item Extractor",
