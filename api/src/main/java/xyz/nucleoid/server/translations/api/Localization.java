@@ -1,28 +1,28 @@
 package xyz.nucleoid.server.translations.api;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import org.jspecify.annotations.Nullable;
 import xyz.nucleoid.server.translations.api.language.ServerLanguage;
-import xyz.nucleoid.server.translations.impl.LocalizableText;
+import xyz.nucleoid.server.translations.impl.LocalizableComponent;
 
 public final class Localization {
     private Localization() {}
 
-    public static Text text(Text text, ServerPlayerEntity target) {
+    public static Component text(Component text, ServerPlayer target) {
         return text(text, LocalizationTarget.of(target));
     }
 
-    public static Text text(Text text, LocalizationTarget target) {
+    public static Component text(Component text, LocalizationTarget target) {
         return text(text, target.getLanguage());
     }
 
-    public static Text text(Text text, ServerLanguage language) {
-        return LocalizableText.asLocalizedFor(text, language);
+    public static Component text(Component text, ServerLanguage language) {
+        return LocalizableComponent.asLocalizedFor(text, language);
     }
 
     @Nullable
-    public static String raw(String key, ServerPlayerEntity target) {
+    public static String raw(String key, ServerPlayer target) {
         return raw(key, LocalizationTarget.of(target));
     }
 

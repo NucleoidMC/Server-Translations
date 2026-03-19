@@ -1,24 +1,22 @@
 package xyz.nucleoid.server.translations.impl;
 
 import com.google.common.collect.Multimap;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.TranslatableTextContent;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import org.jspecify.annotations.Nullable;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.profiler.Profiler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import xyz.nucleoid.server.translations.api.language.ServerLanguage;
 import xyz.nucleoid.server.translations.api.language.ServerLanguageDefinition;
@@ -30,12 +28,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public final class ServerTranslations implements IdentifiableResourceReloadListener, ModInitializer, ServerLifecycleEvents.ServerStopped {
+public final class ServerTranslations implements PreparableReloadListener, ModInitializer, ServerLifecycleEvents.ServerStopped {
     public static final String ID = "server_translations_api";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    public static final ModContainer CONTAINER = FabricLoader.getInstance().getModContainer(ID).orElseThrow();
+
     public static final ServerTranslations INSTANCE = new ServerTranslations();
-    public static final ThreadLocal<ServerLanguage> TRANSLATION_CONTEXT = ThreadLocal.withInitial(() -> null);
+    public static final ScopedValue<ServerLanguage> TRANSLATION_CONTEXT = ScopedValue.newInstance();
 
     private final SortedMap<String, ServerLanguageDefinition> supportedLanguages = new Object2ObjectRBTreeMap<>();
 
@@ -44,6 +44,7 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
     public final LocalizationTarget systemTarget = () -> this.getSystemLanguage().definition().code();
 
     private ServerLanguage defaultLanguage;
+    @Nullable
     private ServerLanguage systemLanguage;
 
     private final List<TranslationsReloadListener> reloadListeners = new ArrayList<>();
@@ -58,12 +59,12 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
     private void loadSupportedLanguages() {
         try {
             Pair<List<ServerLanguageDefinition>, Map<String, String>> pair = ServerLanguageDefinitionReaders.loadLanguageDefinitions();
-            List<ServerLanguageDefinition> definitions = pair.getLeft();
+            List<ServerLanguageDefinition> definitions = pair.getFirst();
             for (ServerLanguageDefinition language : definitions) {
                 this.supportedLanguages.put(language.code(), language);
             }
 
-            CODE_ALIAS.putAll(pair.getRight());
+            CODE_ALIAS.putAll(pair.getSecond());
         } catch (IOException e) {
             LOGGER.error("Failed to load server language definitions", e);
         }
@@ -84,16 +85,14 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
         this.reloadListeners.forEach(TranslationsReloadListener::reload);
     }
 
-    public void addTranslations(String code, Supplier<TranslationMap> supplier) {
+    public void addTranslations(String code, Supplier<@Nullable TranslationMap> supplier) {
         this.translations.add(code, supplier);
     }
 
-    @NotNull
     public ServerLanguage getLanguage(@Nullable LocalizationTarget target) {
         return this.getLanguage(target != null ? target.getLanguageCode() : null);
     }
 
-    @NotNull
     public ServerLanguage getLanguage(@Nullable String code) {
         if (code == null) {
             return this.defaultLanguage;
@@ -112,7 +111,6 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
         }
     }
 
-    @NotNull
     public ServerLanguageDefinition getLanguageDefinition(@Nullable String code) {
         if (code == null) {
             return ServerLanguageDefinition.DEFAULT;
@@ -134,12 +132,10 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
         this.systemLanguage = Objects.requireNonNull(this.getLanguage(definition.code()));
     }
 
-    @NotNull
     public ServerLanguage getSystemLanguage() {
-        return this.systemLanguage;
+        return Objects.requireNonNull(this.systemLanguage);
     }
 
-    @NotNull
     public ServerLanguage getDefaultLanguage() {
         return this.defaultLanguage;
     }
@@ -153,32 +149,27 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
     }
 
     private int getTranslationKeyCount() {
-        return this.translations.get(this.systemLanguage.definition().code()).size();
+        return this.translations.get(this.getSystemLanguage().definition().code()).size();
     }
 
     @Override
-    public CompletableFuture<Void> reload(Store store, Executor prepareExecutor, Synchronizer reloadSynchronizer, Executor applyExecutor) {
+    public CompletableFuture<Void> reload(SharedState store, Executor taskExecutor, PreparationBarrier preparationBarrier, Executor reloadExecutor) {
         CompletableFuture<Multimap<String, Supplier<TranslationMap>>> future = CompletableFuture.supplyAsync(() -> {
             this.reload();
-            return LanguageReader.collectDataPackTranslations(store.getResourceManager());
+            return LanguageReader.collectDataPackTranslations(store.resourceManager());
         });
 
-        return future.thenCompose(reloadSynchronizer::whenPrepared)
-                .thenAcceptAsync(v -> {
-                    Multimap<String, Supplier<TranslationMap>> languageSuppliers = future.join();
-                    languageSuppliers.forEach(this.translations::add);
+        return future.thenCompose(preparationBarrier::wait)
+            .thenAcceptAsync(v -> {
+                Multimap<String, Supplier<TranslationMap>> languageSuppliers = future.join();
+                languageSuppliers.forEach(this.translations::add);
 
-                    int keyCount = ServerTranslations.INSTANCE.getTranslationKeyCount();
-                    LOGGER.info(Text.translatable("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
+                int keyCount = ServerTranslations.INSTANCE.getTranslationKeyCount();
+                LOGGER.info(Component.translatable("text.translated_server.loaded.translation_key", String.valueOf(keyCount)).getString());
 
-                    //System.out.println(LocalizableText.asLocalizedFor(
-                    //        Text.translatable("text.translated_server.loaded.translation_key"), ServerLanguage.getLanguage("en_us")).getContent() instanceof TranslatableTextContent t ? t.getFallback() : "[FAIL]");
-                });
-    }
-
-    @Override
-    public String getName() {
-        return IdentifiableResourceReloadListener.super.getName();
+                //System.out.println(LocalizableText.asLocalizedFor(
+                //        Text.translatable("text.translated_server.loaded.translation_key"), ServerLanguage.getLanguage("en_us")).getContent() instanceof TranslatableTextContent t ? t.getFallback() : "[FAIL]");
+            });
     }
 
     public String getCodeAlias(String code) {
@@ -187,18 +178,22 @@ public final class ServerTranslations implements IdentifiableResourceReloadListe
 
     @Override
     public void onInitialize() {
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(ServerTranslations.INSTANCE);
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(id("translations"), ServerTranslations.INSTANCE);
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerTranslations.INSTANCE);
-    }
-
-    @Override
-    public Identifier getFabricId() {
-        return Identifier.of(ID, "translations");
     }
 
     @Override
     public void onServerStopped(MinecraftServer server) {
         this.translations.clear();
         this.serverLanguages.clear();
+    }
+
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(ID, path);
+    }
+
+    @Nullable
+    public static ServerLanguage getTranslationContextOrNull() {
+        return TRANSLATION_CONTEXT.isBound() ? TRANSLATION_CONTEXT.get() : null;
     }
 }

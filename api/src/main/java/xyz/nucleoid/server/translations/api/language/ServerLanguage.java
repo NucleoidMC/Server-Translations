@@ -1,9 +1,7 @@
 package xyz.nucleoid.server.translations.api.language;
 
+import org.jspecify.annotations.Nullable;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 public record ServerLanguage(ServerLanguageDefinition definition,
                              TranslationAccess serverTranslations) {

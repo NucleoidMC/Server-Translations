@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.locale.Language;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 import xyz.nucleoid.server.translations.impl.language.LanguageReader;
 import xyz.nucleoid.server.translations.api.language.ServerLanguageDefinition;
@@ -12,7 +13,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
-import net.minecraft.util.Language;
 
 import java.io.BufferedReader;
 import java.io.IOException;

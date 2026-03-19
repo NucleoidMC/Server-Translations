@@ -1,21 +1,23 @@
 package xyz.nucleoid.server.translations.api;
 
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import org.jspecify.annotations.Nullable;
 import xyz.nucleoid.server.translations.api.language.ServerLanguage;
 import xyz.nucleoid.server.translations.impl.LanguageGetter;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
-import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.packettweaker.PacketContext;
 
 public interface LocalizationTarget {
+    PacketContext.Key<String> LANGUAGE_KEY = PacketContext.key(ServerTranslations.id("lang"));
+
     @Nullable
     static LocalizationTarget forPacket() {
         PacketContext context = PacketContext.get();
         if (context != null) {
-            var options = context.getClientOptions();
-            if (options != null) {
-                return options::language;
+            String lang = context.get(LANGUAGE_KEY);
+            if (lang != null) {
+                return () -> lang;
             }
         }
         return null;
@@ -28,12 +30,12 @@ public interface LocalizationTarget {
         return ServerTranslations.INSTANCE.getLanguage(this);
     }
 
-    static LocalizationTarget of(ServerPlayerEntity player) {
+    static LocalizationTarget of(ServerPlayer player) {
         return ((LanguageGetter) player)::stapi$getLanguage;
     }
 
-    static LocalizationTarget of(ServerPlayNetworkHandler handler) {
-        return of(handler.getPlayer());
+    static LocalizationTarget of(ServerGamePacketListenerImpl connection) {
+        return of(connection.getPlayer());
     }
 
     static LocalizationTarget ofSystem() {

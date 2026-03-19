@@ -4,10 +4,10 @@
   "package": "fr.catcore.server.translations.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MixinMinecraftDedicatedServer",
-    "MixinMinecraftServer",
-    "MixinRecipeManager",
-    "MixinReloadableResourceManagerImpl"
+    "DedicatedServerMixin",
+    "MinecraftServerMixin",
+    "RecipeManagerMixin",
+    "ReloadableResourceManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

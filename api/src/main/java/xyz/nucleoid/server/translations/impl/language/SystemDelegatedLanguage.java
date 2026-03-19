@@ -1,10 +1,10 @@
 package xyz.nucleoid.server.translations.impl.language;
 
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.util.FormattedCharSequence;
 import xyz.nucleoid.server.translations.api.language.ServerLanguage;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.util.Language;
 
 public final class SystemDelegatedLanguage extends Language {
     private final Language vanilla;
@@ -14,26 +14,26 @@ public final class SystemDelegatedLanguage extends Language {
     }
 
     @Override
-    public String get(String key) {
-        String override = this.getSystemLanguage().serverTranslations().getOrNull(key);
+    public String getOrDefault(String elementId) {
+        String override = this.getSystemLanguage().serverTranslations().getOrNull(elementId);
         if (override != null) {
-            return this.vanilla.get(key, override);
+            return this.vanilla.getOrDefault(elementId, override);
         }
-        return this.vanilla.get(key);
+        return this.vanilla.getOrDefault(elementId);
     }
 
     @Override
-    public String get(String key, String fallback) {
-        return this.vanilla.get(key, fallback);
+    public String getOrDefault(String elementId, String defaultValue) {
+        return this.vanilla.getOrDefault(elementId, defaultValue);
     }
 
     @Override
-    public boolean hasTranslation(String key) {
-        return this.vanilla.hasTranslation(key) || this.getSystemLanguage().serverTranslations().contains(key);
+    public boolean has(String key) {
+        return this.vanilla.has(key) || this.getSystemLanguage().serverTranslations().contains(key);
     }
 
     @Override
-    public boolean isRightToLeft() {
+    public boolean isDefaultRightToLeft() {
         return this.getSystemLanguage().definition().rightToLeft();
     }
 
@@ -42,7 +42,7 @@ public final class SystemDelegatedLanguage extends Language {
     }
 
     @Override
-    public OrderedText reorder(StringVisitable text) {
-        return this.vanilla.reorder(text);
+    public FormattedCharSequence getVisualOrder(FormattedText text) {
+        return this.vanilla.getVisualOrder(text);
     }
 }

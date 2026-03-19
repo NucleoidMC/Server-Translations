@@ -3,13 +3,15 @@ package xyz.nucleoid.server.translations.impl.language;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.datafixers.util.Pair;
 import xyz.nucleoid.server.translations.api.language.ServerLanguageDefinition;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
-import net.minecraft.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class ServerLanguageDefinitionReaders {
@@ -17,7 +19,8 @@ public class ServerLanguageDefinitionReaders {
         List<ServerLanguageDefinition> languageDefinitions = new ArrayList<>();
         Map<String, String> aliasList = new HashMap<>();
 
-        try (BufferedReader read = new BufferedReader(new InputStreamReader(ServerTranslations.class.getResourceAsStream("/minecraft_languages.json")))) {
+        Path languages = ServerTranslations.CONTAINER.findPath("minecraft_languages.json").orElseThrow();
+        try (BufferedReader read = new BufferedReader(new InputStreamReader(Files.newInputStream(languages)))) {
             JsonObject root = JsonParser.parseReader(read).getAsJsonObject();
             JsonObject languageRoot = root.getAsJsonObject("language");
 
@@ -33,7 +36,7 @@ public class ServerLanguageDefinitionReaders {
             }
         }
 
-        return new Pair(languageDefinitions, aliasList);
+        return new Pair<>(languageDefinitions, aliasList);
     }
 
     public static ServerLanguageDefinition parse(String code, JsonObject jsonObject) {
