@@ -22,12 +22,6 @@ public abstract class TranslatableContentsMixin {
         return original.xmap((content) -> {
             if (content.getFallback() != null) {
                 ServerLanguage language = ServerTranslations.getTranslationContextOrNull();
-                if (language == null) {
-                    var target = LocalizationTarget.forPacket();
-                    if (target != null) {
-                        language = target.getLanguage();
-                    }
-                }
 
                 if (language != null && content.getFallback().equals(language.serverTranslations().getOrNull(content.getKey()))) {
                     return new TranslatableContents(content.getKey(), null, content.getArgs());
@@ -37,12 +31,6 @@ public abstract class TranslatableContentsMixin {
         }, (content) -> {
             if (content.getFallback() == null) {
                 ServerLanguage language = ServerTranslations.getTranslationContextOrNull();
-                if (language == null) {
-                    var target = LocalizationTarget.forPacket();
-                    if (target != null) {
-                        language = target.getLanguage();
-                    }
-                }
                 if (language != null) {
                     return new TranslatableContents(content.getKey(), language.serverTranslations().get(content.getKey()), content.getArgs());
                 }
