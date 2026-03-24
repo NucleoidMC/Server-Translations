@@ -8,9 +8,9 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "3.0.0"
-    static def mcVersion = "26.1-pre-3"
-    static def apiVersion = "0.143.14+26.1"
+    static def baseVersion = "3.0.1"
+    static def mcVersion = "26.1"
+    static def apiVersion = "0.144.0+26.1"
     static def loaderVersion = "0.18.4"
 }
 

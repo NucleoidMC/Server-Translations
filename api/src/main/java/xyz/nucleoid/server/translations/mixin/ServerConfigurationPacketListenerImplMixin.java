@@ -11,13 +11,18 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 
 @Mixin(ServerConfigurationPacketListenerImpl.class)
 public abstract class ServerConfigurationPacketListenerImplMixin extends ServerCommonPacketListenerImpl {
     public ServerConfigurationPacketListenerImplMixin(MinecraftServer server, Connection connection, CommonListenerCookie cookie) {
         super(server, connection, cookie);
+    }
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void stapi$setDefaultLanguage(MinecraftServer server, Connection connection, CommonListenerCookie cookie, CallbackInfo ci) {
+        PacketContext context = connection.getPacketContext();
+        context.set(ServerTranslations.LANGUAGE_KEY, cookie.clientInformation().language());
     }
 
     @Inject(
