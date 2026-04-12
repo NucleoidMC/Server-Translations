@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xyz.nucleoid.server.translations.impl.LanguageContext;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 
 @Mixin(ServerConfigurationPacketListenerImpl.class)
@@ -22,7 +23,7 @@ public abstract class ServerConfigurationPacketListenerImplMixin extends ServerC
     @Inject(method = "<init>", at = @At("TAIL"))
     private void stapi$setDefaultLanguage(MinecraftServer server, Connection connection, CommonListenerCookie cookie, CallbackInfo ci) {
         PacketContext context = connection.getPacketContext();
-        context.set(ServerTranslations.LANGUAGE_KEY, cookie.clientInformation().language());
+        context.set(LanguageContext.LANGUAGE_KEY, cookie.clientInformation().language());
     }
 
     @Inject(
@@ -31,6 +32,6 @@ public abstract class ServerConfigurationPacketListenerImplMixin extends ServerC
     )
     private void stapi$setPacketContextLang(ServerboundClientInformationPacket packet, CallbackInfo ci) {
         PacketContext context = this.connection.getPacketContext();
-        context.set(ServerTranslations.LANGUAGE_KEY, packet.information().language());
+        context.set(LanguageContext.LANGUAGE_KEY, packet.information().language());
     }
 }

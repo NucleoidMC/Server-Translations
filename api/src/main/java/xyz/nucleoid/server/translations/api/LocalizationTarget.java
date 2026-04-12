@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.jspecify.annotations.Nullable;
 import xyz.nucleoid.server.translations.api.language.ServerLanguage;
+import xyz.nucleoid.server.translations.impl.LanguageContext;
 import xyz.nucleoid.server.translations.impl.LanguageGetter;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 
@@ -14,7 +15,7 @@ public interface LocalizationTarget {
     static LocalizationTarget forPacket() {
         PacketContext context = PacketContext.get();
         if (context != null) {
-            String lang = context.get(ServerTranslations.LANGUAGE_KEY);
+            String lang = context.get(LanguageContext.LANGUAGE_KEY);
             if (lang != null) {
                 return () -> lang;
             }
@@ -34,7 +35,7 @@ public interface LocalizationTarget {
     }
 
     static LocalizationTarget of(PacketContext context) {
-        return () -> context.orElse(ServerTranslations.LANGUAGE_KEY, "en_us");
+        return () -> context.orElse(LanguageContext.LANGUAGE_KEY, "en_us");
     }
 
     static LocalizationTarget of(PacketContextProvider provider) {

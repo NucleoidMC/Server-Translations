@@ -32,10 +32,10 @@ import java.util.function.Supplier;
 public final class ServerTranslations implements PreparableReloadListener, ModInitializer, ServerLifecycleEvents.ServerStopped {
     public static final String ID = "server_translations_api";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static final PacketContext.Key<String> LANGUAGE_KEY = PacketContext.key(id("lang"));
+    public static final ServerTranslations INSTANCE = new ServerTranslations();
+
     public static final ModContainer CONTAINER = FabricLoader.getInstance().getModContainer(ID).orElseThrow();
 
-    public static final ServerTranslations INSTANCE = new ServerTranslations();
     public static final ScopedValue<ServerLanguage> TRANSLATION_CONTEXT = ScopedValue.newInstance();
 
     private final SortedMap<String, ServerLanguageDefinition> supportedLanguages = new Object2ObjectRBTreeMap<>();

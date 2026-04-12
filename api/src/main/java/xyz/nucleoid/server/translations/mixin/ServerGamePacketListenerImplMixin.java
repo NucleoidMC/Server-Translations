@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
+import xyz.nucleoid.server.translations.impl.LanguageContext;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 
 @Mixin(ServerGamePacketListenerImpl.class)
@@ -26,6 +27,6 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
     )
     private void stapi$setPacketContextLang(ServerboundClientInformationPacket packet, CallbackInfo ci) {
         PacketContext context = this.connection.getPacketContext();
-        context.set(ServerTranslations.LANGUAGE_KEY, packet.information().language());
+        context.set(LanguageContext.LANGUAGE_KEY, packet.information().language());
     }
 }
