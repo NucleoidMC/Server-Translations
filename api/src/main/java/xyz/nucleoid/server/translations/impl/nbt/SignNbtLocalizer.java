@@ -8,12 +8,13 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import xyz.nucleoid.server.translations.api.LocalizationTarget;
 
 public class SignNbtLocalizer {
 
     public static boolean isSign(BlockEntityType<?> type) {
-        return type == BlockEntityType.SIGN || type == BlockEntityType.HANGING_SIGN;
+        return type == BlockEntityTypes.SIGN || type == BlockEntityTypes.HANGING_SIGN;
     }
 
     public static CompoundTag translateNbt(CompoundTag compoundTag, LocalizationTarget target, HolderLookup.Provider lookup) {

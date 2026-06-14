@@ -8,10 +8,10 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "3.0.3"
-    static def mcVersion = "26.1"
-    static def apiVersion = "0.144.0+26.1"
-    static def loaderVersion = "0.18.4"
+    static def baseVersion = "3.1.0+26.2"
+    static def mcVersion = "26.2-rc-2"
+    static def apiVersion = "0.150.2+26.2"
+    static def loaderVersion = "0.19.2"
 }
 
 base.archivesName = "Server-Translations"
@@ -19,7 +19,7 @@ base.archivesName = "Server-Translations"
 allprojects {
     apply plugin: 'net.fabricmc.fabric-loom'
 
-    version = Globals.baseVersion + "+" + Globals.mcVersion
+    version = Globals.baseVersion
 
     java {
         sourceCompatibility = JavaVersion.VERSION_25
