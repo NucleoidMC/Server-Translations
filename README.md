@@ -11,6 +11,19 @@ repositories {
 }
 
 dependencies {
+	implementation include("xyz.nucleoid:server-translations-api:[TAG]")
+}
+```
+
+For `[TAG]`/translations api version I recommend you checking [this maven](https://maven.nucleoid.xyz/xyz/nucleoid/server-translations-api/).
+
+### For versions before 26.1:
+```groovy
+repositories {
+	maven { url 'https://maven.nucleoid.xyz' }
+}
+
+dependencies {
 	modImplementation include("xyz.nucleoid:server-translations-api:[TAG]")
 }
 ```
