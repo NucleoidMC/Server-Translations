@@ -8,10 +8,10 @@ plugins {
 }
 
 class Globals {
-    static def baseVersion = "3.1.0+26.2"
-    static def mcVersion = "26.2-rc-2"
-    static def apiVersion = "0.150.2+26.2"
-    static def loaderVersion = "0.19.2"
+    static def baseVersion = "3.2.0+26.3"
+    static def mcVersion = "26.3-pre-2"
+    static def apiVersion = "0.159.4+26.3"
+    static def loaderVersion = "0.19.4"
 }
 
 base.archivesName = "Server-Translations"

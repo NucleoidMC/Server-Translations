@@ -6,6 +6,10 @@ repositories {
   mavenLocal()
 }
 
+loom {
+  accessWidenerPath = file("src/main/resources/server_translations_api.classtweaker")
+}
+
 dependencies {
 }
 
